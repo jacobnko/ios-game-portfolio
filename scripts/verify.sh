@@ -13,11 +13,12 @@ swift test --package-path "$PKG" 2>&1 | tail -3
 
 echo
 echo "=== 2/2  xcodebuild (generic/platform=iOS) ==="
-xcodebuild -scheme CoreKit-Package \
-           -destination 'generic/platform=iOS' \
-           -derivedDataPath "$DD" \
-           -quiet build 2>&1 \
-  | grep -E "error:|warning:|BUILD" || true
+# xcodebuild resolves the package from the working directory, so run it inside it.
+( cd "$PKG" && xcodebuild -scheme CoreKit-Package \
+                          -destination 'generic/platform=iOS' \
+                          -derivedDataPath "$DD" \
+                          build 2>&1 ) \
+  | grep -E "error:|warning:|BUILD SUCCEEDED|BUILD FAILED" || true
 
 echo
 echo "done."
