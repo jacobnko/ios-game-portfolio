@@ -51,7 +51,9 @@
 - [x] 단위 테스트 10종 통과
 - [x] iOS 실제 빌드 확인 (에러·경고 0)
 - [x] `scripts/verify.sh` — host 테스트 + iOS 빌드 일괄 검증
+- [x] `Tools/JuiceLab` 하네스 앱 — 실기기 체감 검증용 (XcodeGen)
 - [ ] **실기기에서 3종 세기 체감 확인** ← J가 직접. 시뮬레이터는 햅틱이 안 난다
+- [ ] 백그라운드 → 복귀 후에도 햅틱이 살아있는지 확인
 
 ### S1.2 Audio (pitch scaling)
 - [ ] one-shot SFX 피치 시프트 재생기

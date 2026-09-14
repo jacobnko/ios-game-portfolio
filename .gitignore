@@ -18,6 +18,9 @@ build/
 *.dSYM.zip
 *.dSYM
 
+# XcodeGen output — regenerate with `xcodegen generate`, never edit by hand
+Tools/*/*.xcodeproj
+
 # Swift Package Manager
 .build/
 .swiftpm/

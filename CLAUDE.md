@@ -42,10 +42,13 @@ Its reason to exist is simple: every game shipped should require less new code t
    - **wait for the user's confirmation** before moving on.
 3. **If code was touched, run `./scripts/verify.sh` before saying "done".**
    `swift test` alone is not enough: it builds for the host, so everything behind
-   `#if canImport(UIKit)` is never compiled. The script adds a real iOS build.
-4. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
-5. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
-6. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
+   `#if canImport(UIKit)` is never compiled. The script adds real iOS builds.
+4. **Anything a human must feel or see — haptics, audio, animation timing — is not verifiable from here.**
+   Add it to `Tools/JuiceLab` and hand the user a concrete checklist of what to feel.
+   Haptics never fire in the Simulator, so "it builds" is not "it works".
+5. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
+6. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
+7. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
 
 ### Commits
 - **Claude commits automatically.** Staging and committing is part of finishing a step, not a task handed back to the user.
@@ -72,6 +75,8 @@ Its reason to exist is simple: every game shipped should require less new code t
 │  ├─ design/           # Claude Design handoff documents (§6)
 │  ├─ architecture/     # CoreKit module design notes
 │  └─ decisions/        # ADRs, for hard-to-reverse decisions only
+├─ Tools/
+│  └─ JuiceLab/         # harness app — feel CoreKit's feedback on a real device
 ├─ Packages/
 │  └─ CoreKit/          # local SPM package imported by every game
 └─ Apps/
