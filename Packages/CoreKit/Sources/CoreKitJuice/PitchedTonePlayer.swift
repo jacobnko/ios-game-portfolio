@@ -41,6 +41,11 @@ public final class PitchedTonePlayer {
     private struct BufferKey: Hashable {
         let weight: FeedbackWeight
         let stepIndex: Int
+        // The rendered waveform depends on the scale and root as well as the step.
+        // Keying on the step alone meant a game that changed scale kept hearing the
+        // pitches from the old one, forever, with no way to tell why.
+        let scale: MusicalScale
+        let root: Double
     }
     #endif
 
@@ -115,7 +120,10 @@ private extension PitchedTonePlayer {
             object: engine,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated {
+            // Hopping explicitly rather than asserting isolation: `assumeIsolated`
+            // traps if the assumption is ever wrong, and a crash is a far worse
+            // outcome than a one-runloop delay in restarting audio.
+            Task { @MainActor in
                 guard let self else { return }
                 self.teardown()
                 self.startEngineIfNeeded()
@@ -129,7 +137,7 @@ private extension PitchedTonePlayer {
     }
 
     func buffer(for weight: FeedbackWeight, stepIndex: Int) -> AVAudioPCMBuffer? {
-        let key = BufferKey(weight: weight, stepIndex: stepIndex)
+        let key = BufferKey(weight: weight, stepIndex: stepIndex, scale: scale, root: root)
         if let cached = bufferCache[key] { return cached }
         guard let format else { return nil }
 

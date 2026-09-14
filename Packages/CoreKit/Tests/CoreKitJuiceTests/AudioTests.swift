@@ -157,3 +157,26 @@ func everyScaleBeginsOnTheRoot(scale: MusicalScale) {
     #expect(s.isActive(at: 1.2) == true)
     #expect(s.isActive(at: 2.0) == false)
 }
+
+// MARK: - Regression: pitch depends on more than the step
+
+@Test func differentScalesProduceDifferentPitches() {
+    // The tone player caches rendered buffers. Caching them by step alone meant a
+    // game that switched scale kept hearing the old scale's notes with no way to
+    // tell why, so the cache key has to cover everything this depends on.
+    //
+    // Compared across a run rather than at one step: individual degrees coincide
+    // between scales (step 3 is 7 semitones in both pentatonics), so a single-step
+    // check would pass for the wrong reason.
+    let steps = 0...5
+    let major = steps.map { ToneRecipe.make(for: .micro, stepIndex: $0, scale: .pentatonicMajor).frequency }
+    let minor = steps.map { ToneRecipe.make(for: .micro, stepIndex: $0, scale: .pentatonicMinor).frequency }
+    #expect(major != minor)
+}
+
+@Test func differentRootsProduceDifferentPitchesForTheSameStep() {
+    let step = 2
+    let c5 = ToneRecipe.make(for: .micro, stepIndex: step, root: Pitch.c5).frequency
+    let a4 = ToneRecipe.make(for: .micro, stepIndex: step, root: Pitch.a4).frequency
+    #expect(c5 != a4)
+}

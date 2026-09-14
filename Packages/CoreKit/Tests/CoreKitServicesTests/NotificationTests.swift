@@ -180,3 +180,19 @@ private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int = 12) -> Da
 @Test func maxPendingCannotExceedWhatTheSystemAccepts() {
     #expect(NotificationPolicy(maxPending: 500).maxPending <= 60)
 }
+
+// MARK: - Regression: cancellation must be scoped
+
+@Test func everyPlannedIdentifierCarriesTheOwnershipPrefix() {
+    // Cancellation removes pending requests by identifier prefix. A plan item
+    // without the prefix would survive a cancel and fire after the player returned;
+    // an app-wide removeAll would instead delete notifications the game itself owns.
+    let plan = NotificationPlanner.plan(
+        lastPlayed: date(2026, 9, 15), now: date(2026, 9, 15),
+        streakExpiresAt: date(2026, 9, 15, 20), calendar: calendar
+    )
+    #expect(plan.isEmpty == false)
+    for item in plan {
+        #expect(item.id.hasPrefix(NotificationPlanner.identifierPrefix), "\(item.id) is not namespaced")
+    }
+}

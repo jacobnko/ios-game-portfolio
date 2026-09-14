@@ -190,6 +190,13 @@
 
 ---
 
+## Phase 1.5 — 감사 (모델 전환 전)
+- [x] 구현 전체 재검토, 결함 7건 수정 (`context-notes.md` B-01~B-07)
+- [x] 회귀 테스트 4종 추가 (누적 175종)
+- [x] Sendable 경고 0
+- [x] `verify.sh` + `VERIFY_FIREBASE=1` 전부 통과
+- [ ] **J 기기 확인 28항목** — Phase 2 진행과 병행 가능
+
 ## Phase 2 — GameTemplate
 - [ ] 공통 화면 골격 (Home / Stage Select / Game / Result / Settings)
 - [ ] 광고 · 저장 · 분석 훅 지점 고정

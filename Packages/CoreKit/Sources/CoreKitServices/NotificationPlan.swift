@@ -84,6 +84,13 @@ public struct NotificationPolicy: Sendable, Equatable {
 /// player who came back from being nagged: opening the app cancels the whole ladder
 /// and starts a new one from today.
 public enum NotificationPlanner {
+    /// Prefix on every identifier this planner owns.
+    ///
+    /// Cancelling is scoped to these. `removeAllPendingNotificationRequests()` is
+    /// app-wide, so a shared library using it would silently delete notifications a
+    /// game scheduled for its own reasons.
+    public static let identifierPrefix = "corekit.reengagement."
+
     /// Themes assigned to each rung of the ladder, cycling.
     ///
     /// Alternating keeps the tone from becoming one repeated nag.
@@ -105,7 +112,7 @@ public enum NotificationPlanner {
             let warnAt = expiry.addingTimeInterval(-policy.streakWarningLead)
             if warnAt > now, !policy.isQuiet(hour: calendar.component(.hour, from: warnAt)) {
                 planned.append(PlannedNotification(
-                    id: "streak",
+                    id: identifierPrefix + "streak",
                     fireDate: warnAt,
                     theme: .lossAversion,
                     copyIndex: 0
@@ -121,7 +128,7 @@ public enum NotificationPlanner {
             let theme = ladderThemes[rung % ladderThemes.count]
             let poolSize = max(1, copyPoolSizes[theme] ?? 1)
             planned.append(PlannedNotification(
-                id: "ladder_\(days)",
+                id: identifierPrefix + "ladder_\(days)",
                 fireDate: fireDate,
                 theme: theme,
                 // Walks the pool so two consecutive sends of the same theme differ.

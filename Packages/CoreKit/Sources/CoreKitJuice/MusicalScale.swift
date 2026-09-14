@@ -7,7 +7,7 @@ import Foundation
 /// Pentatonic is the default because every note in it is consonant with every
 /// other one. A player can hit steps in any order, at any speed, and the result
 /// still sounds intentional — which a major scale does not guarantee.
-public enum MusicalScale: Sendable, CaseIterable {
+public enum MusicalScale: Sendable, CaseIterable, Hashable {
     case pentatonicMajor
     case pentatonicMinor
     case major

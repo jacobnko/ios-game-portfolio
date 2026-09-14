@@ -78,16 +78,26 @@ public final class AnalyticsHub {
 
 /// Prints events to the console. For development and the harness.
 public final class ConsoleAnalyticsReporter: AnalyticsReporting, @unchecked Sendable {
+    /// Newest events retained. Bounded because a long session logs thousands, and an
+    /// unbounded buffer in a shipped build is a slow memory leak nobody attributes
+    /// to analytics.
+    public let capacity: Int
+
     private let lock = NSLock()
     private var _events: [AnalyticsEvent] = []
 
-    /// Everything logged so far, newest last.
+    /// Everything retained so far, newest last.
     public var events: [AnalyticsEvent] { lock.withLock { _events } }
 
-    public init() {}
+    public init(capacity: Int = 200) {
+        self.capacity = max(1, capacity)
+    }
 
     public func log(_ event: AnalyticsEvent) {
-        lock.withLock { _events.append(event) }
+        lock.withLock {
+            _events.append(event)
+            if _events.count > capacity { _events.removeFirst(_events.count - capacity) }
+        }
         #if DEBUG
         let parameters = event.parameters
             .sorted { $0.key < $1.key }

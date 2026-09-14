@@ -23,6 +23,14 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     private var rewardedContinuation: CheckedContinuation<RewardOutcome, Never>?
     private var didEarnReward = false
 
+    /// Only one full-screen ad can be on screen at a time.
+    ///
+    /// Without this, an interstitial and a rewarded ad could both be awaiting a
+    /// continuation, and the single delegate callback would resolve both with the
+    /// same outcome — handing out a reward nobody watched, or swallowing one
+    /// somebody did.
+    private var isPresenting = false
+
     public init(adUnitIDs: AdUnitIDs = .test) {
         self.adUnitIDs = adUnitIDs
         super.init()
@@ -37,7 +45,9 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     }
 
     public func showInterstitial() async -> Bool {
+        guard !isPresenting else { return false }
         guard let ad = interstitial, let root = Self.currentRootViewController() else { return false }
+        isPresenting = true
         // Consume immediately. A full-screen ad object is single use, and leaving it
         // in place would let a second call present an already-spent ad.
         interstitial = nil
@@ -50,7 +60,9 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     }
 
     public func showRewarded() async -> RewardOutcome {
+        guard !isPresenting else { return .unavailable }
         guard let ad = rewarded, let root = Self.currentRootViewController() else { return .unavailable }
+        isPresenting = true
         rewarded = nil
         didEarnReward = false
 
@@ -98,6 +110,7 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     /// A continuation resumed twice traps, and one never resumed hangs the caller
     /// forever — so both delegate paths funnel through here.
     private func finishPresentation(shown: Bool) {
+        isPresenting = false
         if let continuation = interstitialContinuation {
             interstitialContinuation = nil
             continuation.resume(returning: shown)

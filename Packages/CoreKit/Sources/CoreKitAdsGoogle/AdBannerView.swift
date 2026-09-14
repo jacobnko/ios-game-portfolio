@@ -104,6 +104,9 @@ public struct AdBannerSlot: View {
     private let adUnitID: String
     private let isVisible: Bool
 
+    /// Width of the slot itself, which is not always the width of the screen.
+    @State private var width: CGFloat = 0
+
     public init(adUnitID: String, isVisible: Bool) {
         self.adUnitID = adUnitID
         self.isVisible = isVisible
@@ -111,11 +114,28 @@ public struct AdBannerSlot: View {
 
     public var body: some View {
         if isVisible {
-            GeometryReader { proxy in
-                AdBannerView(adUnitID: adUnitID, width: proxy.size.width)
-            }
-            .frame(height: AdBannerView.Coordinator.height(forWidth: UIScreen.main.bounds.width))
+            Color.clear
+                .frame(height: reservedHeight)
+                // The banner's height depends on the width it is actually given.
+                // Measuring the screen instead would be wrong in Split View, Slide
+                // Over, or any container narrower than the window — the reserved
+                // space and the real banner would disagree and the layout would
+                // clip or gap. `UIScreen.main` is also deprecated and meaningless
+                // in a multi-scene app.
+                .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
+                .overlay {
+                    // Held back until the width is known, so the banner is not
+                    // loaded once at a placeholder width and again at the real one.
+                    if width > 0 {
+                        AdBannerView(adUnitID: adUnitID, width: width)
+                    }
+                }
         }
+    }
+
+    /// Standard banner height until the real width is known.
+    private var reservedHeight: CGFloat {
+        width > 0 ? AdBannerView.Coordinator.height(forWidth: width) : 50
     }
 }
 #endif

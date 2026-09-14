@@ -147,3 +147,16 @@ import Foundation
     // Games log from the first launch, before any backend is configured.
     AnalyticsHub().log(GameEvent.stageStarted(stageID: "s1", attempt: 1))
 }
+
+// MARK: - Regression: the console reporter is bounded
+
+@Test @MainActor func theConsoleReporterDiscardsOldEvents() {
+    // A long session logs thousands of events. An unbounded buffer is a slow leak
+    // nobody would ever attribute to analytics.
+    let reporter = ConsoleAnalyticsReporter(capacity: 10)
+    for index in 0..<50 {
+        reporter.log(AnalyticsEvent(name: "event", parameters: ["i": .int(index)]))
+    }
+    #expect(reporter.events.count == 10)
+    #expect(reporter.events.last?.parameters["i"] == .int(49))   // newest kept
+}

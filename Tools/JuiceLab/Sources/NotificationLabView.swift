@@ -109,8 +109,10 @@ struct NotificationLabView: View {
                     Task { scheduledCount = await scheduler.refresh(lastPlayed: lastPlayed, streakExpiresAt: hasStreak ? Date().addingTimeInterval(8 * 3600) : nil).count }
                 }
                 Button("Cancel all", role: .destructive) {
-                    scheduler.cancelAll()
-                    scheduledCount = 0
+                    Task {
+                        await scheduler.cancelAll()
+                        scheduledCount = 0
+                    }
                 }
                 LabeledContent("Scheduled", value: "\(scheduledCount)")
             }

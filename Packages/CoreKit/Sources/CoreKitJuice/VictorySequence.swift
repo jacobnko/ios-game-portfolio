@@ -64,6 +64,7 @@ private struct VictorySequenceModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var startDate: Date?
     @State private var particles: [Particle] = []
+    @State private var completionTask: Task<Void, Never>?
 
     func body(content: Content) -> some View {
         content
@@ -71,11 +72,21 @@ private struct VictorySequenceModifier: ViewModifier {
                 startDate: startDate,
                 particles: particles,
                 configuration: configuration,
-                reduceMotion: reduceMotion,
-                onComplete: finish
+                reduceMotion: reduceMotion
             ))
             .onChange(of: isPresented) { _, presented in
-                if presented { start() } else { startDate = nil }
+                if presented {
+                    start()
+                } else {
+                    // Dismissed from outside; drop the pending completion too.
+                    completionTask?.cancel()
+                    completionTask = nil
+                    startDate = nil
+                }
+            }
+            .onDisappear {
+                completionTask?.cancel()
+                completionTask = nil
             }
     }
 
@@ -89,11 +100,25 @@ private struct VictorySequenceModifier: ViewModifier {
             paletteSize: configuration.palette.count
         )
         startDate = Date()
+
+        // Completion is driven by a timer, not by the render loop. Hanging it off
+        // TimelineView meant that if the timeline ever stopped ticking — the view
+        // scrolled away, the app was backgrounded at the wrong moment — the sequence
+        // never reported finishing and the game sat on the victory overlay forever.
+        completionTask?.cancel()
+        completionTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(configuration.timeline.total))
+            guard !Task.isCancelled else { return }
+            finish()
+        }
+
         if configuration.playsFeedback { playFeedback() }
     }
 
     private func finish() {
         guard startDate != nil else { return }
+        completionTask?.cancel()
+        completionTask = nil
         startDate = nil
         isPresented = false
         onFinished?()
@@ -120,7 +145,6 @@ private struct VictoryStage: ViewModifier {
     let particles: [Particle]
     let configuration: VictoryConfiguration
     let reduceMotion: Bool
-    let onComplete: () -> Void
 
     func body(content: Content) -> some View {
         guard let startDate else {
@@ -136,9 +160,6 @@ private struct VictoryStage: ViewModifier {
                     .offset(x: shakeOffset.width, y: shakeOffset.height)
                     .overlay { burstLayer(elapsed: elapsed) }
                     .overlay { multiplierLayer(elapsed: elapsed) }
-                    .onChange(of: elapsed >= configuration.timeline.total) { _, done in
-                        if done { onComplete() }
-                    }
             }
         )
     }

@@ -57,7 +57,7 @@ public final class NotificationScheduler {
         get { defaults.bool(forKey: Keys.enabled) }
         set {
             defaults.set(newValue, forKey: Keys.enabled)
-            if !newValue { cancelAll() }
+            if !newValue { Task { await cancelAll() } }
         }
     }
 
@@ -103,7 +103,7 @@ public final class NotificationScheduler {
     /// was planned before they came back.
     @discardableResult
     public func refresh(lastPlayed: Date = Date(), streakExpiresAt: Date? = nil, now: Date = Date()) async -> [PlannedNotification] {
-        cancelAll()
+        await cancelAll()
         guard isEnabled, await isAuthorized() else { return [] }
 
         var poolSizes: [NotificationTheme: Int] = [:]
@@ -122,9 +122,23 @@ public final class NotificationScheduler {
         return plan
     }
 
-    public func cancelAll() {
+    /// Cancels only the notifications this scheduler owns.
+    ///
+    /// Never `removeAllPendingNotificationRequests()`: that is app-wide, and a
+    /// shared component has no business deleting notifications a game scheduled
+    /// for its own purposes.
+    ///
+    /// Async because the pending list has to be read first. Doing that on a
+    /// completion handler and returning immediately would let the cancellation land
+    /// *after* the following schedule and delete the notifications it just made.
+    public func cancelAll() async {
         #if os(iOS)
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        let center = UNUserNotificationCenter.current()
+        let owned = await center.pendingNotificationRequests()
+            .map(\.identifier)
+            .filter { $0.hasPrefix(NotificationPlanner.identifierPrefix) }
+        guard !owned.isEmpty else { return }
+        center.removePendingNotificationRequests(withIdentifiers: owned)
         #endif
     }
 

@@ -111,9 +111,13 @@ private extension HapticEngine {
                 }
             }
 
-            // Keeps the hardware warm between bursts so rapid sequences stay tight.
             engine.playsHapticsOnly = true
-            engine.isAutoShutdownEnabled = true
+            // Auto shutdown is deliberately off. With it on, the engine idles out
+            // between taps and has to be rebuilt, and rebuilding costs enough that
+            // the first tap of every burst arrives late — which is exactly what the
+            // escalating sequences depend on not happening. `teardown()` owns the
+            // lifecycle instead, and backgrounding stops the engine anyway.
+            engine.isAutoShutdownEnabled = false
 
             try engine.start()
             self.engine = engine
