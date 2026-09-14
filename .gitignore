@@ -1,0 +1,46 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Xcode — user-specific state
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/*/.build/
+# Package.resolved is committed on purpose — dependency versions must be reproducible.
+
+# CocoaPods / Carthage (not used, guarded anyway)
+Pods/
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Secrets — never commit real ad unit IDs or service configs
+*.p8
+*.p12
+*.mobileprovision
+Secrets.xcconfig
+GoogleService-Info.plist
+
+# Design working files (deliverables are committed, raw exports are not)
+docs/design/**/assets/*.psd
+docs/design/**/assets/*.sketch
+*.fig
