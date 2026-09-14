@@ -151,7 +151,17 @@
 - [ ] 게임 #1에서 `GoogleService-Info.plist` 넣고 Firebase 콘솔에 실제 도달 확인
 - [ ] DebugView로 실시간 이벤트 확인
 
-### S1.8 Localization & Theme
+### S1.8 Local Notifications (재참여)
+- [ ] `NotificationScheduler` — 롤링 윈도우로 **64개 제한** 관리
+- [ ] 권한 요청 타이밍 정책 — 첫 실행 금지, **첫 클리어 후**
+- [ ] 조용 시간 (타임존·서머타임 대응)
+- [ ] 문구 로테이션 (같은 문구 반복 금지)
+- [ ] 앱 진입 시 재예약 / 취소
+- [ ] 설정에서 on/off
+- [ ] Guideline 4.5.4 — 광고성 문구 금지, 게임 상태 기반만
+- [ ] FCM은 보류 (D-052)
+
+### S1.9 Localization & Theme
 - [ ] `.xcstrings` 규약 + 공통 키 세트
 - [ ] 시스템 설정 언어 딥링크
 - [ ] `GameTheme` (팔레트 · 타이포 · 아이콘 스타일 주입)
