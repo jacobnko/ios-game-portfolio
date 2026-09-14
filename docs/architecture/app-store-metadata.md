@@ -15,10 +15,10 @@
 그래서 이런 구성이 가능하다.
 
 ```
-en  →  Chordline          / Connect Pipes, Hear the Chord
-ko  →  Chordline          / 선을 이을수록 음이 올라간다
-ja  →  Chordline          / つなぐたび音が上がるパズル
-de  →  Chordline          / Verbinde Leitungen, hör den Akkord
+en  →  Brandname         / Connect the pipes, hear the chord
+ko  →  Brandname         / 선을 이을수록 음이 올라간다
+ja  →  Brandname         / つなぐたびに音が上がるパズル
+de  →  Brandname         / Verbinde Leitungen, hör den Akkord
 ```
 
 **이름은 전 언어 동일하게 유지하고 부제만 갈아끼우는 것**이 이 포트폴리오의 기본 전략이다.
@@ -47,7 +47,7 @@ App Store 로컬라이제이션 단위는 **국가가 아니라 언어**다.
 이 둘은 자동으로 동기화되지 않는다. 따로 설정해야 한다.
 홈 화면 이름은 `InfoPlist.xcstrings`로 언어별 로컬라이즈한다.
 
-> 브랜드명을 전부 10자 이내로 잡은 이유가 이것이다. `Chordline`(9) · `Pixlaugh`(8) · `Ballanche`(9) 모두 홈 화면에서 안 잘린다.
+> 이 포트폴리오의 브랜드명을 전부 **10자 이내**로 잡은 이유가 이것이다. 홈 화면에서 잘리지 않는다.
 
 ---
 
@@ -65,7 +65,7 @@ App Store 로컬라이제이션 단위는 **국가가 아니라 언어**다.
 
 ## 하면 안 되는 것 (Guideline 2.3.7 — 메타데이터)
 
-- 이름이나 부제에 **키워드를 욱여넣기.** `Chordline - Puzzle Game Free Best Logic Brain` 같은 형태는 리젝된다. 부제는 **설명하는 한 문장**이어야 한다.
+- 이름이나 부제에 **키워드를 욱여넣기.** `Brandname - Puzzle Game Free Best Logic Brain` 같은 형태는 리젝된다. 부제는 **설명하는 한 문장**이어야 한다.
 - 경쟁 앱 이름을 키워드에 넣기. 상표 침해로 처리된다.
 - `Free`, `#1`, `Best`, `New` 같은 수식어. 심사 마찰이 생기고 실효도 없다.
 - 부제에 가격·프로모션 언급. (`50% Off` 등)

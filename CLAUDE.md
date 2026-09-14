@@ -62,10 +62,11 @@ Its reason to exist is simple: every game shipped should require less new code t
 ```
 00_Games/
 ├─ CLAUDE.md            # this file — working rules
-├─ PLAN.md              # full roadmap (Phase 0–9)
+├─ PLAN.md              # full roadmap — GITIGNORED, private
 ├─ checklist.md         # progress checkboxes, updated at the end of each step
 ├─ context-notes.md     # decisions and their rationale, append-only
 ├─ docs/
+│  ├─ concepts/         # game concepts and brand names — GITIGNORED, private
 │  ├─ design/           # Claude Design handoff documents (§6)
 │  ├─ architecture/     # CoreKit module design notes
 │  └─ decisions/        # ADRs, for hard-to-reverse decisions only
@@ -115,9 +116,9 @@ The decision axis is **"physics-driven vs. state-driven"**, not "UIKit vs. Swift
 
 ## 7. Model Usage Strategy
 
-- **Phase 1 — architecture setup: Opus 5, effort high.** `CoreKit` + `JuiceManager` skeleton, StoreKit 2 manager, SwiftData/CloudKit schema, AdMob wrapper, and LineRush's core loop.
-- **Claude raises the switch proactively.** Once `CoreKit` + `JuiceManager` are scaffolded and LineRush runs end-to-end (grid rendering → win/lose state → ad triggers → juice moments feeling right), tell the user it is a good point to switch models — without being asked.
-- **Phase 2 — implementation: Sonnet 5, effort medium.** Remaining LineRush polish and games #2–10.
+- **Phase 1 — architecture setup: Opus 5, effort high.** `CoreKit` + `JuiceManager` skeleton, StoreKit 2 manager, SwiftData/CloudKit schema, AdMob wrapper, and game #1's core loop.
+- **Claude raises the switch proactively.** Once `CoreKit` + `JuiceManager` are scaffolded and game #1 runs end-to-end (grid rendering → win/lose state → ad triggers → juice moments feeling right), tell the user it is a good point to switch models — without being asked.
+- **Phase 2 — implementation: Sonnet 5, effort medium.** Remaining game #1 polish and games #2–10.
 
 ---
 

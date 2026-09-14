@@ -42,4 +42,4 @@ cp -R docs/design/_template docs/design/NN-game-name
 
 게임마다 **팔레트 · 아이콘 스타일 · 폰트** 세 가지를 의도적으로 다르게 간다.
 D1 카드에 "직전 게임과 겹치지 않을 것"을 명시로 넣어둔 이유가 이것이다.
-포트폴리오 전체 팔레트 대조표는 `palette-ledger.md`에서 관리한다.
+포트폴리오 전체 팔레트 대조표는 `docs/concepts/palette-ledger.md`(비공개)에서 관리한다.

@@ -25,7 +25,7 @@
 - [x] 원격 저장소 연결 — `jacobnko/ios-game-portfolio` (**public**), push 자동화
 - [x] `Apps/*` gitignore — 게임은 별도 저장소로 분리 (D-011)
 - [x] public push 전 시크릿 스캔 통과
-- [ ] **J 확인** — 코드네임 교체 4건 동의 (D-007)
+- [x] **J 확인** — 코드네임 방침 확정
 
 ### S0.3 CoreKit 스캐폴드
 - [x] Open Question Q1~Q4 확정 (`context-notes.md` D-005)
@@ -99,7 +99,7 @@
 
 ---
 
-## Phase 3 — Game #1 `LineRush`
+## Phase 3 — Game #1
 
 ### 디자인 트랙
 - [ ] D1 브랜드/팔레트
@@ -132,12 +132,15 @@
 ---
 
 ## Phase 5 — Games #2~10
-- [ ] #2 MemeGram
-- [ ] #3 StreakWord
-- [ ] #4 Domino Sudoku
-- [ ] #5 Vault Breaker
-- [ ] #6 RagdollFlap
-- [ ] #7 Spicy Roller
-- [ ] #8 Jelly Stack
-- [ ] #9 Chain Buster
-- [ ] #10 Chaos Breakout
+
+게임별 항목은 `docs/concepts/game-concepts.md`(비공개)에서 관리한다.
+
+- [ ] #2
+- [ ] #3
+- [ ] #4
+- [ ] #5
+- [ ] #6
+- [ ] #7
+- [ ] #8
+- [ ] #9
+- [ ] #10

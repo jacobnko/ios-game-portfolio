@@ -6,8 +6,8 @@
 ```
 Apps/
 ├─ README.md          ← 이 파일만 이 저장소에 들어간다
-├─ LineRush/          ← 별도 저장소. 여기서는 무시됨
-└─ MemeGram/          ← 별도 저장소. 여기서는 무시됨
+├─ <Codename>/        ← 별도 저장소. 여기서는 무시됨
+└─ <Codename>/        ← 별도 저장소. 여기서는 무시됨
 ```
 
 자세한 이유와 운영 방식은 `docs/architecture/repo-strategy.md` 참조.

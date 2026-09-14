@@ -6,40 +6,31 @@
 
 | | 코드네임 | 스토어 이름 |
 |---|---|---|
-| 예시 | `LineRush` (번들 `com.jacobkostudio.linerush`) | `Loopflow` |
+| 예시 | `Codename` (번들 `com.jacobkostudio.codename`) | `Codename` |
 | 쓰이는 곳 | 폴더명 · Xcode 타겟 · 번들 ID(`com.jacobkostudio.<codename>`) · 내부 문서 | App Store 표시명 · 앱 아이콘 아래 이름 |
 | 사용자에게 보이나 | **안 보인다** | 보인다 |
 | 확정 시점 | **Xcode 프로젝트 만들 때** (Phase 2~3 초입) | **출시 3주 전** |
 | 바꾸는 비용 | 높다. 번들 ID는 사실상 못 바꾼다 | 낮다. App Store Connect에서 새 버전과 함께 변경 가능 |
 
-**번들 ID와 표시 이름은 일치할 필요가 전혀 없다.** `com.jacobkostudio.linerush`로 만들어 놓고 스토어에는 "Pipe Rush"로 내도 아무 문제 없다.
+**번들 ID와 표시 이름은 일치할 필요가 전혀 없다.** `com.jacobkostudio.oldname`으로 만들어 놓고 스토어에는 다른 이름으로 내도 아무 문제 없다.
 그래서 **코드네임만 지금 고정하고, 유니크한 스토어 이름은 디자인(D1) 끝난 뒤 천천히 고른다.**
 
 ---
 
-## 지금 `PLAN.md`에 있는 이름들의 상표 위험
+## 장르명이 곧 상표인 경우가 있다
 
-현재 목록은 **장르를 알아보기 위한 작업명**이다. 이대로 스토어에 내면 안 되는 것이 3개 있다.
+퍼즐 장르명처럼 보이는 단어 중 일부는 **일반명사가 아니라 등록상표**다. 이름에 넣으면 리젝 또는 퇴출 대상이다.
 
-| 현재 이름 | 위험도 | 내용 |
+| 위험 | 쓰지 말 것 | 대신 쓸 일반명사 |
 |---|---|---|
-| **Streak Wordle** | **높음** | "Wordle"은 The New York Times 소유 등록상표다. NYT는 2022년 인수 후 Wordle 유사 앱에 실제로 DMCA/상표 조치를 해왔다. 이름에 쓰면 리젝 또는 퇴출 대상이다 |
-| **Meme Picross** | **높음** | "Picross"는 Nintendo 상표다. 장르 일반명사는 **Nonogram**이다. 이쪽을 쓴다 |
-| **Flappy Ragdoll** | **중간** | Flappy Bird 사태(2014) 이후 Apple은 이름에 "Flappy"가 들어간 앱을 대량 리젝한 전례가 있다. 상표는 아니지만 심사 마찰 비용이 크다 |
-| **Juicy Flow** | 낮음~중간 | "Flow Free"는 Big Duck Games 상표다. "Flow" 단독은 일반어지만 같은 장르라 연상이 강하다. 피하는 편이 안전하다 |
-| Domino Sudoku / Vault Breaker / Spicy Roller / Jelly Stack / Chain Buster / Chaos Breakout | 낮음 | Sudoku · Kakuro · Nonogram · Numberlink는 일반명사라 안전하다 |
+| 🔴 | `Wordle` — The New York Times 등록상표 | `Word` / `Spell` |
+| 🔴 | `Picross` — Nintendo 상표 | **`Nonogram`** |
+| 🟡 | `Flappy` — 2014년 Apple 대량 리젝 전례 | 다른 의태어 |
+| 🟡 | `Flow Free` — Big Duck Games 상표. 같은 장르에서 `Flow` 단독도 연상이 강함 | `Line` / `Connect` |
 
-**대응.** 코드네임은 장르 식별용으로 그대로 두되, 위험 3건은 **코드네임 단계에서 미리 갈아둔다.**
-나중에 바꾸려면 번들 ID까지 따라가야 해서 비용이 커진다.
+안전한 일반명사 — `Sudoku` · `Kakuro` · `Nonogram` · `Numberlink` · `Solitaire` · `Mahjong` · `Breakout`.
 
-| # | 기존 | 권장 코드네임 |
-|---|---|---|
-| 1 | Juicy Flow | `LineRush` |
-| 2 | Meme Picross | `MemeGram` (Nonogram 계열) |
-| 3 | Streak Wordle | `StreakWord` |
-| 6 | Flappy Ragdoll | `RagdollFlap` |
-
----
+**대응 원칙.** 장르를 이름에 넣지 않고 **조어 브랜드명 + 부제에 장르 키워드**로 분리한다. 아래 참조.
 
 ## 유니크한 스토어 이름 고르는 법
 
