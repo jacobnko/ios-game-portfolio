@@ -56,11 +56,18 @@
 - [ ] 백그라운드 → 복귀 후에도 햅틱이 살아있는지 확인
 
 ### S1.2 Audio (pitch scaling)
-- [ ] one-shot SFX 피치 시프트 재생기
-- [ ] 연속 액션 음계 상승 + 시퀀스 리셋 규칙
-- [ ] Kenney UI SFX 팩에서 피치 시프트 가능한 원샷 소스 확보 (150ms 이하, 리버브 없음)
-- [ ] `AVAudioSession` `.ambient` + `.mixWithOthers` — 사용자 음악 죽이지 않기
-- [ ] 설정의 SFX / 햅틱 토글 분리
+- [x] `MusicalScale` — 펜타토닉/메이저, 옥타브 연장, 상한 클램프
+- [x] `ToneRecipe` — 주파수·길이·게인·엔벨로프 + 순수 샘플 렌더링
+- [x] `PitchedTonePlayer` — AVAudioEngine, 버퍼 캐시, 라우트 변경 복구
+- [x] `JuiceSequence` — 연속 액션 카운터 + 타임아웃 리셋 규칙
+- [x] `JuiceAudioSession` — `.ambient` + `.mixWithOthers`, 타앱 재생 감지
+- [x] SFX 볼륨을 독립 채널로 분리 (BGM 자리 확보)
+- [x] **합성 방식 채택 — 외부 SFX 에셋 불필요** (D-026)
+- [x] 단위 테스트 22종 추가 (누적 35종)
+- [x] `verify.sh` 3단계 전부 통과
+- [ ] **실기기에서 음계 상승 체감** ← JuiceLab → Audio
+- [ ] **시퀀스 리셋 체감** — 연타하면 올라가고, 쉬었다 누르면 루트로 복귀
+- [ ] 다른 앱 음악 틀어놓고 죽지 않는지 확인
 
 > **BGM은 보류다 (D-020).** 게임 #1이 완성된 뒤에 넣을지 판단한다.
 > 다만 `AVAudioSession` 구성과 볼륨 채널 분리는 지금 해둔다. 나중에 BGM을 끼울 자리만 남기는 것이다.

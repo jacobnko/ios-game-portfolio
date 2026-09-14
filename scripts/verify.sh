@@ -24,6 +24,11 @@ echo
 echo "=== 3/3  JuiceLab harness (generic/platform=iOS) ==="
 # The harness is what proves the feedback layer actually runs inside an app.
 LAB="$(cd "$(dirname "$0")/../Tools/JuiceLab" && pwd)"
+# Sources are baked into the project at generation time, so a newly added file is
+# invisible until the project is regenerated. Always regenerate before building.
+if command -v xcodegen >/dev/null 2>&1; then
+  ( cd "$LAB" && xcodegen generate --quiet )
+fi
 if [ -d "$LAB/JuiceLab.xcodeproj" ]; then
   ( cd "$LAB" && xcodebuild -scheme JuiceLab \
                             -destination 'generic/platform=iOS' \
