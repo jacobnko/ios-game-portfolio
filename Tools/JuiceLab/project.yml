@@ -23,6 +23,8 @@ targets:
         product: CoreKitServices
       - package: CoreKit
         product: CoreKitAdsGoogle
+      - package: CoreKit
+        product: CoreKitUI
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jacobkostudio.juicelab

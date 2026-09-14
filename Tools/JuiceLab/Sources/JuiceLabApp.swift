@@ -23,6 +23,7 @@ struct JuiceLabRootView: View {
                 NavigationLink("Ads") { AdsLabView() }
                 NavigationLink("Analytics") { AnalyticsLabView() }
                 NavigationLink("Notifications") { NotificationLabView() }
+                NavigationLink("Theme") { ThemeLabView() }
             }
             .navigationTitle("JuiceLab")
         }

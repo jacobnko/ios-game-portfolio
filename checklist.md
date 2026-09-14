@@ -171,10 +171,22 @@
 - [ ] FCM은 보류 (D-052)
 
 ### S1.9 Localization & Theme
-- [ ] `.xcstrings` 규약 + 공통 키 세트
-- [ ] 시스템 설정 언어 딥링크
-- [ ] `GameTheme` (팔레트 · 타이포 · 아이콘 스타일 주입)
-- [ ] `GameTheme` 교체만으로 외형 전환 확인
+- [x] `CoreKitUI` 타겟 신설 (Phase 2 공통 화면이 들어올 자리)
+- [x] `GameTheme` — 팔레트 · 타이포(패밀리 포함) · 메트릭
+- [x] `ThemeColor` 라이트/다크 분리
+- [x] `@Environment(\.gameTheme)` 주입
+- [x] `theme.victoryConfiguration()` — 승리 연출이 테마 색을 따라감
+- [x] `Common.xcstrings` — 공통 키 26종, en/ko
+- [x] `CommonStrings` + 카탈로그 데이터 검증 테스트 (누락·고아 키)
+- [x] `Package.swift`에 `defaultLocalization` (없으면 리소스 미처리)
+- [x] `LanguageSettings` — 시스템 설정 딥링크, `AppleLanguages` 미조작
+- [x] 지원 언어 7종 + 출시 세트(en/ko) 정의
+- [x] 단위 테스트 16종 추가 (누적 171종)
+- [x] `docs/architecture/localization-and-theme.md`
+- [x] `verify.sh` 3단계 전부 통과
+- [ ] **JuiceLab → Theme에서 3개 테마 전환 확인**
+- [ ] 다크 모드로 전환해서 세 테마 모두 성립하는지
+- [ ] 언어 버튼 → 설정 앱 이동 확인
 
 ---
 

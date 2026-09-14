@@ -12,12 +12,16 @@ import PackageDescription
 // Juice code gets tuned dozens of times per game, so preview speed is development speed.
 let package = Package(
     name: "CoreKit",
+    // Required for String Catalogs to be processed at all. Without it SwiftPM
+    // ignores localized resources and every key resolves to itself at runtime.
+    defaultLocalization: "en",
     // macOS is declared so `swift build` / `swift test` run on the host without a simulator.
     // Platform-specific code is guarded with `#if canImport(...)`.
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
         .library(name: "CoreKitJuice", targets: ["CoreKitJuice"]),
         .library(name: "CoreKitData", targets: ["CoreKitData"]),
+        .library(name: "CoreKitUI", targets: ["CoreKitUI"]),
         .library(name: "CoreKitServices", targets: ["CoreKitServices"]),
         // iOS only: pulls in the AdMob SDK. Host tests never depend on it.
         .library(name: "CoreKitAdsGoogle", targets: ["CoreKitAdsGoogle"]),
@@ -31,6 +35,7 @@ let package = Package(
     targets: [
         .target(name: "CoreKitJuice"),
         .target(name: "CoreKitData"),
+        .target(name: "CoreKitUI", dependencies: ["CoreKitJuice"], resources: [.process("Resources")]),
         .target(name: "CoreKitServices", dependencies: ["CoreKitData"]),
         .target(name: "CoreKitAdsGoogle", dependencies: [
             "CoreKitServices",
@@ -39,5 +44,6 @@ let package = Package(
         .testTarget(name: "CoreKitJuiceTests", dependencies: ["CoreKitJuice"]),
         .testTarget(name: "CoreKitDataTests", dependencies: ["CoreKitData"]),
         .testTarget(name: "CoreKitServicesTests", dependencies: ["CoreKitServices"]),
+        .testTarget(name: "CoreKitUITests", dependencies: ["CoreKitUI"]),
     ]
 )
