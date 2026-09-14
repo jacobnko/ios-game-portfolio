@@ -21,8 +21,10 @@
 - [x] Swift/Xcode용 `.gitignore` (시크릿·GoogleService-Info 차단 포함)
 - [x] `docs/architecture/naming.md` — 코드네임 / 스토어 이름 분리 규칙
 - [x] `scripts/check-name.sh` — App Store 중복 확인 (동작 검증 완료)
-- [ ] 첫 커밋 (J가 직접 실행)
-- [x] 원격 저장소 방침 결정 — private 시작, 출시 후 CoreKit만 public 분리
+- [x] 첫 커밋 (Claude 자동 커밋으로 전환)
+- [x] 원격 저장소 연결 — `jacobnko/ios-game-portfolio` (**public**), push 자동화
+- [x] `Apps/*` gitignore — 게임은 별도 저장소로 분리 (D-011)
+- [x] public push 전 시크릿 스캔 통과
 - [ ] **J 확인** — 코드네임 교체 4건 동의 (D-007)
 
 ### S0.3 CoreKit 스캐폴드
