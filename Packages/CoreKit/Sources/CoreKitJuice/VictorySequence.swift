@@ -1,0 +1,183 @@
+// Composes shake, particles, score multiplier and sound into one felt payoff.
+
+import SwiftUI
+
+/// Everything a game chooses about its victory payoff.
+///
+/// The timing and physics are shared so every game in the portfolio feels like it
+/// was built by the same hand; colour, multiplier and burst origins are per game.
+public struct VictoryConfiguration: Sendable {
+    public var multiplier: Int
+    /// Where bursts originate, in unit space (0...1 across the view).
+    public var origins: [CGPoint]
+    public var particleCount: Int
+    public var palette: [Color]
+    public var seed: UInt64
+    public var timeline: VictoryTimeline
+    public var shake: ShakeCurve
+    public var pop: PopCurve
+    /// Whether the sequence drives audio and haptics as well as pixels.
+    public var playsFeedback: Bool
+
+    public init(
+        multiplier: Int = 1,
+        origins: [CGPoint] = [CGPoint(x: 0.5, y: 0.55)],
+        particleCount: Int = 90,
+        palette: [Color] = [.yellow, .orange, .pink],
+        seed: UInt64 = 0x5EED,
+        timeline: VictoryTimeline = .standard,
+        shake: ShakeCurve = ShakeCurve(),
+        pop: PopCurve = .standard,
+        playsFeedback: Bool = true
+    ) {
+        self.multiplier = max(1, multiplier)
+        self.origins = origins.isEmpty ? [CGPoint(x: 0.5, y: 0.55)] : origins
+        self.particleCount = max(0, particleCount)
+        self.palette = palette.isEmpty ? [.yellow] : palette
+        self.seed = seed
+        self.timeline = timeline
+        self.shake = shake
+        self.pop = pop
+        self.playsFeedback = playsFeedback
+    }
+}
+
+public extension View {
+    /// Plays the portfolio's victory payoff over this view.
+    ///
+    /// The binding is set back to `false` when the sequence finishes, so a game can
+    /// drive it from a single piece of state and advance on `onFinished`.
+    func victorySequence(
+        isPresented: Binding<Bool>,
+        configuration: VictoryConfiguration = VictoryConfiguration(),
+        onFinished: (() -> Void)? = nil
+    ) -> some View {
+        modifier(VictorySequenceModifier(isPresented: isPresented, configuration: configuration, onFinished: onFinished))
+    }
+}
+
+private struct VictorySequenceModifier: ViewModifier {
+    @Binding var isPresented: Bool
+    let configuration: VictoryConfiguration
+    let onFinished: (() -> Void)?
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var startDate: Date?
+    @State private var particles: [Particle] = []
+
+    func body(content: Content) -> some View {
+        content
+            .modifier(VictoryStage(
+                startDate: startDate,
+                particles: particles,
+                configuration: configuration,
+                reduceMotion: reduceMotion,
+                onComplete: finish
+            ))
+            .onChange(of: isPresented) { _, presented in
+                if presented { start() } else { startDate = nil }
+            }
+    }
+
+    private func start() {
+        // Reduce Motion must still get a payoff — a quieter one, not a missing one.
+        let count = reduceMotion ? configuration.particleCount / 3 : configuration.particleCount
+        particles = ParticleField.make(
+            count: count,
+            origins: configuration.origins,
+            seed: configuration.seed,
+            paletteSize: configuration.palette.count
+        )
+        startDate = Date()
+        if configuration.playsFeedback { playFeedback() }
+    }
+
+    private func finish() {
+        guard startDate != nil else { return }
+        startDate = nil
+        isPresented = false
+        onFinished?()
+    }
+
+    private func playFeedback() {
+        Task { @MainActor in
+            // A short rising run, then the arrival. The ear hears the same shape the
+            // eye sees: build, then payoff.
+            for step in 0..<4 {
+                PitchedTonePlayer.shared.play(.micro, stepIndex: step)
+                HapticEngine.shared.play(.micro, stepIndex: step)
+                try? await Task.sleep(for: .milliseconds(70))
+            }
+            PitchedTonePlayer.shared.play(.milestone)
+            HapticEngine.shared.play(.milestone)
+        }
+    }
+}
+
+/// Drives one frame of the sequence. Split out so the timeline only ticks while running.
+private struct VictoryStage: ViewModifier {
+    let startDate: Date?
+    let particles: [Particle]
+    let configuration: VictoryConfiguration
+    let reduceMotion: Bool
+    let onComplete: () -> Void
+
+    func body(content: Content) -> some View {
+        guard let startDate else {
+            return AnyView(content)
+        }
+
+        return AnyView(
+            TimelineView(.animation) { context in
+                let elapsed = context.date.timeIntervalSince(startDate)
+                let shakeOffset = reduceMotion ? .zero : configuration.shake.offset(at: elapsed)
+
+                content
+                    .offset(x: shakeOffset.width, y: shakeOffset.height)
+                    .overlay { burstLayer(elapsed: elapsed) }
+                    .overlay { multiplierLayer(elapsed: elapsed) }
+                    .onChange(of: elapsed >= configuration.timeline.total) { _, done in
+                        if done { onComplete() }
+                    }
+            }
+        )
+    }
+
+    private func burstLayer(elapsed: TimeInterval) -> some View {
+        // One Canvas draws every particle. Rendering each as its own View collapses
+        // the frame rate once the count passes a few dozen.
+        Canvas { canvasContext, size in
+            guard let burstProgress = configuration.timeline.burst.progress(at: elapsed) else { return }
+            let burstTime = burstProgress * configuration.timeline.burst.duration
+
+            for particle in particles {
+                guard let unitPoint = ParticleField.position(of: particle, at: burstTime) else { continue }
+                let opacity = ParticleField.opacity(of: particle, at: burstTime)
+                guard opacity > 0.01 else { continue }
+
+                let rect = CGRect(
+                    x: unitPoint.x * size.width - particle.size / 2,
+                    y: unitPoint.y * size.height - particle.size / 2,
+                    width: particle.size,
+                    height: particle.size
+                )
+                let color = configuration.palette[particle.colorIndex % configuration.palette.count]
+                canvasContext.fill(Path(ellipseIn: rect), with: .color(color.opacity(opacity)))
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    @ViewBuilder
+    private func multiplierLayer(elapsed: TimeInterval) -> some View {
+        if let progress = configuration.timeline.multiplier.progress(at: elapsed) {
+            Text("×\(configuration.multiplier)")
+                .font(.system(size: 64, weight: .heavy, design: .rounded))
+                .foregroundStyle(configuration.palette.first ?? .yellow)
+                .shadow(radius: 8, y: 2)
+                .scaleEffect(configuration.pop.scale(at: progress))
+                .opacity(configuration.pop.opacity(at: progress))
+                .allowsHitTesting(false)
+        }
+    }
+}

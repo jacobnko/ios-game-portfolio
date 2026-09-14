@@ -73,11 +73,19 @@
 > 다만 `AVAudioSession` 구성과 볼륨 채널 분리는 지금 해둔다. 나중에 BGM을 끼울 자리만 남기는 것이다.
 
 ### S1.3 Victory catharsis
-- [ ] 화면 흔들림 modifier
-- [ ] 파티클 버스트
-- [ ] 점수 배수 표시
-- [ ] 4요소 순차 연출 `VictorySequence`
-- [ ] Preview 단독 재생 확인
+- [x] `VictoryTimeline` — 레이어별 시작·길이, 스태거 보장
+- [x] `ShakeCurve` — 감쇠 진동, **정확히 0으로 복귀**
+- [x] `ParticleField` — 시드 결정론적 버스트, 중력, 페이드
+- [x] `PopCurve` — 오버슈트 후 정착 (배수 표시)
+- [x] `.victorySequence(isPresented:configuration:onFinished:)` 모디파이어
+- [x] Canvas 단일 패스 렌더링 (파티클당 View 생성 안 함)
+- [x] Reduce Motion 대응 — 흔들림 제거, 파티클 1/3, **연출은 유지**
+- [x] 사운드·햅틱 연동 (상승 4단 → 마일스톤)
+- [x] 단위 테스트 24종 추가 (누적 59종)
+- [x] `verify.sh` 3단계 전부 통과
+- [ ] **실기기에서 연출 체감** ← JuiceLab → Victory
+- [ ] Reduce Motion 켜고 재생 확인
+- [ ] 파티클 300개에서 프레임 저하 없는지 확인
 
 ### S1.4 Persistence
 - [ ] `GameProgress` `@Model`

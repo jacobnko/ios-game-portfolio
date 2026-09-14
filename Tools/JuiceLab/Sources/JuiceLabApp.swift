@@ -17,11 +17,7 @@ struct JuiceLabRootView: View {
             List {
                 NavigationLink("Haptics") { HapticLabView() }
                 NavigationLink("Audio") { AudioLabView() }
-                Section {
-                    Text("The victory sequence lab lands here as CoreKit grows.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
+                NavigationLink("Victory") { VictoryLabView() }
             }
             .navigationTitle("JuiceLab")
         }
