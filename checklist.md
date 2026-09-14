@@ -152,13 +152,22 @@
 - [ ] DebugView로 실시간 이벤트 확인
 
 ### S1.8 Local Notifications (재참여)
-- [ ] `NotificationScheduler` — 롤링 윈도우로 **64개 제한** 관리
-- [ ] 권한 요청 타이밍 정책 — 첫 실행 금지, **첫 클리어 후**
-- [ ] 조용 시간 (타임존·서머타임 대응)
-- [ ] 문구 로테이션 (같은 문구 반복 금지)
-- [ ] 앱 진입 시 재예약 / 취소
-- [ ] 설정에서 on/off
-- [ ] Guideline 4.5.4 — 광고성 문구 금지, 게임 상태 기반만
+- [x] `NotificationPolicy` — 감쇠 사다리 1·3·7·14·30일 (한 달 5회, 매일 금지)
+- [x] `NotificationPlanner` — 순수 계획 생성, 결정론적
+- [x] **동시 대기 5~6개** — 64개 제한에 애초에 닿지 않음 + `maxPending` 방어
+- [x] 조용 시간 — 자정을 넘어 감싸는 구간 처리, 저녁 7시 고정
+- [x] 과거 시각 예약 방지 (등록 즉시 발사 버그)
+- [x] 앱 열면 사다리 전체 취소 후 오늘부터 재계산
+- [x] 테마 3종 — `progress` / `curiosity` / `lossAversion`, **프로모션 테마 없음**
+- [x] 문구 로테이션 + 변형 1개짜리 풀도 안전
+- [x] 스트릭 만료 경고 (조용 시간이면 포기)
+- [x] `requestAuthorizationAfterFirstClear()` — 첫 실행 요청 차단
+- [x] `isEnabled` 토글 (4.5.4)
+- [x] interval 트리거 사용 (타임존 이동 시 새벽 발사 방지)
+- [x] 단위 테스트 20종 추가 (누적 155종)
+- [x] `docs/architecture/notifications.md`
+- [ ] **JuiceLab → Notifications에서 사다리 미리보기 확인**
+- [ ] 권한 요청 흐름 실기기 확인
 - [ ] FCM은 보류 (D-052)
 
 ### S1.9 Localization & Theme
