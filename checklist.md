@@ -88,10 +88,18 @@
 - [ ] 파티클 300개에서 프레임 저하 없는지 확인
 
 ### S1.4 Persistence
-- [ ] `GameProgress` `@Model`
-- [ ] 전 프로퍼티 optional 또는 기본값, `@Attribute(.unique)` 없음
-- [ ] `ModelConfiguration(cloudKitDatabase: .automatic)`
-- [ ] 삭제 → 재설치 복원 실기기 확인
+- [x] `StageProgress` — 순수 값 타입 + 병합 규칙
+- [x] `StageRecord` `@Model` — 전 프로퍼티 기본값, `@Attribute(.unique)` 없음
+- [x] `ProgressStore` — `ModelConfiguration(cloudKitDatabase: .automatic)`
+- [x] **중복 행 병합·정리** — CloudKit이 유니크를 강제하지 못하는 것에 대한 대응
+- [x] 병합 규칙 멱등성·교환법칙 테스트
+- [x] `ProgressSummary` — 집계를 저장하지 않고 파생
+- [x] 단위 테스트 20종 추가 (누적 79종)
+- [x] `docs/architecture/cloudkit-setup.md` — 설정 절차 + 출시 함정
+- [x] `verify.sh` 3단계 전부 통과
+- [ ] **JuiceLab → Progress에서 중복 병합 동작 확인**
+- [ ] 게임 #1에서 iCloud capability 켜고 **삭제 → 재설치 복원** 실기기 확인
+- [ ] **출시 직전 CloudKit Console에서 Production 스키마 배포** ← 빠뜨리면 실사용자만 동기화 실패
 
 ### S1.5 StoreKit 2
 - [ ] `PurchaseManager` (fetch → purchase → verify → finish)
@@ -154,6 +162,7 @@
 ---
 
 ## Phase 4 — 릴리즈 파이프라인
+- [ ] **CloudKit Console → Deploy Schema to Production** (게임마다, 매 스키마 변경마다)
 - [ ] 심사 리젝 체크리스트 문서
 - [ ] 개인정보처리방침 페이지 + 앱 내 링크
 - [ ] Small Business Program 신청
