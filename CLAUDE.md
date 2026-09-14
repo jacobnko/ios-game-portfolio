@@ -40,7 +40,9 @@ Its reason to exist is simple: every game shipped should require less new code t
    - present a **CHECKLIST** the user can verify personally,
    - **commit the step's work automatically** (see Commits below) — never hand the user git commands to run by hand,
    - **wait for the user's confirmation** before moving on.
-3. **If code was touched, build and test before saying "done".** At minimum `swift build` or `xcodebuild build` must pass.
+3. **If code was touched, run `./scripts/verify.sh` before saying "done".**
+   `swift test` alone is not enough: it builds for the host, so everything behind
+   `#if canImport(UIKit)` is never compiled. The script adds a real iOS build.
 4. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
 5. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
 6. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.

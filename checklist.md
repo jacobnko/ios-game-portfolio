@@ -42,17 +42,26 @@
 ## Phase 1 — CoreKit
 
 ### S1.1 Haptics
-- [ ] `HapticEngine` — `.light` / `.heavy` / `.rigid`
-- [ ] `CoreHaptics` 미지원 기기 폴백
-- [ ] 실기기에서 3종 세기 체감 확인
+- [x] `HapticRecipe` — 플랫폼 무관 순수 매핑 (intent → intensity/sharpness/eventCount)
+- [x] `HapticEngine` — `.micro` / `.milestone` / `.error`
+- [x] `micro` 단계별 상승 (피치 상승과 동기)
+- [x] `CoreHaptics` 미지원 기기 → `UIImpactFeedbackGenerator` 폴백
+- [x] 엔진 중단·리셋 핸들러 (백그라운드 복귀 후 햅틱 사망 방지)
+- [x] `isEnabled` 토글 + `prepare()` / `teardown()`
+- [x] 단위 테스트 10종 통과
+- [x] iOS 실제 빌드 확인 (에러·경고 0)
+- [x] `scripts/verify.sh` — host 테스트 + iOS 빌드 일괄 검증
+- [ ] **실기기에서 3종 세기 체감 확인** ← J가 직접. 시뮬레이터는 햅틱이 안 난다
 
 ### S1.2 Audio (pitch scaling)
 - [ ] one-shot SFX 피치 시프트 재생기
 - [ ] 연속 액션 음계 상승 + 시퀀스 리셋 규칙
 - [ ] Kenney UI SFX 팩에서 피치 시프트 가능한 원샷 소스 확보 (150ms 이하, 리버브 없음)
 - [ ] `AVAudioSession` `.ambient` + `.mixWithOthers` — 사용자 음악 죽이지 않기
-- [ ] BGM 덕킹 (juice SFX 재생 시 -6dB)
-- [ ] 설정의 BGM / SFX / 햅틱 토글 3종 분리
+- [ ] 설정의 SFX / 햅틱 토글 분리
+
+> **BGM은 보류다 (D-020).** 게임 #1이 완성된 뒤에 넣을지 판단한다.
+> 다만 `AVAudioSession` 구성과 볼륨 채널 분리는 지금 해둔다. 나중에 BGM을 끼울 자리만 남기는 것이다.
 
 ### S1.3 Victory catharsis
 - [ ] 화면 흔들림 modifier
