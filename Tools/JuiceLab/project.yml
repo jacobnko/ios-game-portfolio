@@ -21,6 +21,8 @@ targets:
         product: CoreKitData
       - package: CoreKit
         product: CoreKitServices
+      - package: CoreKit
+        product: CoreKitAdsGoogle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jacobkostudio.juicelab
@@ -33,6 +35,10 @@ targets:
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
+        # Google's public test application id. Never replace this in the harness.
+        INFOPLIST_KEY_GADApplicationIdentifier: "ca-app-pub-3940256099942544~1458002511"
+        INFOPLIST_KEY_NSUserTrackingUsageDescription: "Used to show ads that are more relevant to you."
+
 
 schemes:
   JuiceLab:

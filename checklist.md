@@ -119,13 +119,22 @@
 - [ ] Ask to Buy 시뮬레이션으로 `pending` 경로 확인
 
 ### S1.6 AdMob
-- [ ] 배너 — `Coordinator` 단일 인스턴스 재사용
-- [ ] 부모 state 변경 시 리로드/깜빡임 없음 확인
-- [ ] 전면 광고
-- [ ] 보상형 광고
-- [ ] ATT 프롬프트 플로우
-- [ ] 테스트 Ad Unit ID가 기본값인지 확인
-- [ ] 모든 광고 호출부가 단일 `adsRemoved` 게이트 뒤에 있음
+- [x] `CoreKitAdsGoogle` 타겟 분리 (SDK가 호스트 테스트를 깨지 않게)
+- [x] `AdUnitIDs` — Google 테스트 ID 기본값, production은 플래그 필요
+- [x] `AdPolicy` — 초반 유예·최소 간격·최소 클리어·보상형 쿨다운 (순수)
+- [x] `InterstitialVerdict` — 왜 안 나왔는지 추적 가능
+- [x] `AdPresenting` 프로토콜 + `AdCoordinator` 단일 게이트
+- [x] `AdBannerView` — **Coordinator 단일 인스턴스 재사용**
+- [x] `AdBannerSlot` — 광고 로드 전에도 높이 확보 (2.3.1 대응)
+- [x] `GoogleAdPresenter` — 전면·보상형, continuation 정확히 1회 resume
+- [x] `AdSetup` — ATT 먼저, SDK 시작 나중
+- [x] 단위 테스트 22종 추가 (누적 117종)
+- [x] `docs/architecture/admob-setup.md`
+- [x] `verify.sh` 3단계 전부 통과
+- [ ] **JuiceLab → Ads에서 배너 깜빡임 없는지 확인** ← 재렌더 카운터가 올라가는 동안
+- [ ] 전면·보상형 실제 표시 확인
+- [ ] Apply pacing policy 켜고 verdict가 바뀌는지 확인
+- [ ] ATT 프롬프트 표시 확인 (앱 삭제 후 재설치 필요)
 
 ### S1.7 Analytics
 - [ ] `AnalyticsReporting` 프로토콜

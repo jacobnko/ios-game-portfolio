@@ -293,3 +293,31 @@
 - **상태.** XcodeGen이 `storeKitConfiguration: JuiceLab.storekit`을 `identifier="../../JuiceLab.storekit"`로 적는데, 이 경로가 Xcode에서 해석되는지 **확인하지 못했다.**
 - **J가 할 확인.** Xcode → Edit Scheme → Run → Options → StoreKit Configuration 드롭다운. 비어 있으면 직접 선택한다.
 - **기록 이유.** "빌드 통과"를 "동작 확인"으로 보고하지 않기 위해(D-025). 검증 시도가 실패한 것과 검증이 불가능한 것은 다르고, 여기는 후자다.
+
+---
+
+## 2026-09-14 · S1.6 AdMob
+
+### D-044. AdMob SDK를 별도 타겟 `CoreKitAdsGoogle`로 격리한다
+- **결정.** SDK 의존성을 `CoreKitServices`가 아니라 새 타겟에만 건다.
+- **이유.** GoogleMobileAds는 iOS 전용 바이너리 프레임워크다. `CoreKitServices`에 직접 걸면 macOS 호스트에서 `swift test`가 링크에 실패하고, 우리 개발 루프의 핵심인 밀리초 단위 테스트가 사라진다.
+- **검증.** SDK 추가 후에도 `swift test` 117종이 0.037초에 돈다. `swift test`는 테스트 타겟이 의존하는 것만 빌드하므로 SDK 타겟은 아예 컴파일되지 않는다.
+- **버전.** 13.9.0. **v12부터 Swift에서 `GAD` 접두사가 사라졌다** — `BannerView`, `InterstitialAd`, `MobileAds.shared`. 구버전 예제 코드를 그대로 쓰면 컴파일되지 않는다.
+- **API 확인 방법.** 추측하지 않고 xcframework의 헤더에서 `NS_SWIFT_NAME`을 직접 읽었다. `currentOrientationAnchoredAdaptiveBanner(width:)`는 13.x에서 deprecated이고 `largeAnchoredAdaptiveBanner(width:)`가 대체다.
+
+### D-045. 배너는 Coordinator가 소유한 단일 인스턴스를 재사용한다
+- **문제.** SwiftUI는 부모 state가 바뀔 때마다 `updateUIView`를 호출한다. 게임에서는 타이머 한 틱, 점수 한 번 오를 때마다다. `updateUIView`에서 `BannerView`를 만들면 배너가 계속 리로드되어 깜빡이고 노출이 낭비되며 AdMob이 비정상 트래픽으로 볼 수 있다.
+- **대응.** `Coordinator.init`에서 `BannerView`를 한 번 만들고 평생 재사용한다. `updateUIView`는 너비만 조정하고, **1pt 넘게 실제로 바뀐 경우에만** 다시 로드한다.
+- **높이 선확보.** `AdBannerSlot`이 광고 도착 전에도 높이를 잡는다. 첫 노출에 화면이 밀리면 사용자가 누르려던 것을 잘못 누르고, 그게 Guideline 2.3.1 위반이다.
+- **검증 방법.** JuiceLab의 Ads 탭이 250ms마다 부모를 재렌더한다. 그동안 배너가 깜빡이면 수정이 실패한 것이다.
+
+### D-046. 광고 빈도 정책은 의도적으로 적게 보여준다
+- **기본값.** 초반 3판 무광고, 전면 최소 간격 120초, 전면 사이 최소 2판, 보상형 후 45초 정숙.
+- **이유.** 캐주얼 퍼즐 세션은 짧다. 매 판 전면은 2일차 리텐션을 깎는 가장 빠른 방법이고, **잃는 리텐션이 버는 노출보다 비싸다.**
+- **보상형은 페이싱하지 않는다.** 사용자가 직접 요청한 것이라 거절하면 스스로 벌기로 한 힌트를 뺏는 것이다. 광고를 제거한 사용자는 **광고 없이 보상만 받는다** — 결제한 사람을 벌하지 않는다.
+- **`InterstitialVerdict`를 남긴 이유.** "광고가 안 나온다"는 다른 방법으로 디버깅이 매우 어렵다. 실제 플레이어의 verdict 분포가 정책이 과한지 모자란지 알려준다.
+
+### D-047. 실패한 노출은 기록하지 않는다
+- **결정.** `showInterstitial()`이 false를 돌려주면 `lastInterstitialAt`을 갱신하지 않는다.
+- **이유.** 로드 실패를 노출로 세면 이후 정당한 기회 몇 번이 이유 없이 억제된다. 테스트로 고정했다.
+- **continuation 안전성.** `GoogleAdPresenter`는 dismiss와 present 실패 양쪽을 한 곳(`finishPresentation`)으로 모은다. continuation을 두 번 resume하면 트랩이고, 한 번도 안 하면 호출자가 영원히 멈춘다.

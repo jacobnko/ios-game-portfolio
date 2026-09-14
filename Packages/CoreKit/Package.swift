@@ -19,15 +19,23 @@ let package = Package(
         .library(name: "CoreKitJuice", targets: ["CoreKitJuice"]),
         .library(name: "CoreKitData", targets: ["CoreKitData"]),
         .library(name: "CoreKitServices", targets: ["CoreKitServices"]),
+        // iOS only: pulls in the AdMob SDK. Host tests never depend on it.
+        .library(name: "CoreKitAdsGoogle", targets: ["CoreKitAdsGoogle"]),
     ],
     dependencies: [
-        // Intentionally empty for now.
-        // AdMob is added in S1.6 and Firebase in S1.7 — both only as CoreKitServices dependencies.
+        // Only CoreKitAdsGoogle depends on this. Keeping it off CoreKitServices is
+        // what lets `swift test` keep running on the host, where an iOS-only
+        // binary framework cannot link.
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "13.9.0"),
     ],
     targets: [
         .target(name: "CoreKitJuice"),
         .target(name: "CoreKitData"),
         .target(name: "CoreKitServices", dependencies: ["CoreKitData"]),
+        .target(name: "CoreKitAdsGoogle", dependencies: [
+            "CoreKitServices",
+            .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+        ]),
         .testTarget(name: "CoreKitJuiceTests", dependencies: ["CoreKitJuice"]),
         .testTarget(name: "CoreKitDataTests", dependencies: ["CoreKitData"]),
         .testTarget(name: "CoreKitServicesTests", dependencies: ["CoreKitServices"]),
