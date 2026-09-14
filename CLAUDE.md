@@ -52,7 +52,8 @@ Its reason to exist is simple: every game shipped should require less new code t
 - Good: `feat(corekit): add haptic feedback pipeline`
 - Bad: a commit mixing juice, ads, and a bug fix — split it into three.
 - Use Conventional Commit prefixes: `feat` / `fix` / `refactor` / `docs` / `chore` / `test`. Scope with the module when it helps: `feat(corekit): ...`
-- **Never `git push` without being asked.** Committing is automatic; publishing is not.
+- **Push automatically too.** J has authorized push for this repository, so `git push` follows the commit as part of finishing a step.
+- **This repository is public.** Before any push, verify no secret, real Ad Unit ID, or service config entered the diff — a pushed secret must be revoked, not just deleted.
 
 ---
 

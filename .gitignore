@@ -40,6 +40,12 @@ fastlane/test_output
 Secrets.xcconfig
 GoogleService-Info.plist
 
+# Game apps are tracked in their own separate repositories.
+# This repo holds only the shared architecture, docs and templates.
+# See docs/architecture/repo-strategy.md
+Apps/*
+!Apps/README.md
+
 # Design working files (deliverables are committed, raw exports are not)
 docs/design/**/assets/*.psd
 docs/design/**/assets/*.sketch
