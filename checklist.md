@@ -30,10 +30,12 @@
 ### S0.3 CoreKit 스캐폴드
 - [x] Open Question Q1~Q4 확정 (`context-notes.md` D-005)
 - [ ] 최소 배포 타겟 iOS 18.0 반영
-- [ ] `Package.swift` — 타겟 `CoreKitJuice` / `CoreKitData` / `CoreKitServices`
-- [ ] 빈 테스트 타겟
-- [ ] `swift build` 통과
-- [ ] `swift test` 통과
+- [x] `Package.swift` — 타겟 `CoreKitJuice` / `CoreKitData` / `CoreKitServices`
+- [x] 테스트 타겟 2종 (`CoreKitJuiceTests` / `CoreKitDataTests`)
+- [x] `swift build` 통과 (5.46s)
+- [x] `swift test` 통과 (3 tests)
+- [x] 외부 의존성 0 — AdMob은 S1.6, Firebase는 S1.7에서 추가
+- [x] `docs/architecture/audio-assets.md` — 효과음·배경음 조달 전략
 
 ---
 
@@ -47,7 +49,10 @@
 ### S1.2 Audio (pitch scaling)
 - [ ] one-shot SFX 피치 시프트 재생기
 - [ ] 연속 액션 음계 상승 + 시퀀스 리셋 규칙
-- [ ] Kenney UI SFX 팩에서 피치 시프트 가능한 원샷 소스 확보
+- [ ] Kenney UI SFX 팩에서 피치 시프트 가능한 원샷 소스 확보 (150ms 이하, 리버브 없음)
+- [ ] `AVAudioSession` `.ambient` + `.mixWithOthers` — 사용자 음악 죽이지 않기
+- [ ] BGM 덕킹 (juice SFX 재생 시 -6dB)
+- [ ] 설정의 BGM / SFX / 햅틱 토글 3종 분리
 
 ### S1.3 Victory catharsis
 - [ ] 화면 흔들림 modifier
