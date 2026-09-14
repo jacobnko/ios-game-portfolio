@@ -137,10 +137,19 @@
 - [ ] ATT 프롬프트 표시 확인 (앱 삭제 후 재설치 필요)
 
 ### S1.7 Analytics
-- [ ] `AnalyticsReporting` 프로토콜
-- [ ] Firebase Analytics 어댑터
-- [ ] Crashlytics 연결
-- [ ] 공통 이벤트 스키마 문서화 (`docs/architecture/analytics-events.md`)
+- [x] `AnalyticsEvent` — 이름·파라미터 자동 정규화 (조용한 유실 방지)
+- [x] `GameEvent` — 10개 게임 공통 이벤트 12종
+- [x] `AnalyticsReporting` / `CrashReporting` 프로토콜
+- [x] `AnalyticsHub` — 팬아웃, opt-out 지원
+- [x] `ConsoleAnalyticsReporter` — 개발·하네스용
+- [x] **`Packages/CoreKitFirebase` 별도 패키지** — Firebase 144MB가 빠른 루프를 오염시키지 않게
+- [x] Crashlytics 비치명적 에러 + context
+- [x] 단위 테스트 18종 추가 (누적 135종)
+- [x] `docs/architecture/analytics-events.md`
+- [x] `verify.sh` + `VERIFY_FIREBASE=1` 전부 통과
+- [ ] **JuiceLab → Analytics에서 이벤트 페이로드 확인**
+- [ ] 게임 #1에서 `GoogleService-Info.plist` 넣고 Firebase 콘솔에 실제 도달 확인
+- [ ] DebugView로 실시간 이벤트 확인
 
 ### S1.8 Localization & Theme
 - [ ] `.xcstrings` 규약 + 공통 키 세트

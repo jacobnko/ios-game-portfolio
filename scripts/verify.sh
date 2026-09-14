@@ -39,5 +39,19 @@ else
   echo "skipped — run: cd Tools/JuiceLab && xcodegen generate"
 fi
 
+# The Firebase adapter lives in its own package and pulls ~144 MB, so it is not
+# part of the fast loop. Run it after touching CoreKitFirebase:
+#   VERIFY_FIREBASE=1 ./scripts/verify.sh
+if [ "${VERIFY_FIREBASE:-0}" = "1" ]; then
+  echo
+  echo "=== 4/4  CoreKitFirebase (generic/platform=iOS) ==="
+  FB="$(cd "$(dirname "$0")/../Packages/CoreKitFirebase" && pwd)"
+  ( cd "$FB" && xcodebuild -scheme CoreKitFirebase \
+                           -destination 'generic/platform=iOS' \
+                           -derivedDataPath "$DD-fb" \
+                           build 2>&1 ) \
+    | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED" || true
+fi
+
 echo
 echo "done."

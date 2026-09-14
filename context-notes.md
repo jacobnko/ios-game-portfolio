@@ -321,3 +321,29 @@
 - **결정.** `showInterstitial()`이 false를 돌려주면 `lastInterstitialAt`을 갱신하지 않는다.
 - **이유.** 로드 실패를 노출로 세면 이후 정당한 기회 몇 번이 이유 없이 억제된다. 테스트로 고정했다.
 - **continuation 안전성.** `GoogleAdPresenter`는 dismiss와 present 실패 양쪽을 한 곳(`finishPresentation`)으로 모은다. continuation을 두 번 resume하면 트랩이고, 한 번도 안 하면 호출자가 영원히 멈춘다.
+
+---
+
+## 2026-09-15 · S1.7 Analytics
+
+### D-048. Firebase는 CoreKit의 타겟이 아니라 별도 패키지다
+- **측정.** `firebase-ios-sdk` resolve에 **101초, checkouts 144MB**가 들었다 (gRPC 바이너리 아티팩트 포함).
+- **결정적 사실.** SwiftPM은 **빌드하는 타겟과 무관하게 패키지가 선언한 모든 의존성을 resolve한다.** 즉 `CoreKit`에 Firebase를 넣으면 JuiceLab도, `swift test` 루프도, Firebase를 전혀 안 쓰는 도구도 전부 이 비용을 문다. AdMob 때처럼 타겟만 분리하는 것으로는 해결되지 않는다.
+- **대응.** `Packages/CoreKitFirebase`를 독립 패키지로 만든다. 프로토콜과 이벤트 스키마는 `CoreKitServices`에 남으므로 게임은 Firebase 없이도 로깅 코드를 쓸 수 있다.
+- **부수 이득.** 분석 백엔드는 이 포트폴리오에서 가장 교체 가능성이 높은 조각이다. 바뀌면 이 패키지만 갈아끼운다.
+- **`verify.sh`.** 기본 3단계는 빠르게 유지하고 Firebase는 `VERIFY_FIREBASE=1`일 때만 빌드한다.
+
+### D-049. 이벤트는 생성 시점에 정규화한다
+- **문제.** 분석 백엔드는 잘못된 이벤트 이름을 **에러 없이 버린다.** 몇 주 뒤 대시보드에 데이터가 없는 것으로만 알게 되고, 그 데이터는 어느 게임에 더 투자할지 정하는 근거다.
+- **대응.** `AnalyticsEvent` 생성자가 소문자화·치환·예약 접두사 제거·길이 제한·파라미터 수 제한을 수행한다.
+- **정렬 후 자르는 이유.** 파라미터가 25개를 넘을 때 딕셔너리 순서로 자르면 **같은 호출부가 실행마다 다른 이벤트를 만든다.** 키를 정렬해서 결정론적으로 만들었고 테스트로 고정했다.
+- **가장 중요한 테스트.** `GameEvent`의 모든 이름이 정규화를 통과해도 변하지 않는지 검사한다. 코드에 쓴 이름과 대시보드 이름이 달라지는 사고를 막는다.
+
+### D-050. `Analytics`를 `AnalyticsHub`로 이름을 바꿨다
+- **이유.** `FirebaseAnalytics.Analytics`와 충돌한다. 어댑터 안에서는 정규화해서 피할 수 있지만, 두 모듈을 같이 import하는 파일이 생기면 모호해진다.
+- **시점.** 게임 코드에 퍼지기 전인 지금이 가장 싸다.
+
+### D-051. `ad_suppressed`와 `stage_abandon`이 이 스키마의 핵심이다
+- **`ad_suppressed(verdict:)`.** 광고 노출 수만 봐서는 정책이 과한지 모자란지 절대 알 수 없다. verdict 분포가 그걸 알려준다 — `onboardingGrace`가 대부분이면 유예가 길고, `tooSoon`이 대부분이면 간격이 과하다.
+- **`stage_abandon(progress_pct:)`.** 이탈률만으로는 처방이 안 나온다. 진행률이 낮으면 "이해 실패", 높으면 "거의 다 왔는데 실패"이고 대응이 정반대다.
+- **`share_trigger`.** 숏폼 영상은 리텐션·ASO와 나란한 세 번째 성장 레버인데 로깅하지 않으면 존재 자체가 안 보인다.
