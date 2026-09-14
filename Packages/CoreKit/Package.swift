@@ -30,5 +30,6 @@ let package = Package(
         .target(name: "CoreKitServices", dependencies: ["CoreKitData"]),
         .testTarget(name: "CoreKitJuiceTests", dependencies: ["CoreKitJuice"]),
         .testTarget(name: "CoreKitDataTests", dependencies: ["CoreKitData"]),
+        .testTarget(name: "CoreKitServicesTests", dependencies: ["CoreKitServices"]),
     ]
 )

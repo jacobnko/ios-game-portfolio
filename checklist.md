@@ -102,10 +102,21 @@
 - [ ] **출시 직전 CloudKit Console에서 Production 스키마 배포** ← 빠뜨리면 실사용자만 동기화 실패
 
 ### S1.5 StoreKit 2
-- [ ] `PurchaseManager` (fetch → purchase → verify → finish)
-- [ ] `adsRemoved`를 `Transaction.currentEntitlements`에서만 파생
-- [ ] Restore Purchases 동작
-- [ ] StoreKit Configuration 파일로 시나리오 테스트
+- [x] `StoreClient` 프로토콜 — 테스트 가능한 이음새
+- [x] `StoreKitClient` — fetch → purchase → **verify** → finish
+- [x] `PurchaseManager` — `adsRemoved`를 `currentEntitlements`에서만 파생
+- [x] `Transaction.updates` 리스너 (Ask to Buy·타기기·중단된 결제)
+- [x] `.unverified` 거래는 아무것도 부여하지 않음
+- [x] `.pending`을 실패로 처리하지 않음
+- [x] Restore Purchases — sync 실패해도 엔타이틀먼트 재조회
+- [x] `ProductID.removeAds(bundleID:)` 규칙
+- [x] `Tools/JuiceLab/JuiceLab.storekit` 설정 파일
+- [x] 단위 테스트 16종 추가 (누적 95종)
+- [x] `docs/architecture/iap-setup.md`
+- [ ] **Xcode → Edit Scheme → Run → Options → StoreKit Configuration 드롭다운 확인** ← 자동 검증 불가 (D-043)
+- [ ] JuiceLab → Purchases에서 구매 → `Ads removed: YES`
+- [ ] **Debug → StoreKit → Manage Transactions에서 환불 → `no`로 복귀 확인**
+- [ ] Ask to Buy 시뮬레이션으로 `pending` 경로 확인
 
 ### S1.6 AdMob
 - [ ] 배너 — `Coordinator` 단일 인스턴스 재사용

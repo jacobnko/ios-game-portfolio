@@ -19,6 +19,7 @@ struct JuiceLabRootView: View {
                 NavigationLink("Audio") { AudioLabView() }
                 NavigationLink("Victory") { VictoryLabView() }
                 NavigationLink("Progress") { ProgressLabView() }
+                NavigationLink("Purchases") { PurchaseLabView() }
             }
             .navigationTitle("JuiceLab")
         }

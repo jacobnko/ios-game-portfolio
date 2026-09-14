@@ -19,6 +19,8 @@ targets:
         product: CoreKitJuice
       - package: CoreKit
         product: CoreKitData
+      - package: CoreKit
+        product: CoreKitServices
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jacobkostudio.juicelab
@@ -31,3 +33,16 @@ targets:
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1,2"
         CODE_SIGN_STYLE: Automatic
+
+schemes:
+  JuiceLab:
+    build:
+      targets:
+        JuiceLab: all
+    run:
+      config: Debug
+      # Lets purchase flows run without App Store Connect. Never ship a build
+      # that still points at this file.
+      storeKitConfiguration: JuiceLab.storekit
+    test:
+      config: Debug

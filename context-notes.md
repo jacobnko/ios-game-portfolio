@@ -272,3 +272,24 @@
 - **함정.** SwiftData가 개발 중 만드는 CloudKit 스키마는 **Development 환경에만** 존재하고 자동 승격되지 않는다. 그대로 출시하면 **실사용자에게만 동기화가 실패한다.** 개발자 기기에서는 멀쩡해 보인다.
 - **대응.** `checklist.md`의 Phase 4 첫 항목으로 올렸다. 절차는 `docs/architecture/cloudkit-setup.md`.
 - **추가 제약.** Production 스키마는 **추가만 가능**하다. 필드 이름 변경·삭제·타입 변경이 안 된다. 첫 출시 전에 스키마를 확정해야 하고, 이후 변경은 "새 optional 필드 추가"만 가능하다고 가정한다.
+
+---
+
+## 2026-09-14 · S1.5 StoreKit 2
+
+### D-041. StoreKit 앞에 프로토콜 이음새를 둔다
+- **결정.** `StoreClient` 프로토콜을 정의하고 `StoreKitClient`가 구현한다. `PurchaseManager`는 프로토콜에만 의존한다.
+- **이유.** StoreKit은 패키지 테스트 타겟에서 구동할 수 없다(앱 호스트 + StoreKitTest 필요). 그런데 엔타이틀먼트 규칙은 **틀리면 돈이 걸리는** 코드다. 유료 사용자가 구매를 잃거나, 반대로 결제 없이 제품이 나간다.
+- **근거가 된 결과.** 이 이음새 덕에 환불 후 광고 복귀, 미검증 거래 거부, `pending` 처리, 복원 실패 시 재조회까지 16종을 자동 테스트로 고정했다. 추상화를 위한 추상화가 아니다.
+
+### D-042. `adsRemoved`는 성공 경로에서도 직접 세팅하지 않는다
+- **결정.** 구매가 `.purchased`로 돌아와도 `adsRemoved = true`를 쓰지 않고 `currentEntitlements`를 다시 읽는다.
+- **이유.** 진리를 한 곳으로 유지한다. 해피 패스에서만 예외를 두면 그 예외가 나중에 캐시로 자라난다.
+- **같이 고정한 규칙.** `.unverified`는 아무것도 부여하지 않는다. `.pending`은 실패가 아니다(Ask to Buy). 복원은 sync가 던져도 엔타이틀먼트를 재조회한다 — 로컬에 이미 있는데 네트워크 실패로 "없음"이라 답하면 유료 사용자에게 거짓말이 된다.
+
+### D-043. StoreKit Configuration 스킴 연결은 자동 검증이 불가능하다
+- **시도.** 시뮬레이터에 설치 후 `xcrun simctl launch --console-pty`로 제품 조회를 프로브했다. 결과는 `productNotFound`.
+- **그런데 이 결과는 결론이 아니다.** `simctl launch`는 **Xcode 스킴을 거치지 않으므로** StoreKit Configuration이 애초에 주입되지 않는다. 실패가 예상된 결과이고, 스킴 경로가 맞는지는 말해주지 않는다.
+- **상태.** XcodeGen이 `storeKitConfiguration: JuiceLab.storekit`을 `identifier="../../JuiceLab.storekit"`로 적는데, 이 경로가 Xcode에서 해석되는지 **확인하지 못했다.**
+- **J가 할 확인.** Xcode → Edit Scheme → Run → Options → StoreKit Configuration 드롭다운. 비어 있으면 직접 선택한다.
+- **기록 이유.** "빌드 통과"를 "동작 확인"으로 보고하지 않기 위해(D-025). 검증 시도가 실패한 것과 검증이 불가능한 것은 다르고, 여기는 후자다.
