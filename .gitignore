@@ -40,6 +40,11 @@ fastlane/test_output
 Secrets.xcconfig
 GoogleService-Info.plist
 
+# Private planning material — the public repo must not expose the unreleased
+# game roadmap, concepts or brand names.
+PLAN.md
+docs/concepts/
+
 # Game apps are tracked in their own separate repositories.
 # This repo holds only the shared architecture, docs and templates.
 # See docs/architecture/repo-strategy.md
