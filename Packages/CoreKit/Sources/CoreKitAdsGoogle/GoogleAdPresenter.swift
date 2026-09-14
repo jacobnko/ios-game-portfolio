@@ -23,6 +23,9 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     private var rewardedContinuation: CheckedContinuation<RewardOutcome, Never>?
     private var didEarnReward = false
 
+    /// Fires if the SDK never reports the presentation ending.
+    private var watchdog: Task<Void, Never>?
+
     /// Only one full-screen ad can be on screen at a time.
     ///
     /// Without this, an interstitial and a rewarded ad could both be awaiting a
@@ -54,6 +57,7 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
 
         return await withCheckedContinuation { continuation in
             interstitialContinuation = continuation
+            startWatchdog()
             ad.fullScreenContentDelegate = self
             ad.present(from: root)
         }
@@ -68,6 +72,7 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
 
         return await withCheckedContinuation { continuation in
             rewardedContinuation = continuation
+            startWatchdog()
             ad.fullScreenContentDelegate = self
             ad.present(from: root) { [weak self] in
                 // Fires when the player has watched enough. Dismissal is reported
@@ -105,11 +110,28 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
             .rootViewController
     }
 
+    /// Resolves the presentation if the SDK never does.
+    ///
+    /// A continuation that is never resumed does not crash — it simply never
+    /// returns, so a game awaiting an interstitial before advancing to the next
+    /// stage would hang there permanently. That is a far worse failure than a
+    /// missed impression, so it gets an explicit deadline.
+    private func startWatchdog() {
+        watchdog?.cancel()
+        watchdog = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(90))
+            guard !Task.isCancelled else { return }
+            self?.finishPresentation(shown: false)
+        }
+    }
+
     /// Resolves whichever presentation is in flight, exactly once.
     ///
     /// A continuation resumed twice traps, and one never resumed hangs the caller
     /// forever — so both delegate paths funnel through here.
     private func finishPresentation(shown: Bool) {
+        watchdog?.cancel()
+        watchdog = nil
         isPresenting = false
         if let continuation = interstitialContinuation {
             interstitialContinuation = nil

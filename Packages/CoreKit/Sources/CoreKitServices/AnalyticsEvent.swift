@@ -45,8 +45,14 @@ public struct AnalyticsEvent: Sendable, Equatable {
     /// Lowercases, replaces anything but letters, digits and underscore, ensures a
     /// leading letter, strips reserved prefixes, and truncates.
     static func sanitizeName(_ raw: String) -> String {
+        // ASCII only. Swift's `isLetter` is true for Hangul, Kana and much else,
+        // but analytics backends accept only ASCII alphanumerics and underscore —
+        // so a Korean event name would sail through this function and then be
+        // dropped silently at the far end, which is the exact failure this
+        // sanitizer exists to prevent.
         var result = raw.lowercased().map { character -> Character in
-            character.isLetter || character.isNumber || character == "_" ? character : "_"
+            let isAllowed = character.isASCII && (character.isLetter || character.isNumber)
+            return isAllowed || character == "_" ? character : "_"
         }
 
         // Reserved prefixes are silently rejected by Firebase.
@@ -56,8 +62,8 @@ public struct AnalyticsEvent: Sendable, Equatable {
         }
         result = Array(text)
 
-        // Must begin with a letter.
-        while let first = result.first, !first.isLetter { result.removeFirst() }
+        // Must begin with an ASCII letter.
+        while let first = result.first, !(first.isASCII && first.isLetter) { result.removeFirst() }
         if result.isEmpty { return "unnamed_event" }
 
         return String(result.prefix(maxNameLength))

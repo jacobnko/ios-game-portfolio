@@ -10,7 +10,7 @@ import CoreKitServices
 ///
 /// Holds no policy. Event naming and sanitization already happened in
 /// `AnalyticsEvent`, so this only converts types and forwards.
-public final class FirebaseAnalyticsReporter: AnalyticsReporting, @unchecked Sendable {
+public final class FirebaseAnalyticsReporter: AnalyticsReporting {
     public init() {}
 
     public func log(_ event: AnalyticsEvent) {
@@ -23,7 +23,7 @@ public final class FirebaseAnalyticsReporter: AnalyticsReporting, @unchecked Sen
 }
 
 /// Sends non-fatal errors and breadcrumbs to Crashlytics.
-public final class FirebaseCrashReporter: CrashReporting, @unchecked Sendable {
+public final class FirebaseCrashReporter: CrashReporting {
     public init() {}
 
     public func record(_ error: Error, context: [String: String]) {

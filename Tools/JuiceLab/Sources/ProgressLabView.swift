@@ -65,7 +65,13 @@ struct ProgressLabView: View {
     }
 
     private var rowCount: Int {
-        (try? store?.container.mainContext.fetch(FetchDescriptor<StageRecord>()).count) as? Int ?? 0
+        // `try?` over an optional chain yields Int??; the old `as? Int` on that
+        // always failed, so this row displayed 0 no matter how many rows existed —
+        // which is the one number the duplicate-repair check depends on.
+        guard let store, let count = try? store.container.mainContext.fetch(FetchDescriptor<StageRecord>()).count else {
+            return 0
+        }
+        return count
     }
 
     private func setUp() {

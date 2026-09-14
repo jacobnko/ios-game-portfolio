@@ -7,7 +7,7 @@ import Foundation
 /// Synthesis is used instead of pitch-shifting a sample on purpose: it gives exact
 /// musical intervals with no stretching artefacts, costs zero bytes in the bundle,
 /// and carries no licence obligations across ten apps.
-public struct ToneRecipe: Sendable, Equatable {
+public struct ToneRecipe: Sendable, Hashable {
     public let frequency: Double
     public let duration: TimeInterval
     /// Linear gain, 0...1.

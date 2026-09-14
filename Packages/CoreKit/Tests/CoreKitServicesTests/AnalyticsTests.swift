@@ -160,3 +160,37 @@ import Foundation
     #expect(reporter.events.count == 10)
     #expect(reporter.events.last?.parameters["i"] == .int(49))   // newest kept
 }
+
+// MARK: - Regression: names must end up ASCII
+
+@Test func nonAsciiNamesAreReplaced() {
+    // Swift's `isLetter` is true for Hangul and Kana, so a Korean event name would
+    // pass an "is it a letter" check and then be dropped silently by the backend —
+    // the exact failure this sanitizer exists to prevent.
+    let event = AnalyticsEvent(name: "스테이지클리어")
+    #expect(event.name.allSatisfy { $0.isASCII })
+    #expect(event.name == "unnamed_event")   // nothing usable survived
+}
+
+@Test func mixedScriptNamesKeepOnlyTheAsciiPart() {
+    // "클리어" is three characters, so it becomes three underscores between the two
+    // that were already there.
+    let event = AnalyticsEvent(name: "stage_클리어_2")
+    #expect(event.name.allSatisfy { $0.isASCII })
+    #expect(event.name == "stage_____2")
+}
+
+@Test func everySanitizedNameIsAsciiSafe() {
+    let inputs = ["日本語イベント", "événement", "тест", "emoji_🎉_event", "stage clear!", "ガチャ_pull"]
+    for input in inputs {
+        let name = AnalyticsEvent(name: input).name
+        #expect(name.allSatisfy { $0.isASCII }, "\(input) produced \(name)")
+        #expect(name.first?.isLetter == true)
+    }
+}
+
+@Test func sharedEventNamesAreAllAscii() {
+    for event in [GameEvent.stageStarted(stageID: "s", attempt: 1), GameEvent.adShown(placement: .banner)] {
+        #expect(event.name.allSatisfy { $0.isASCII })
+    }
+}

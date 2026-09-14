@@ -3,6 +3,7 @@
 #if os(iOS)
 import Foundation
 import AppTrackingTransparency
+import UIKit
 import GoogleMobileAds
 
 /// One-time setup every game runs at launch.
@@ -15,9 +16,18 @@ public enum AdSetup {
     ///
     /// Requires `NSUserTrackingUsageDescription` in the app's Info.plist. Without it
     /// the prompt never appears and the status stays `.notDetermined` forever.
+    @MainActor
     public static func start() async {
         await requestTrackingAuthorization()
         await MobileAds.shared.start()
+    }
+
+    @MainActor
+    private static func waitUntilActive() async {
+        guard UIApplication.shared.applicationState != .active else { return }
+        for await _ in NotificationCenter.default.notifications(named: UIApplication.didBecomeActiveNotification) {
+            return
+        }
     }
 
     /// Current tracking authorisation, for the App Privacy questionnaire and analytics.
@@ -26,11 +36,17 @@ public enum AdSetup {
     }
 
     @discardableResult
+    @MainActor
     public static func requestTrackingAuthorization() async -> ATTrackingManager.AuthorizationStatus {
         // Asking again once answered is a no-op, so this is safe to call on launch.
         guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else {
             return ATTrackingManager.trackingAuthorizationStatus
         }
+        // The prompt only appears while the app is active. Asking during launch,
+        // before the scene is foregrounded, returns `.denied` without ever showing
+        // anything — and the answer cannot be revisited, so that single mistimed
+        // call permanently halves what the ad units are worth.
+        await waitUntilActive()
         return await ATTrackingManager.requestTrackingAuthorization()
     }
 }

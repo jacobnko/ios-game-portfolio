@@ -180,3 +180,20 @@ func everyScaleBeginsOnTheRoot(scale: MusicalScale) {
     let a4 = ToneRecipe.make(for: .micro, stepIndex: step, root: Pitch.a4).frequency
     #expect(c5 != a4)
 }
+
+@Test func identicalTonesBeyondTheCeilingShareOneRecipe() {
+    // The tone player caches by recipe. Steps past the pitch ceiling all render the
+    // same waveform, so they must compare equal — otherwise a long drag mints a
+    // fresh ~19 KB buffer per step for audio that never changes.
+    let ceiling = MusicalScale.pentatonicMajor.ceilingStep()
+    let atCeiling = ToneRecipe.make(for: .micro, stepIndex: ceiling)
+    let farBeyond = ToneRecipe.make(for: .micro, stepIndex: 5_000)
+    #expect(atCeiling == farBeyond)
+    #expect(atCeiling.hashValue == farBeyond.hashValue)
+}
+
+@Test func milestoneAndErrorIgnoreTheStepEntirely() {
+    // Same reason: these do not vary by step, so they must not key separately.
+    #expect(ToneRecipe.make(for: .milestone, stepIndex: 0) == ToneRecipe.make(for: .milestone, stepIndex: 40))
+    #expect(ToneRecipe.make(for: .error, stepIndex: 0) == ToneRecipe.make(for: .error, stepIndex: 40))
+}

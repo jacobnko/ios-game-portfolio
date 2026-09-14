@@ -35,18 +35,13 @@ public final class PitchedTonePlayer {
     private var engine: AVAudioEngine?
     private var playerNode: AVAudioPlayerNode?
     private var format: AVAudioFormat?
-    private var bufferCache: [BufferKey: AVAudioPCMBuffer] = [:]
+    /// Keyed by the recipe itself, which is the only thing that determines the
+    /// samples. A hand-written key can drift from what rendering actually depends
+    /// on — it already had, silently returning the previous scale's pitches — and
+    /// it also grew without bound, because the step index keeps climbing after the
+    /// pitch has stopped rising, minting a fresh entry for every identical tone.
+    private var bufferCache: [ToneRecipe: AVAudioPCMBuffer] = [:]
     private var configurationObserver: NSObjectProtocol?
-
-    private struct BufferKey: Hashable {
-        let weight: FeedbackWeight
-        let stepIndex: Int
-        // The rendered waveform depends on the scale and root as well as the step.
-        // Keying on the step alone meant a game that changed scale kept hearing the
-        // pitches from the old one, forever, with no way to tell why.
-        let scale: MusicalScale
-        let root: Double
-    }
     #endif
 
     private init() {}
@@ -137,11 +132,11 @@ private extension PitchedTonePlayer {
     }
 
     func buffer(for weight: FeedbackWeight, stepIndex: Int) -> AVAudioPCMBuffer? {
-        let key = BufferKey(weight: weight, stepIndex: stepIndex, scale: scale, root: root)
-        if let cached = bufferCache[key] { return cached }
         guard let format else { return nil }
 
         let recipe = ToneRecipe.make(for: weight, stepIndex: stepIndex, scale: scale, root: root)
+        if let cached = bufferCache[recipe] { return cached }
+
         let samples = recipe.renderSamples(sampleRate: format.sampleRate)
         guard !samples.isEmpty,
               let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(samples.count)),
@@ -150,7 +145,7 @@ private extension PitchedTonePlayer {
 
         samples.withUnsafeBufferPointer { channel.update(from: $0.baseAddress!, count: samples.count) }
         buffer.frameLength = AVAudioFrameCount(samples.count)
-        bufferCache[key] = buffer
+        bufferCache[recipe] = buffer
         return buffer
     }
 }
