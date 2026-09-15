@@ -93,6 +93,22 @@ extension GameTheme {
 
 `docs/concepts/palette-ledger.md`(비공개)에서 인접 게임과 팔레트가 겹치지 않는지 확인한다.
 
+### 5.1 실제 게임플레이 화면은 `Sources/<Game>UI/Views/`에 둔다
+
+`GeometryReader` + `Canvas` + 제스처로 조립되는 화면 — 즉 "만져서 확인해야 하는" 코드 —
+은 이 하위 폴더에 둔다. `audit.sh` 7단계가 `UI/Views/`를 커버리지 하한에서 제외해 주는데,
+이건 `CoreKitUI/Screens`가 이미 그런 취급을 받는 것과 같은 이유다 — `GraphicsContext`는
+공개 이니셜라이저가 없어서 호스트 테스트가 렌더 함수를 직접 부를 방법이 없다.
+
+**반대로, 좌표 변환·경로/스타일 계산처럼 값만 다루는 로직은 이 폴더 밖에 둔다.**
+그래야 하한 검사를 실제로 받는다. Chordline의 예:
+
+| 파일 | 위치 | 이유 |
+|---|---|---|
+| `BoardLayout.swift` | `ChordlineCore/` | `CGPoint`/`CGRect`만 다룸 — SwiftUI 불필요, 호스트에서 100% 테스트 |
+| `NodeGlyph+Path.swift`, `LineTexture+StrokeStyle.swift` | `ChordlineUI/` (Views 밖) | `Path`/`StrokeStyle`을 만들 뿐 그리지 않음 — 결과값을 단언할 수 있음 |
+| `GameplayBoardView.swift` | `ChordlineUI/Views/` | 실제 `Canvas` 렌더 + `DragGesture` — 여기만 예외 대상 |
+
 ## 6. App 진입점 — 다섯 화면을 배선한다
 
 이게 전체 배선의 핵심이다. `FlowLabView.swift`가 정확히 이 모양이다.

@@ -16,6 +16,12 @@ pass()    { echo "  ✓ $1"; }
 # Files that can only execute on a device. Excluded from the coverage floor
 # because no host test can reach them — they are covered by docs/DEVICE-TEST.md.
 DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|NotificationScheduler|StoreKitClient|CoreKitAdsGoogle|CoreKitFirebase|CoreKitUI/Screens'
+# Same idea, one level down: every game's own full-screen gameplay views
+# (GeometryReader + Canvas + gesture wiring) live under Sources/*UI/Views/ by
+# convention — see docs/architecture/new-game-setup.md. The logic behind them
+# (layout math, path/style builders) stays outside that folder and stays held
+# to the floor; only the SwiftUI assembly itself is exempt.
+GAME_DEVICE_ONLY='UI/Views/'
 # 80 rather than 90: a file may legitimately hold one or two calls that cannot run
 # off a device (UIApplication.open, for example). Anything below this is a real gap,
 # and the uncovered function names are printed so the number is actionable.
@@ -139,8 +145,12 @@ for manifest in "$ROOT/Apps"/*/Package.swift; do
         # section 4, not by the game's.
         GAME_LOW=$(xcrun llvm-cov report "$GAME_BIN" -instr-profile "$GAME_PROF" \
                      -ignore-filename-regex="Tests|\.build" "$GAME_DIR/Sources" 2>/dev/null \
-          | sed 's|.*Sources/||' | awk -v floor="$COVERAGE_FLOOR" '
-            NF > 5 && $1 !~ /^(Filename|-|TOTAL)/ { pct = $4; sub(/%/, "", pct); if (pct + 0 < floor) printf "%s %s\n", $1, pct }')
+          | sed 's|.*Sources/||' | awk -v floor="$COVERAGE_FLOOR" -v skip="$GAME_DEVICE_ONLY" '
+            NF > 5 && $1 !~ /^(Filename|-|TOTAL)/ {
+                pct = $4; sub(/%/, "", pct)
+                if ($1 ~ skip) next
+                if (pct + 0 < floor) printf "%s %s\n", $1, pct
+            }')
         if [ -n "$GAME_LOW" ]; then
             echo "$GAME_LOW" | sed 's/^/    x /'
             fail "$GAME_NAME below the coverage floor"
