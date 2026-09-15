@@ -204,6 +204,7 @@
 - [ ] **J 기기 확인** — `docs/DEVICE-TEST.md` (60여 항목, 🔴 표시가 필수)
 
 ## Phase 2 — GameTemplate
+- [ ] 페이즈 종료 시 `./scripts/audit.sh` + `docs/AUDIT.md` §4 읽기 패스
 - [ ] 공통 화면 골격 (Home / Stage Select / Game / Result / Settings)
 - [ ] 광고 · 저장 · 분석 훅 지점 고정
 - [ ] `docs/architecture/new-game-setup.md`

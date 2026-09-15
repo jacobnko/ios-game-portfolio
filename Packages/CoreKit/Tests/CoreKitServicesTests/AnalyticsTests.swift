@@ -144,8 +144,15 @@ import Foundation
 }
 
 @Test @MainActor func loggingWithNoReportersIsHarmless() {
-    // Games log from the first launch, before any backend is configured.
-    
+    // Games log from the first launch, before any backend is configured, so this
+    // path has to be safe rather than merely unlikely.
+    let hub = AnalyticsHub()
+    hub.log(GameEvent.stageStarted(stageID: "s1", attempt: 1))
+    hub.record(SampleError())
+    hub.leaveBreadcrumb("no reporters attached")
+    hub.setUserProperty("ko", forName: "language")
+    #expect(hub.isEnabled)                 // nothing disabled itself as a side effect
+    #expect(hub.isCrashReportingEnabled)
 }
 
 // MARK: - Regression: the console reporter is bounded

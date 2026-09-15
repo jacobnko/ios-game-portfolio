@@ -46,9 +46,12 @@ Its reason to exist is simple: every game shipped should require less new code t
 4. **Anything a human must feel or see — haptics, audio, animation timing — is not verifiable from here.**
    Add it to `Tools/JuiceLab` and hand the user a concrete checklist of what to feel.
    Haptics never fire in the Simulator, so "it builds" is not "it works".
-5. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
-6. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
-7. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
+5. **At the end of every phase, run the audit** — `./scripts/audit.sh`, then the reading
+   pass in `docs/AUDIT.md` §4. Phase 1 shipped 15 defects past a green build; four of
+   them were invisible to reading and one was invisible to everything but running the app.
+6. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
+7. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
+8. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
 
 ### Commits
 - **Claude commits automatically.** Staging and committing is part of finishing a step, not a task handed back to the user.
