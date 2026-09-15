@@ -647,3 +647,18 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **원인.** `-ignore-filename-regex="Tests|\.build"`는 의존 패키지 소스를 걸러내지 못한다. CoreKit은 `.build` 안이 아니라 `Packages/` 아래 실제 경로에 있기 때문이다.
 - **수정.** 리포트를 `"$GAME_DIR/Sources"`로 한정했다. 게임 자기 코드만 센다.
 - **일반화.** **첫 게임이 CoreKit을 붙이는 순간에만 드러나는 부류다.** 감사 스크립트도 코드라서, 대상의 구조가 바뀌면 같이 틀린다 — K형(검증 도구가 틀리면 검증이 거짓이 된다)의 스크립트 판이다.
+
+### D-080. S3.2 계획 — 그리드 렌더 + 드래그 연결
+- **범위.** `BoardState`는 이미 순수 로직으로 완성돼 있다 (주석에 명시: "The gesture layer's only job (S3.2) is turning touch coordinates into Cells and calling extend"). 이번 단계는 그 번역 계층 하나만 만든다 — 승리 판정 연출(S3.3), 앱 배선(GameFlowCoordinator 연결)은 범위 밖.
+- **좌표 변환은 순수 로직으로 뺀다.** `BoardLayout`(격자 크기 + 컨테이너 크기 → 셀 프레임/중심, 터치 지점 → `Cell?`)을 `ChordlineCore`에 둔다. `CGPoint`/`CGRect`는 CoreGraphics 타입이라 SwiftUI가 전혀 필요 없고, 호스트에서 100% 테스트된다. SwiftUI 쪽(제스처 핸들러)은 이 함수를 부르기만 해서 테스트 불가능한 부분을 최소로 줄인다.
+- **드래그 시작점을 고정한다.** `DragGesture(minimumDistance: 0)`의 `onChanged`가 반복 호출되는데, 매번 `beginPath`를 다시 시도하면 손을 뗀 적 없는 드래그가 중간에 다른 점 위를 지나가는 순간 새로 시작해버린다 — 디자인 규칙("점을 누른 채 끌기")과 어긋난다. `isDragging` 플래그로 **제스처당 한 번만** `beginPath(at: startLocation의 셀)`을 부르고, 이후는 전부 `extend`로 보낸다.
+- **텍스처는 근사치다.** D1의 `LineTexture` 6종(solid/dashed/dotted/double/chevron/beaded)을 `Canvas`의 `StrokeStyle.dash`만으로 전부 정확히 재현할 수는 없다 (double·chevron·beaded는 원래 반복 그라디언트/지그재그 형태). dash 패턴 굵기·간격만 다르게 줘서 **구분은 되지만 D1 목업과 픽셀 일치는 아니다.** D3(게임플레이 화면) 목업이 나오면 다시 맞춰본다.
+
+### D-081. `try!`은 미리보기 코드에서도 예외 없이 걸린다
+- **증상.** `#Preview`용 헬퍼에서 `try! Puzzle(id:rows:...)`를 썼다가 `audit.sh` 6단계(위험 패턴 스캔)에 걸렸다.
+- **판단.** 스캔은 파일이 미리보기인지 앱 코드인지 구분하지 않고, 그래야 맞다 — 프리뷰도 같은 모듈에서 컴파일되는 실제 코드다. `Puzzle`에는 던지지 않는 멤버와이즈 이니셜라이저(`init(id:size:pairs:difficulty:)`)가 이미 있어서, 문자열 격자 대신 좌표로 직접 써서 `try!` 없이 같은 보드를 만들었다.
+
+### D-082. `CoreKitUI/Screens`의 커버리지 예외가 게임 쪽엔 없었다
+- **증상.** `GameplayBoardView`(그리드 렌더 + `DragGesture`)를 추가하자 §7이 0%로 잡아 하한 미달로 떨어졌다. `GraphicsContext`는 공개 이니셜라이저가 없어서 그리기 함수를 테스트에서 직접 부를 방법이 없다 — CoreKit의 `Screens/`가 같은 이유로 이미 예외 처리돼 있던 것과 정확히 같은 상황인데, §7(게임 패키지)의 커버리지 검사에는 그 예외가 없었다.
+- **수정.** `Sources/<Game>UI/Views/`를 만들어 그 화면 파일을 옮기고, `audit.sh`에 `GAME_DEVICE_ONLY='UI/Views/'`를 추가해 §7에도 같은 처리를 넣었다. **좌표 변환·경로/스타일 계산은 그 폴더 밖에 남긴다** — `BoardLayout`(순수 좌표 수학, `ChordlineCore`)과 `NodeGlyph`/`LineTexture`의 `Path`/`StrokeStyle` 변환(값만 만들고 그리지 않음, `ChordlineUI` 루트)은 전부 하한 검사를 그대로 받는다. 이 구분을 `docs/architecture/new-game-setup.md` §5.1에 게임 #2부터 따라야 할 규칙으로 적어뒀다.
+- **일반화.** 감사 스크립트 자체가 코드라서, 검사 대상의 종류(게임 패키지)가 새로 생기면 기존 규칙이 자동으로 따라가지 않는다 — D-079(§7 커버리지가 CoreKit 소스까지 잡던 문제)와 같은 뿌리다.

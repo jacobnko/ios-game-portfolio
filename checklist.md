@@ -269,7 +269,14 @@
   - [x] 테스트 63종, 커버리지 92.6% (솔버 97.5%)
   - [x] `audit.sh`가 게임 패키지도 검사하도록 확장 (7단계)
   - [x] 별도 저장소 생성 및 푸시 — `jacobnko/Chordline-ios-game` (private)
-- [ ] S3.2 그리드 렌더 + 드래그 연결
+- [x] S3.2 그리드 렌더 + 드래그 연결
+  - [x] `BoardLayout` — 좌표 ↔ 화면 변환, `ChordlineCore`에 순수 로직으로 (호스트 테스트 10개)
+  - [x] `NodeGlyph`/`LineTexture` → `Path`/`StrokeStyle` (텍스처는 D1 근사치 — D3 목업 나오면 재조정)
+  - [x] `GameplayBoardView` — `Canvas` 렌더 + `DragGesture`, `Sources/ChordlineUI/Views/`에 배치
+  - [x] `audit.sh` 7단계에 `GAME_DEVICE_ONLY`('UI/Views/') 추가 — `CoreKitUI/Screens` 예외와 같은 이유
+  - [ ] **검증은 Xcode Live Preview로** — 아직 실제 앱 프로젝트가 없다. 패키지를 Xcode에서 열고
+        `GameplayBoardPreview`를 Live/Interactive Preview로 돌려서 마우스로 드래그해본다.
+        점 잡기 → 잇기 → 되짚어 지우기 → 다른 선 가로질러 끊기 → 반대쪽 끝점에서 완성, 다섯 가지 다 확인
 - [ ] S3.3 승리 판정 + 피치/햅틱 상승 연결
 - [ ] S3.4 `VictorySequence` 적용
 - [ ] S3.5 광고 연결 (클리어 전면 · 힌트 보상형)
