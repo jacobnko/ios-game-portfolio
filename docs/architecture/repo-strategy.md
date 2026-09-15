@@ -10,6 +10,12 @@ github.com/jacobnko/<game-repo>          (게임별)   ← 게임마다 새로 �
    └─ Xcode 프로젝트 · 게임 로직 · 스테이지 데이터 · 에셋
 ```
 
+| 게임 | 저장소 | 로컬 경로 |
+|---|---|---|
+| Chordline | `jacobnko/Chordline-ios-game` (private) | `Apps/Chordline/` |
+
+저장소 이름은 코드네임과 정확히 같을 필요가 없다. 번들 ID와 폴더명이 코드네임을 따르면 충분하다.
+
 로컬 디스크에서는 게임이 `Apps/<Codename>/` 아래 놓이지만, 그 폴더는 이 저장소의 `.gitignore`가 막는다.
 즉 **한 폴더 안에 저장소 두 개가 겹쳐 있는 것이 아니라, 부모가 자식을 안 보는 구조**다.
 
