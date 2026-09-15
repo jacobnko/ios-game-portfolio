@@ -239,7 +239,13 @@
 - [x] `docs/design/01-chordline/` 폴더 + `00-brief.md` 작성 (게임 컨셉 확정값 반영)
 - [x] D1 카드 — Chordline 전용 프롬프트 완성, **J가 Claude Design(Opus)에서 실행해야 함**
 - [x] D2 카드 — 프롬프트 뼈대 완성, D1 결과값(hex·키워드) 채우는 자리만 남음
-- [ ] D1 실제 실행 → 팔레트 표 채우기 → `GameTheme.chordline`에 반영
+- [x] D1 실제 실행 → 팔레트 표 채우기 → `GameTheme.chordline`에 반영
+  - [x] 리드 6종(hex·글리프·텍스처) → `ChordlineCore/SignalLead.swift`
+  - [x] 코어 팔레트 · 메트릭 → `ChordlineUI/GameTheme+Chordline.swift`
+  - [x] `Color(hex:)` → `CoreKitUI/Color+Hex.swift` (D2 이후 모든 게임이 씀)
+  - [x] `palette-ledger.md` 1번 줄 + "2~10번이 피해야 할 것"
+  - [ ] Sora / JetBrains Mono `.ttf` 번들 → `ThemeTypography` 패밀리 채우기 (D-078)
+  - [ ] **생성기 색 수 > 팔레트 용량 충돌** — S3.7에서 결정 (D-076)
 - [ ] D2 실제 실행 → 아이콘 1024 마스터
 - [ ] D3 게임플레이 화면 (D1 완료 후)
 - [ ] D4 보조 화면
