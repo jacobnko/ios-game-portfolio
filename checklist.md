@@ -236,8 +236,15 @@
 ## Phase 3 — Game #1
 
 ### 디자인 트랙
-- [ ] D1 브랜드/팔레트
-- [ ] D2 앱 아이콘
+- [x] `docs/design/01-chordline/` 폴더 + `00-brief.md` 작성 (게임 컨셉 확정값 반영)
+- [x] D1 카드 — Chordline 전용 프롬프트 완성, **J가 Claude Design(Opus)에서 실행해야 함**
+- [x] D2 카드 — 프롬프트 뼈대 완성, D1 결과값(hex·키워드) 채우는 자리만 남음
+- [ ] D1 실제 실행 → 팔레트 표 채우기 → `GameTheme.chordline`에 반영
+- [ ] D2 실제 실행 → 아이콘 1024 마스터
+- [ ] D3 게임플레이 화면 (D1 완료 후)
+- [ ] D4 보조 화면
+- [ ] D5 Juice/VFX 스펙
+- [ ] D6 스토어 에셋
 - [ ] D3 게임플레이 화면
 - [ ] D4 보조 화면
 - [ ] D5 Juice/VFX 스펙
