@@ -227,6 +227,9 @@
 
 ### S2.3 코드네임 확정 게이트
 - [x] Phase 0에서 이미 확정 (`docs/concepts/game-concepts.md`)
+- [x] 10개 전부 프로그램적 재검증 — 번들 ID 중복 없음, 형식 일치, 금지 상표어(Wordle/Picross/Flappy/Flow) 미포함, 홈화면 12자 이하
+- [x] Chordline(게임 #1) US App Store 재확인 (2026-09-15) — 동일 이름 없음, 게이트 통과
+- [x] **Phase 2 전체 종료**
 
 ---
 

@@ -551,3 +551,16 @@ UNUserNotificationCenter, StoreKit, SwiftUI 뷰.
 ### D-065. `GameTheme`처럼 `StageDescriptor`도 최소 프로토콜로 남긴다
 - **결정.** `id`와 `displayNumber` 둘만 요구한다. 언락 규칙은 프로토콜 요구사항이 아니라 `StageSelectView`에 클로저로 주입한다.
 - **이유.** 게임마다 언락 규칙이 다르다(선형·별 개수·챕터). 프로토콜에 넣으면 규칙이 다른 게임이 억지로 맞춰야 한다.
+
+---
+
+## 2026-09-15 · S2.3 코드네임 확정 게이트 (Phase 2 종료)
+
+### D-066. 10개 코드네임을 프로그램적으로 재검증했다
+- **검증 항목.** 번들 ID 중복 없음, `com.jacobkostudio.<lowercase>` 형식 일치, 금지 상표어(Wordle/Picross/Flappy/Flow) 미포함, 홈화면 표시명 12자 이하.
+- **결과.** 10개 전부 통과. Phase 0에서 사람이 검토한 결정을 스크립트로 다시 확인한 것 — 사람 검토와 기계 검증을 이중화했다.
+- **게임 #1(Chordline) 재확인.** `check-name.sh`로 US 스토어 재조회, 동일 이름 없음. Phase 3에서 실제 Xcode 프로젝트 생성 직전 시점의 최신 상태를 확인해뒀다.
+
+### Phase 2 종료
+S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 게이트) 전부 완료.
+다음은 Phase 3 — 게임 #1 `Chordline`.
