@@ -133,8 +133,12 @@ for manifest in "$ROOT/Apps"/*/Package.swift; do
     GAME_XCTEST=$(find "$GAME_DIR/.build" -name "*PackageTests.xctest" 2>/dev/null | head -1)
     if [ -n "$GAME_PROF" ] && [ -n "$GAME_XCTEST" ]; then
         GAME_BIN="$GAME_XCTEST/Contents/MacOS/$(basename "$GAME_XCTEST" .xctest)"
+        # The trailing source path restricts the report to this game's own files.
+        # Without it a game that depends on CoreKit reports CoreKit's sources too,
+        # which read as 0% here because they are covered by CoreKit's tests in
+        # section 4, not by the game's.
         GAME_LOW=$(xcrun llvm-cov report "$GAME_BIN" -instr-profile "$GAME_PROF" \
-                     -ignore-filename-regex="Tests|\.build" 2>/dev/null \
+                     -ignore-filename-regex="Tests|\.build" "$GAME_DIR/Sources" 2>/dev/null \
           | sed 's|.*Sources/||' | awk -v floor="$COVERAGE_FLOOR" '
             NF > 5 && $1 !~ /^(Filename|-|TOTAL)/ { pct = $4; sub(/%/, "", pct); if (pct + 0 < floor) printf "%s %s\n", $1, pct }')
         if [ -n "$GAME_LOW" ]; then
