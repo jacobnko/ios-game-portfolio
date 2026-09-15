@@ -204,11 +204,29 @@
 - [ ] **J 기기 확인** — `docs/DEVICE-TEST.md` (60여 항목, 🔴 표시가 필수)
 
 ## Phase 2 — GameTemplate
-- [ ] 페이즈 종료 시 `./scripts/audit.sh` + `docs/AUDIT.md` §4 읽기 패스
-- [ ] 공통 화면 골격 (Home / Stage Select / Game / Result / Settings)
-- [ ] 광고 · 저장 · 분석 훅 지점 고정
-- [ ] `docs/architecture/new-game-setup.md`
-- [ ] 문서만으로 빈 게임 앱 30분 내 기동 검증
+
+### S2.1 공통 화면 골격
+- [x] `GameRoute` / `StageOutcome` — 5화면 라우팅 모델
+- [x] `StageDescriptor` 프로토콜 — 스테이지 데이터는 게임이 정의
+- [x] `GameFlowCoordinator` — 네비게이션 + 진행도·구매·광고·분석 연결
+- [x] `HomeView` / `StageSelectView` / `ResultView` / `SettingsView` — `CoreKitUI` 재사용 뷰 (A안)
+- [x] 로고·배너는 슬롯(ViewBuilder)으로 주입 — `CoreKitUI`가 `CoreKitAdsGoogle`에 의존하지 않음
+- [x] **전면 광고는 `completeStage`가 아니라 `advanceFromResult`에서만** — 승리 연출 보호
+- [x] `retryStage` — 실패 후 재시도, funnel에 새 attempt로 기록
+- [x] 저장 실패를 크래시 리포팅에 기록 (침묵 스월로우 방지)
+- [x] 동시 탭 가드 (`isAdvancing`) — 레이스로 스테이지 스킵되는 버그 재현 후 수정
+- [x] 단위 테스트 25종 추가 (누적 231종)
+- [x] `FlowLabView` — JuiceLab에 전체 흐름 데모 (Home→StageSelect→Game(stub)→Result)
+- [x] `./scripts/audit.sh` 6종 전부 통과
+- [x] 시뮬레이터 기동 확인 (스크린샷) — **UI 탭 진행은 MCP 차단으로 미검증**
+- [ ] **J 실기기에서 Flow 탭 전체 흐름 확인** (테스트 보류 중)
+
+### S2.2 새 게임 설정 문서
+- [x] `docs/architecture/new-game-setup.md` — 저장소 생성부터 5화면 배선까지
+- [ ] 실제 게임(Chordline)으로 30분 검증 (Phase 3에서)
+
+### S2.3 코드네임 확정 게이트
+- [x] Phase 0에서 이미 확정 (`docs/concepts/game-concepts.md`)
 
 ---
 

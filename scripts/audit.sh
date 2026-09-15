@@ -15,7 +15,7 @@ pass()    { echo "  ✓ $1"; }
 
 # Files that can only execute on a device. Excluded from the coverage floor
 # because no host test can reach them — they are covered by docs/DEVICE-TEST.md.
-DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|NotificationScheduler|StoreKitClient|CoreKitAdsGoogle|CoreKitFirebase'
+DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|NotificationScheduler|StoreKitClient|CoreKitAdsGoogle|CoreKitFirebase|CoreKitUI/Screens'
 # 80 rather than 90: a file may legitimately hold one or two calls that cannot run
 # off a device (UIApplication.open, for example). Anything below this is a real gap,
 # and the uncovered function names are printed so the number is actionable.

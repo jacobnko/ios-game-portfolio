@@ -521,3 +521,33 @@
 UNUserNotificationCenter, StoreKit, SwiftUI 뷰.
 **3차에 걸쳐 찾은 결함 15건이 정확히 이 영역에 몰려 있다.** 순수 로직 계층에서는 세 번 모두 새 결함이 0건이었다.
 남은 위험은 "더 읽어서" 줄일 수 있는 성질이 아니라, **실기기에서 실행해야만** 줄어든다.
+
+---
+
+## 2026-09-15 · S2.1 GameFlowCoordinator + 공통 화면
+
+### D-062. 공통 화면은 B안(템플릿 복사)이 아니라 A안(`CoreKitUI` 재사용 뷰)으로 간다
+- **결정.** Home/StageSelect/Result/Settings를 `CoreKitUI`에 SwiftUI 뷰로 만들고, 게임은 콜백과 데이터만 공급한다. `.game`(실제 플레이) 화면만 게임이 직접 짠다.
+- **이유.** B안(복사 템플릿)은 Apps/*와 같은 문제를 반복한다 — 복사된 순간 CoreKit 개선을 자동으로 못 받는다. Phase 0 원칙("두 번째 게임에서도 쓸 코드는 CoreKit으로")과 정면으로 어긋난다.
+- **경계.** `CoreKitUI`는 `CoreKitAdsGoogle`에 의존하지 않는다. 로고·배너는 `HomeView`의 `@ViewBuilder` 슬롯으로 주입되고, 실제 `AdBannerSlot`은 게임 앱 레벨에서 채운다. SDK 무관성을 유지하기 위한 경계다.
+
+### D-063. 전면 광고는 `completeStage`가 아니라 `advanceFromResult`에서만 시도한다
+- **결정.** 스테이지 완료 직후(`completeStage`)에는 광고 로직을 전혀 건드리지 않는다. 광고 페이싱 카운터만 갱신(`ads.recordStageClear()`)하고, 실제 전면 광고 시도는 플레이어가 Result 화면에서 "다음"을 눌러 `advanceFromResult`를 부를 때만 일어난다.
+- **이유.** 승리 연출(`victorySequence`)이 Result 화면에서 재생되는 그 순간이 `JuiceManager`가 만들어내는 유일한 카타르시스다. 그 위에 광고가 끼어들면 도파민 트리거를 정면으로 죽인다. "완료 즉시 광고 시도"가 훨씬 자연스러워 보이지만, 이 설계 원칙(§3.1)과 정면 충돌하기 때문에 의도적으로 갈라놨다.
+
+### D-064. `docs/AUDIT.md`의 읽기 패스가 새 코드에서 결함 2건을 잡았다 (B-16, B-17)
+
+**B-16. `advanceFromResult` 동시 호출 시 스테이지가 스킵됐다 (심각)**
+- **증상.** "다음" 버튼을 빠르게 두 번 탭하면 두 호출이 모두 `await ads.showInterstitialIfAllowed()`에서 동시에 대기하다가, 먼저 시작한 호출이 아니라 **나중에 끝난 호출이 `path`를 덮어써서** 플레이어가 의도한 스테이지가 아니라 그 다음 스테이지로 건너뛴다.
+- **분류.** `docs/AUDIT.md` 카탈로그 G(동시 진행 시 공유 상태가 섞인다) — Phase 1의 광고 continuation 버그(B-07)와 같은 부류다.
+- **검증 방법.** 고치기 전에 가드를 일부러 제거하고 테스트를 돌려 **실제로 실패하는 것**을 확인한 뒤 복원했다. `interstitialShowCount == 2`, `path`가 의도한 스테이지가 아닌 다음 다음 스테이지를 가리키는 것으로 재현됐다.
+- **수정.** `isAdvancing` 재진입 가드. 두 번째 호출은 즉시 무시된다.
+
+**B-17. 진행도 저장 실패를 `try?`로 조용히 삼켰다**
+- **증상.** `completeStage`가 `(try? progress.recordAttempt(...)) ?? StageProgress(...)`로, 저장이 실패해도 플레이어에게는 정상 클리어처럼 보이고 **아무 데도 기록되지 않는다.**
+- **분류.** `docs/architecture/analytics-events.md`(Phase 1 D-051)가 이미 "비치명적 에러도 기록한다"로 명시한 패턴을 정확히 위반했다. 문서가 있어도 새로 쓰는 코드에서 같은 실수가 재발할 수 있다는 사례다.
+- **수정.** `do/catch`로 바꾸고 `analytics.record(error, context:)`를 호출한다.
+
+### D-065. `GameTheme`처럼 `StageDescriptor`도 최소 프로토콜로 남긴다
+- **결정.** `id`와 `displayNumber` 둘만 요구한다. 언락 규칙은 프로토콜 요구사항이 아니라 `StageSelectView`에 클로저로 주입한다.
+- **이유.** 게임마다 언락 규칙이 다르다(선형·별 개수·챕터). 프로토콜에 넣으면 규칙이 다른 게임이 억지로 맞춰야 한다.

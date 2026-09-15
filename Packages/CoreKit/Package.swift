@@ -35,7 +35,7 @@ let package = Package(
     targets: [
         .target(name: "CoreKitJuice"),
         .target(name: "CoreKitData"),
-        .target(name: "CoreKitUI", dependencies: ["CoreKitJuice"], resources: [.process("Resources")]),
+        .target(name: "CoreKitUI", dependencies: ["CoreKitJuice", "CoreKitData", "CoreKitServices"], resources: [.process("Resources")]),
         .target(name: "CoreKitServices", dependencies: ["CoreKitData"]),
         .target(name: "CoreKitAdsGoogle", dependencies: [
             "CoreKitServices",

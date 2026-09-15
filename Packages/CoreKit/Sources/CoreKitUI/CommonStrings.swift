@@ -15,6 +15,7 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case close = "common.close"
     case cancel = "common.cancel"
     case back = "common.back"
+    case home = "common.home"
     case settings = "common.settings"
 
     case settingsSound = "settings.sound"
@@ -30,6 +31,7 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case resultStageCleared = "result.stageCleared"
     case resultBestTime = "result.bestTime"
     case resultNewRecord = "result.newRecord"
+    case resultStageFailed = "result.stageFailed"
 
     case hintTitle = "hint.title"
     case hintWatchAd = "hint.watchAd"
