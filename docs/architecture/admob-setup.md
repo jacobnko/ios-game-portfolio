@@ -13,7 +13,25 @@
 | `NSUserTrackingUsageDescription` | ATT 프롬프트 문구. 없으면 **프롬프트가 아예 안 뜬다** |
 | `SKAdNetworkItems` | AdMob 문서의 목록을 그대로 붙여넣는다. 없으면 기여도 추적이 안 된다 |
 
-`GADApplicationIdentifier`가 없으면 SDK가 **시작 시 크래시**한다.
+`GADApplicationIdentifier`가 없으면 SDK가 **시작 시 크래시**한다
+(`GADInvalidInitializationException`). 앱이 즉시 종료되므로 놓칠 수는 없지만, 원인은 엉뚱한 곳에 있다.
+
+### ⚠️ `INFOPLIST_KEY_GADApplicationIdentifier`는 동작하지 않는다
+
+Xcode의 `GENERATE_INFOPLIST_FILE` + `INFOPLIST_KEY_*` 방식은 **Apple이 정한 키 목록에만** 적용된다.
+`NSUserTrackingUsageDescription`은 그 목록에 있어서 들어가지만, `GADApplicationIdentifier`는 **없다.**
+빌드 설정에 써도 **경고 없이 조용히 버려지고**, 앱은 실행 즉시 위 예외로 죽는다.
+
+실제로 이 저장소의 하네스가 그 상태였고, 시뮬레이터에서 **실행해 보고 나서야** 발견했다.
+빌드도 테스트도 전부 통과했었다.
+
+**대응.** 실제 `Info.plist` 파일을 쓴다. XcodeGen이라면 `GENERATE_INFOPLIST_FILE: NO`로 두고
+타겟에 `info: path/properties`를 선언한다 (`Tools/JuiceLab/project.yml` 참조).
+
+**검증 방법.** 빌드 산출물의 plist를 직접 확인한다. 이것이 유일하게 확실한 확인이다.
+```bash
+plutil -extract GADApplicationIdentifier raw <App>.app/Info.plist
+```
 
 ### 앱 시작
 ```swift

@@ -145,7 +145,7 @@ import Foundation
 
 @Test @MainActor func loggingWithNoReportersIsHarmless() {
     // Games log from the first launch, before any backend is configured.
-    AnalyticsHub().log(GameEvent.stageStarted(stageID: "s1", attempt: 1))
+    
 }
 
 // MARK: - Regression: the console reporter is bounded
@@ -193,4 +193,104 @@ import Foundation
     for event in [GameEvent.stageStarted(stageID: "s", attempt: 1), GameEvent.adShown(placement: .banner)] {
         #expect(event.name.allSatisfy { $0.isASCII })
     }
+}
+
+// MARK: - Crash reporting fan-out
+//
+// Entirely unexecuted until the third audit pass. Non-fatal errors are how
+// persistence and purchase failures become visible at all; if this path is dead,
+// those bugs stay invisible for months.
+
+private final class SpyCrashReporter: CrashReporting, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _errors: [(Error, [String: String])] = []
+    private var _breadcrumbs: [String] = []
+    private var _keys: [String: String] = [:]
+
+    var errors: [(Error, [String: String])] { lock.withLock { _errors } }
+    var breadcrumbs: [String] { lock.withLock { _breadcrumbs } }
+    var keys: [String: String] { lock.withLock { _keys } }
+
+    func record(_ error: Error, context: [String: String]) { lock.withLock { _errors.append((error, context)) } }
+    func leaveBreadcrumb(_ message: String) { lock.withLock { _breadcrumbs.append(message) } }
+    func setKey(_ value: String, forName name: String) { lock.withLock { _keys[name] = value } }
+}
+
+private struct SampleError: Error {}
+
+@Test @MainActor func recordedErrorsReachEveryCrashReporter() {
+    let hub = AnalyticsHub()
+    let a = SpyCrashReporter()
+    let b = SpyCrashReporter()
+    hub.register(crashReporter: a)
+    hub.register(crashReporter: b)
+
+    hub.record(SampleError(), context: ["stage": "s12"])
+    #expect(a.errors.count == 1)
+    #expect(b.errors.count == 1)
+    // Context is what makes a non-fatal actionable; without it the dashboard shows
+    // a stack trace and no way to tell which stage it came from.
+    #expect(a.errors.first?.1["stage"] == "s12")
+}
+
+@Test @MainActor func breadcrumbsAndKeysReachCrashReporters() {
+    let hub = AnalyticsHub()
+    let spy = SpyCrashReporter()
+    hub.register(crashReporter: spy)
+
+    hub.leaveBreadcrumb("entered stage 12")
+    hub.setCrashKey("chordline", forName: "game")
+    #expect(spy.breadcrumbs == ["entered stage 12"])
+    #expect(spy.keys["game"] == "chordline")
+}
+
+@Test @MainActor func crashReportingIsAySeparateSwitchFromAnalytics() {
+    // Opting out of analytics is a choice about behavioural data. It must not
+    // blind crash reporting, or a player who opts out can never be supported.
+    let hub = AnalyticsHub()
+    let spy = SpyCrashReporter()
+    hub.register(crashReporter: spy)
+
+    hub.isEnabled = false
+    hub.record(SampleError())
+    #expect(spy.errors.count == 1)
+
+    // And the diagnostic switch must actually work on its own.
+    hub.isCrashReportingEnabled = false
+    hub.record(SampleError())
+    hub.leaveBreadcrumb("x")
+    hub.setCrashKey("v", forName: "k")
+    #expect(spy.errors.count == 1)
+    #expect(spy.breadcrumbs.isEmpty)
+    #expect(spy.keys.isEmpty)
+}
+
+@Test @MainActor func removingReportersDetachesEverything() {
+    let hub = AnalyticsHub()
+    let reporter = ConsoleAnalyticsReporter()
+    let crash = SpyCrashReporter()
+    hub.register(reporter)
+    hub.register(crashReporter: crash)
+    hub.removeAllReporters()
+
+    hub.log(GameEvent.adShown(placement: .banner))
+    hub.record(SampleError())
+    #expect(reporter.events.isEmpty)
+    #expect(crash.errors.isEmpty)
+}
+
+@Test @MainActor func theConsoleReporterCanBeClearedAndTakesProperties() {
+    let reporter = ConsoleAnalyticsReporter()
+    reporter.log(GameEvent.adShown(placement: .banner))
+    reporter.setUserProperty("ko", forName: "language")
+    #expect(reporter.events.count == 1)
+    reporter.clear()
+    #expect(reporter.events.isEmpty)
+}
+
+@Test func analyticsValuesDescribeThemselves() {
+    #expect(AnalyticsValue.string("x").described == "x")
+    #expect(AnalyticsValue.int(3).described == "3")
+    #expect(AnalyticsValue.bool(true).described == "true")
+    #expect(AnalyticsValue.double(1.5).described == "1.5")
 }

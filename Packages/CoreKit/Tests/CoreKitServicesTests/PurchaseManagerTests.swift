@@ -175,3 +175,85 @@ private func makeManager(_ client: FakeStoreClient) -> PurchaseManager {
     #expect(manager.adsRemoved)
     #expect(manager.removeAdsProduct == nil)
 }
+
+// MARK: - The updates listener
+//
+// Never executed by any test until the third audit pass, despite being the path
+// that delivers Ask to Buy approvals, purchases made on another device, and
+// payments that completed after being interrupted. If it is broken the player
+// pays and nothing happens, which is the worst outcome this file can produce.
+
+/// Waits for a condition, so an async listener can be observed without sleeping blindly.
+@MainActor
+private func eventually(_ condition: () -> Bool) async -> Bool {
+    for _ in 0..<200 {
+        if condition() { return true }
+        await Task.yield()
+    }
+    return condition()
+}
+
+@Test @MainActor func startPicksUpEntitlementsAlreadyOwned() async {
+    let client = FakeStoreClient(entitlements: [removeAdsID])
+    let manager = makeManager(client)
+
+    manager.start()
+    #expect(await eventually { manager.adsRemoved })
+    manager.stop()
+}
+
+@Test @MainActor func anEntitlementArrivingLaterIsPickedUp() async {
+    // Ask to Buy: the parent approves minutes after the child tapped Buy. Nothing
+    // in the app asked for this; it arrives through the updates stream.
+    let client = FakeStoreClient()
+    let manager = makeManager(client)
+    manager.start()
+    #expect(await eventually { manager.removeAdsProduct != nil })
+    #expect(manager.adsRemoved == false)
+
+    client.setEntitlements([removeAdsID])
+    #expect(await eventually { manager.adsRemoved })
+    manager.stop()
+}
+
+@Test @MainActor func aRevokedEntitlementArrivingLaterRestoresAds() async {
+    let client = FakeStoreClient(entitlements: [removeAdsID])
+    let manager = makeManager(client)
+    manager.start()
+    #expect(await eventually { manager.adsRemoved })
+
+    client.setEntitlements([])
+    #expect(await eventually { manager.adsRemoved == false })
+    manager.stop()
+}
+
+@Test @MainActor func stoppingEndsTheSubscription() async {
+    let client = FakeStoreClient()
+    let manager = makeManager(client)
+    manager.start()
+    #expect(await eventually { manager.removeAdsProduct != nil })
+
+    manager.stop()
+    client.setEntitlements([removeAdsID])
+    // Not observed any more, so the flag must not move on its own.
+    for _ in 0..<50 { await Task.yield() }
+    #expect(manager.adsRemoved == false)
+}
+
+@Test @MainActor func startingTwiceDoesNotStackListeners() async {
+    let client = FakeStoreClient()
+    let manager = makeManager(client)
+    manager.start()
+    manager.start()
+    client.setEntitlements([removeAdsID])
+    #expect(await eventually { manager.adsRemoved })
+    manager.stop()
+}
+
+@Test func theProductIDComesFromTheBundleByDefault() {
+    // Guards the convention itself: a game that forgets to pass an id must still
+    // end up asking the App Store for its own product, not a placeholder.
+    let bundle = Bundle(for: FakeStoreClient.self)
+    let derived = ProductID.removeAds(for: bundle)
+    #expect(derived.hasSuffix(".removeads"))
+}

@@ -42,9 +42,24 @@ public enum LanguageSettings {
     /// Language the app is actually rendering in.
     public static var current: SupportedLanguage? {
         guard let identifier = Bundle.main.preferredLocalizations.first else { return nil }
-        return SupportedLanguage(rawValue: identifier)
-            ?? SupportedLanguage.allCases.first { $0.rawValue.hasPrefix(identifier) }
-            ?? SupportedLanguage.allCases.first { identifier.hasPrefix($0.rawValue.prefix(2)) }
+        return language(matching: identifier)
+    }
+
+    /// Maps a BCP-47 identifier onto a shipped language.
+    ///
+    /// Split out from `current` so it can be tested. It reads as three lines but
+    /// covers three different shapes of input — an exact tag, a bare language for a
+    /// regional variant we ship (`es` → `es-MX`), and a regional variant of a bare
+    /// language we ship (`en-GB` → `en`) — and getting any of them wrong silently
+    /// falls back to English for a whole market.
+    static func language(matching identifier: String) -> SupportedLanguage? {
+        guard !identifier.isEmpty else { return nil }
+        if let exact = SupportedLanguage(rawValue: identifier) { return exact }
+        if let regional = SupportedLanguage.allCases.first(where: { $0.rawValue.hasPrefix(identifier + "-") }) {
+            return regional
+        }
+        let base = identifier.prefix(while: { $0 != "-" })
+        return SupportedLanguage.allCases.first { $0.rawValue.prefix(while: { $0 != "-" }) == base }
     }
 
     /// Opens this app's own page in Settings, where the language picker lives.

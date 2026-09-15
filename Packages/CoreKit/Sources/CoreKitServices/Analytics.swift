@@ -28,8 +28,16 @@ public protocol CrashReporting: AnyObject, Sendable {
 public final class AnalyticsHub {
     public static let shared = AnalyticsHub()
 
-    /// Turned off entirely when the player opts out.
+    /// Behavioural analytics. Off when the player opts out of data collection.
     public var isEnabled: Bool = true
+
+    /// Crash and non-fatal reporting, kept separate from analytics on purpose.
+    ///
+    /// Opting out of analytics is a choice about behavioural tracking; it is not a
+    /// request to stop diagnosing crashes, and honouring it that way would leave a
+    /// player who opted out impossible to support. Games that want one combined
+    /// switch set both. The App Privacy label must disclose both regardless.
+    public var isCrashReportingEnabled: Bool = true
 
     private var reporters: [AnalyticsReporting] = []
     private var crashReporters: [CrashReporting] = []
@@ -64,14 +72,17 @@ public final class AnalyticsHub {
     /// Silent `try?` is how persistence and purchase bugs stay invisible for months.
     /// Failures that are survivable still need to be visible.
     public func record(_ error: Error, context: [String: String] = [:]) {
+        guard isCrashReportingEnabled else { return }
         crashReporters.forEach { $0.record(error, context: context) }
     }
 
     public func leaveBreadcrumb(_ message: String) {
+        guard isCrashReportingEnabled else { return }
         crashReporters.forEach { $0.leaveBreadcrumb(message) }
     }
 
     public func setCrashKey(_ value: String, forName name: String) {
+        guard isCrashReportingEnabled else { return }
         crashReporters.forEach { $0.setKey(value, forName: name) }
     }
 }

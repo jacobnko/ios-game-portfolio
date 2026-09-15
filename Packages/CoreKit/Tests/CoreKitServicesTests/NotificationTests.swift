@@ -196,3 +196,19 @@ private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int = 12) -> Da
         #expect(item.id.hasPrefix(NotificationPlanner.identifierPrefix), "\(item.id) is not namespaced")
     }
 }
+
+@Test func aNonWrappingQuietWindowAlsoWorks() {
+    // The wrapping case (21:00–09:00) was covered; this branch never ran. A game
+    // choosing a daytime quiet window would have been relying on untested code.
+    let policy = NotificationPolicy(quietStartHour: 1, quietEndHour: 5)
+    #expect(policy.isQuiet(hour: 0) == false)
+    #expect(policy.isQuiet(hour: 1))
+    #expect(policy.isQuiet(hour: 4))
+    #expect(policy.isQuiet(hour: 5) == false)
+    #expect(policy.isQuiet(hour: 23) == false)
+}
+
+@Test func anEmptyQuietWindowSilencesNothing() {
+    let policy = NotificationPolicy(quietStartHour: 9, quietEndHour: 9)
+    #expect((0...23).allSatisfy { policy.isQuiet(hour: $0) == false })
+}

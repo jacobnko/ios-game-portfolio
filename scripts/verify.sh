@@ -53,5 +53,21 @@ if [ "${VERIFY_FIREBASE:-0}" = "1" ]; then
     | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED" || true
 fi
 
+# A build that succeeds can still ship a plist missing keys the SDKs require —
+# Xcode drops unknown INFOPLIST_KEY_* settings without a word, and the app then
+# dies on launch. Checking the product is the only way to know.
+LAB_PLIST="$DD-lab/Build/Products/Debug-iphoneos/JuiceLab.app/Info.plist"
+if [ -f "$LAB_PLIST" ]; then
+  echo
+  echo "=== Info.plist required keys ==="
+  for key in GADApplicationIdentifier NSUserTrackingUsageDescription; do
+    if plutil -extract "$key" raw "$LAB_PLIST" >/dev/null 2>&1; then
+      echo "  ok      $key"
+    else
+      echo "  MISSING $key"
+    fi
+  done
+fi
+
 echo
 echo "done."

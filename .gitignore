@@ -20,6 +20,7 @@ build/
 
 # XcodeGen output — regenerate with `xcodegen generate`, never edit by hand
 Tools/*/*.xcodeproj
+Tools/*/Info.plist
 
 # Swift Package Manager
 .build/

@@ -197,3 +197,9 @@ func everyScaleBeginsOnTheRoot(scale: MusicalScale) {
     #expect(ToneRecipe.make(for: .milestone, stepIndex: 0) == ToneRecipe.make(for: .milestone, stepIndex: 40))
     #expect(ToneRecipe.make(for: .error, stepIndex: 0) == ToneRecipe.make(for: .error, stepIndex: 40))
 }
+
+@Test func theStepConvenienceMatchesTheExplicitToneCall() {
+    let step = JuiceStep(index: 4, weight: .micro)
+    #expect(ToneRecipe.make(for: step) == ToneRecipe.make(for: .micro, stepIndex: 4))
+    #expect(ToneRecipe.make(for: step, scale: .major) == ToneRecipe.make(for: .micro, stepIndex: 4, scale: .major))
+}

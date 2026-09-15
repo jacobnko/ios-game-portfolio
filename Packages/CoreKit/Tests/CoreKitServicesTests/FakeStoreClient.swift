@@ -24,8 +24,11 @@ final class FakeStoreClient: StoreClient, @unchecked Sendable {
     }
 
     func setEntitlements(_ ids: Set<String>) {
-        lock.withLock { entitlements = ids }
-        continuation?.yield(ids)
+        let sink = lock.withLock { () -> AsyncStream<Set<String>>.Continuation? in
+            entitlements = ids
+            return continuation
+        }
+        sink?.yield(ids)
     }
 
     // MARK: - StoreClient
@@ -59,7 +62,7 @@ final class FakeStoreClient: StoreClient, @unchecked Sendable {
 
     func entitlementUpdates() -> AsyncStream<Set<String>> {
         AsyncStream { continuation in
-            self.continuation = continuation
+            lock.withLock { self.continuation = continuation }
         }
     }
 }

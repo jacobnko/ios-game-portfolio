@@ -149,3 +149,90 @@ private struct Catalog {
     a.metrics.cornerRadius = 30
     #expect(a != b)
 }
+
+// MARK: - Language matching
+//
+// Untouched by any test until the third audit pass. A wrong match here silently
+// serves English to an entire market, and nothing about it would ever throw.
+
+@Test func exactLanguageTagsMatch() {
+    #expect(LanguageSettings.language(matching: "en") == .english)
+    #expect(LanguageSettings.language(matching: "ko") == .korean)
+    #expect(LanguageSettings.language(matching: "es-MX") == .spanish)
+    #expect(LanguageSettings.language(matching: "pt-BR") == .portuguese)
+}
+
+@Test func aBareLanguageFindsTheRegionalVariantWeShip() {
+    // The device reports "es"; we ship "es-MX".
+    #expect(LanguageSettings.language(matching: "es") == .spanish)
+    #expect(LanguageSettings.language(matching: "pt") == .portuguese)
+}
+
+@Test func aRegionalVariantFindsTheBaseLanguageWeShip() {
+    // The device reports "en-GB"; we ship "en".
+    #expect(LanguageSettings.language(matching: "en-GB") == .english)
+    #expect(LanguageSettings.language(matching: "ko-KR") == .korean)
+    #expect(LanguageSettings.language(matching: "de-AT") == .german)
+    #expect(LanguageSettings.language(matching: "fr-CA") == .french)
+    #expect(LanguageSettings.language(matching: "ja-JP") == .japanese)
+}
+
+@Test func otherRegionsOfAShippedLanguageStillMatch() {
+    // Spain and Portugal fall back to the Latin American and Brazilian catalogs
+    // rather than to English, which is much closer to right.
+    #expect(LanguageSettings.language(matching: "es-ES") == .spanish)
+    #expect(LanguageSettings.language(matching: "pt-PT") == .portuguese)
+    #expect(LanguageSettings.language(matching: "es-419") == .spanish)
+}
+
+@Test func unshippedLanguagesMatchNothing() {
+    // Must be nil, not a wrong guess: Chinese and Russian are deliberately excluded.
+    #expect(LanguageSettings.language(matching: "zh-Hans") == nil)
+    #expect(LanguageSettings.language(matching: "ru") == nil)
+    #expect(LanguageSettings.language(matching: "it") == nil)
+}
+
+@Test func malformedIdentifiersMatchNothing() {
+    #expect(LanguageSettings.language(matching: "") == nil)
+    #expect(LanguageSettings.language(matching: "-") == nil)
+    #expect(LanguageSettings.language(matching: "e") == nil)
+}
+
+// MARK: - Theme values that had never been evaluated
+
+@Test func typographyProducesEveryRole() {
+    let typography = ThemeTypography(displaySize: 40, titleSize: 20, bodySize: 14)
+    #expect(typography.display != typography.body)
+    #expect(typography.title != typography.body)
+    #expect(typography.numeric != typography.body)
+}
+
+@Test func customFontFamiliesAreUsedWhenSupplied() {
+    let system = ThemeTypography()
+    let custom = ThemeTypography(displayFamily: "Georgia", bodyFamily: "Menlo")
+    #expect(custom.display != system.display)
+    #expect(custom.body != system.body)
+}
+
+@Test func aSingleColourResolvesTheSameInBothAppearances() {
+    let color = ThemeColor(.red)
+    #expect(color.resolved(for: .light) == color.resolved(for: .dark))
+}
+
+@Test func theEnvironmentCarriesTheTheme() {
+    var environment = EnvironmentValues()
+    #expect(environment.gameTheme == .placeholder)
+    var custom = GameTheme.placeholder
+    custom.metrics.cornerRadius = 28
+    environment.gameTheme = custom
+    #expect(environment.gameTheme.metrics.cornerRadius == 28)
+}
+
+@Test func sharedStringsResolveWithoutCrashing() {
+    // On the host these return the key itself because SwiftPM does not compile
+    // String Catalogs. The point here is only that the lookup path is exercised.
+    for key in CommonStrings.allCases {
+        #expect(key.text.isEmpty == false)
+        _ = key.resource
+    }
+}
