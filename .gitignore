@@ -59,3 +59,8 @@ Apps/*
 docs/design/**/assets/*.psd
 docs/design/**/assets/*.sketch
 *.fig
+
+# Per-game design handoff folders — same leak risk as docs/concepts/: briefs
+# name the unreleased brand and describe the core mechanic in plain language.
+# The template stays tracked; every numbered game folder does not.
+docs/design/[0-9]*/
