@@ -21,18 +21,18 @@ DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|No
 # and the uncovered function names are printed so the number is actionable.
 COVERAGE_FLOOR=80
 
-section "1/6  Build, tests, product checks"
+section "1/7  Build, tests, product checks"
 "$ROOT/scripts/verify.sh" 2>&1 | grep -E "Test run|BUILD|MISSING|ok " | sed 's/^/  /'
 "$ROOT/scripts/verify.sh" 2>&1 | grep -q "BUILD FAILED" && fail "a build failed" || pass "builds and tests"
 
-section "2/6  Warnings treated as errors"
+section "2/7  Warnings treated as errors"
 if swift build --package-path "$PKG" -Xswiftc -warnings-as-errors 2>&1 | grep -q "error:"; then
     fail "warnings present"
 else
     pass "no warnings"
 fi
 
-section "3/6  Static analyser"
+section "3/7  Static analyser"
 if ( cd "$PKG" && xcodebuild analyze -scheme CoreKit-Package -destination 'generic/platform=iOS' \
         -derivedDataPath "${TMPDIR:-/tmp}/ck-analyze" 2>&1 | grep -q "ANALYZE SUCCEEDED" ); then
     pass "analyze succeeded"
@@ -40,7 +40,7 @@ else
     fail "analyze failed"
 fi
 
-section "4/6  Coverage floor (${COVERAGE_FLOOR}% on host-testable code)"
+section "4/7  Coverage floor (${COVERAGE_FLOOR}% on host-testable code)"
 swift test --package-path "$PKG" --enable-code-coverage >/dev/null 2>&1
 PROF=$(find "$PKG/.build" -name "*.profdata" | head -1)
 BIN=$(find "$PKG/.build" -name "CoreKitPackageTests.xctest" | head -1)/Contents/MacOS/CoreKitPackageTests
@@ -67,7 +67,7 @@ else
     fail "could not read coverage data"
 fi
 
-section "5/6  Test suite audit"
+section "5/7  Test suite audit"
 python3 - "$PKG" <<'PY'
 import pathlib, re, sys
 root = pathlib.Path(sys.argv[1]) / "Tests"
@@ -95,15 +95,63 @@ sys.exit(1 if issues else 0)
 PY
 if [ $? -eq 0 ]; then pass "no weak assertions"; else fail "weak tests found"; fi
 
-section "6/6  Hazard patterns"
+section "6/7  Hazard patterns"
+HAZARD_ROOTS=("$ROOT/Packages"/*/Sources/)
+for gameSources in "$ROOT/Apps"/*/Sources/; do
+    [ -d "$gameSources" ] && HAZARD_ROOTS+=("$gameSources")
+done
 HAZARDS=$(grep -rnE 'try!|fatalError|as!|UIScreen\.main|DispatchQueue|assumeIsolated|removeAllPendingNotificationRequests' \
-    --include="*.swift" "$ROOT/Packages"/*/Sources/ 2>/dev/null | grep -v '^\s*//' | grep -vE '^\S+:\s*[0-9]+:\s*//')
+    --include="*.swift" "${HAZARD_ROOTS[@]}" 2>/dev/null | grep -v '^\s*//' | grep -vE '^\S+:\s*[0-9]+:\s*//')
 if [ -n "$HAZARDS" ]; then
     echo "$HAZARDS" | sed 's/^/  ✗ /' | cut -c1-140
     fail "hazard patterns present"
 else
     pass "none"
 fi
+
+section "7/7  Game packages"
+# Games live in their own repositories (docs/architecture/repo-strategy.md), but
+# their logic is where the puzzle rules live — it gets the same treatment as
+# CoreKit rather than being audited by eye.
+GAME_COUNT=0
+for manifest in "$ROOT/Apps"/*/Package.swift; do
+    [ -f "$manifest" ] || continue
+    GAME_DIR="$(dirname "$manifest")"
+    GAME_NAME="$(basename "$GAME_DIR")"
+    GAME_COUNT=$((GAME_COUNT + 1))
+
+    GAME_TESTS=$(swift test --package-path "$GAME_DIR" --enable-code-coverage 2>&1)
+    if echo "$GAME_TESTS" | grep -q "Test run with .* passed"; then
+        pass "$GAME_NAME — $(echo "$GAME_TESTS" | grep -o 'Test run with [0-9]* tests' | tail -1)"
+    else
+        fail "$GAME_NAME tests failed"
+        echo "$GAME_TESTS" | grep -E "error:|recorded an issue" | head -5 | sed 's/^/      /'
+        continue
+    fi
+
+    GAME_PROF=$(find "$GAME_DIR/.build" -name "*.profdata" 2>/dev/null | head -1)
+    GAME_XCTEST=$(find "$GAME_DIR/.build" -name "*PackageTests.xctest" 2>/dev/null | head -1)
+    if [ -n "$GAME_PROF" ] && [ -n "$GAME_XCTEST" ]; then
+        GAME_BIN="$GAME_XCTEST/Contents/MacOS/$(basename "$GAME_XCTEST" .xctest)"
+        GAME_LOW=$(xcrun llvm-cov report "$GAME_BIN" -instr-profile "$GAME_PROF" \
+                     -ignore-filename-regex="Tests|\.build" 2>/dev/null \
+          | sed 's|.*Sources/||' | awk -v floor="$COVERAGE_FLOOR" '
+            NF > 5 && $1 !~ /^(Filename|-|TOTAL)/ { pct = $4; sub(/%/, "", pct); if (pct + 0 < floor) printf "%s %s\n", $1, pct }')
+        if [ -n "$GAME_LOW" ]; then
+            echo "$GAME_LOW" | sed 's/^/    x /'
+            fail "$GAME_NAME below the coverage floor"
+        else
+            echo "    ok  coverage at or above ${COVERAGE_FLOOR}%"
+        fi
+    fi
+
+    if python3 "$ROOT/scripts/lib-test-audit.py" "$GAME_DIR"; then
+        echo "    ok  no weak assertions"
+    else
+        fail "$GAME_NAME has weak tests"
+    fi
+done
+if [ "$GAME_COUNT" -eq 0 ]; then echo "  (none yet)"; fi
 
 echo
 if [ "$FAILURES" -eq 0 ]; then
