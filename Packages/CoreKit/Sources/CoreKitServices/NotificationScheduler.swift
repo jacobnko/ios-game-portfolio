@@ -131,6 +131,34 @@ public final class NotificationScheduler {
     /// Async because the pending list has to be read first. Doing that on a
     /// completion handler and returning immediately would let the cancellation land
     /// *after* the following schedule and delete the notifications it just made.
+    #if DEBUG
+    /// Fires one notification shortly, so delivery can actually be observed.
+    ///
+    /// The real ladder starts a day out, which makes delivery impossible to verify
+    /// inside a testing session — and "it was scheduled" is not the same claim as
+    /// "it arrived, with the right words, and did not arrive during quiet hours".
+    /// Debug builds only; it has no place in a shipping game.
+    public func fireTestNotification(after seconds: TimeInterval = 10, theme: NotificationTheme = .progress) async -> Bool {
+        #if os(iOS)
+        guard await isAuthorized() else { return false }
+        let copy = copyProvider.copy(for: theme, index: 0)
+        let content = UNMutableNotificationContent()
+        content.title = copy.title
+        content.body = copy.body
+        content.sound = .default
+        let request = UNNotificationRequest(
+            identifier: NotificationPlanner.identifierPrefix + "debug",
+            content: content,
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: max(1, seconds), repeats: false)
+        )
+        try? await UNUserNotificationCenter.current().add(request)
+        return true
+        #else
+        return false
+        #endif
+    }
+    #endif
+
     public func cancelAll() async {
         #if os(iOS)
         let center = UNUserNotificationCenter.current()

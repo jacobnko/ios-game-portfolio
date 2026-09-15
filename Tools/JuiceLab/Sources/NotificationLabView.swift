@@ -108,6 +108,12 @@ struct NotificationLabView: View {
                 Button("Schedule for real") {
                     Task { scheduledCount = await scheduler.refresh(lastPlayed: lastPlayed, streakExpiresAt: hasStreak ? Date().addingTimeInterval(8 * 3600) : nil).count }
                 }
+                Button("Fire a test notification in 10s") {
+                    Task {
+                        let ok = await scheduler.fireTestNotification(after: 10)
+                        scheduledCount = ok ? scheduledCount + 1 : scheduledCount
+                    }
+                }
                 Button("Cancel all", role: .destructive) {
                     Task {
                         await scheduler.cancelAll()

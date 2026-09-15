@@ -201,7 +201,7 @@
 - [x] `verify.sh`가 산출물 Info.plist 필수 키 검사
 - [x] Sendable 경고 0
 - [x] `verify.sh` + `VERIFY_FIREBASE=1` 전부 통과
-- [ ] **J 기기 확인 28항목** — Phase 2 진행과 병행 가능
+- [ ] **J 기기 확인** — `docs/DEVICE-TEST.md` (60여 항목, 🔴 표시가 필수)
 
 ## Phase 2 — GameTemplate
 - [ ] 공통 화면 골격 (Home / Stage Select / Game / Result / Settings)
