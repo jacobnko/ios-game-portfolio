@@ -662,3 +662,14 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **증상.** `GameplayBoardView`(그리드 렌더 + `DragGesture`)를 추가하자 §7이 0%로 잡아 하한 미달로 떨어졌다. `GraphicsContext`는 공개 이니셜라이저가 없어서 그리기 함수를 테스트에서 직접 부를 방법이 없다 — CoreKit의 `Screens/`가 같은 이유로 이미 예외 처리돼 있던 것과 정확히 같은 상황인데, §7(게임 패키지)의 커버리지 검사에는 그 예외가 없었다.
 - **수정.** `Sources/<Game>UI/Views/`를 만들어 그 화면 파일을 옮기고, `audit.sh`에 `GAME_DEVICE_ONLY='UI/Views/'`를 추가해 §7에도 같은 처리를 넣었다. **좌표 변환·경로/스타일 계산은 그 폴더 밖에 남긴다** — `BoardLayout`(순수 좌표 수학, `ChordlineCore`)과 `NodeGlyph`/`LineTexture`의 `Path`/`StrokeStyle` 변환(값만 만들고 그리지 않음, `ChordlineUI` 루트)은 전부 하한 검사를 그대로 받는다. 이 구분을 `docs/architecture/new-game-setup.md` §5.1에 게임 #2부터 따라야 할 규칙으로 적어뒀다.
 - **일반화.** 감사 스크립트 자체가 코드라서, 검사 대상의 종류(게임 패키지)가 새로 생기면 기존 규칙이 자동으로 따라가지 않는다 — D-079(§7 커버리지가 CoreKit 소스까지 잡던 문제)와 같은 뿌리다.
+
+### D-083. S3.3 계획 — 승리 판정 + 피치/햅틱 상승 연결
+- **범위.** 두 가지. (1) 한 칸 그릴 때마다 피치/햅틱이 올라가는 연결, (2) 색 완성·전체 완성을 감지해 juice 이벤트로 잇는 것. 실제 승리 연출(파티클·화면 흔들림)은 S3.4 `VictorySequence`의 몫 — 여기서는 `onSolved` 콜백만 노출한다.
+- **`JuiceSequence`를 쓰지 않는다.** `JuiceLab/AudioLabView.swift`가 보여주는 표준 패턴은 `JuiceSequence.advance(at:)`로 시간 기반 리셋을 쓰는 것이지만, 그건 자체적인 카운트가 없는 액션(반복 탭 등)을 위한 장치다. Chordline은 이미 `BoardState.activePathLength`가 정확한 진행 칸 수를 들고 있어서 — 손을 멈춰도 값이 안 변한다 — 시간 기반으로 다시 세면 **드래그 중 잠깐 멈췄다가 이어그리면 피치가 리셋되는 오류**가 생긴다. 도메인에 이미 있는 값을 시간 추정으로 덮어쓰지 않는다.
+- **되짚기(retrace)도 피치가 내려간다.** 디자인 브리프는 "이을 때마다 올라간다"만 말하지만, `BoardState`의 되짚기는 일급 동작(되돌리기 버튼이 없는 이유)이라 반대 방향 피드백도 자연스럽다. `activePathLength`를 그대로 스텝 인덱스로 쓰면 이 대칭이 공짜로 나온다.
+- **로직은 순수하게, 재생은 View에.** "이전/이후 상태를 비교해서 어떤 `JuiceStep`을 낼지"는 순수 함수(`BoardJuicePlanner`, `ChordlineUI` 루트)로 빼서 호스트 테스트를 받는다. `HapticEngine.shared.play`/`PitchedTonePlayer.shared.play` 호출 자체는 기기 전용이라 `Views/`에만 남는다 — S3.2에서 세운 구분을 그대로 따른다.
+
+### D-084. S3.3 완료 — 순수 로직/기기 전용 경계가 그대로 유지됐다
+- **`BoardJuicePlanner`가 `CoreKitJuice`의 진짜 어휘(`JuiceStep`/`FeedbackWeight`)를 그대로 쓴다.** 별도 열거형을 만들어 나중에 `View`에서 변환하는 방법도 있었지만, 그건 이미 있는 공용 어휘를 게임마다 재발명하는 셈이다. `ChordlineUI`에 `CoreKitJuice`를 직접 의존성으로 추가했다 — `CoreKitUI`를 통해 간접적으로 들어와 있던 걸 명시적으로 꺼냈을 뿐, 새 빌드 비용은 없다.
+- **`HapticEngine`/`PitchedTonePlayer` 호출은 여전히 `Views/`에만 있다.** S3.2에서 세운 구분(순수 계산 vs 기기 호출)이 S3.3에서도 그대로 성립했다 — 테스트 12개가 전부 `BoardJuicePlanner`의 순수 함수만 겨냥하고, `Views/GameplayBoardView.swift`는 그 결과를 재생만 한다.
+- **통합 테스트로 단위 테스트의 전제를 다시 확인했다.** `BoardJuicePlannerTests`는 손으로 만든 숫자로 각 분기를 확인하고, `BoardJuicePlannerIntegrationTests`는 실제 `BoardState`를 플레이해서 같은 숫자가 실제로 나오는지 확인한다. 한 예로 `didJustSolve`를 3x3 보드로 처음 테스트했을 때 실패했다 — 색 하나만 완성해도 `isSolved`는 **칸도 전부 채워야** 참이 되는데, 3x3에서 한 쌍만 잇는 경로는 칸 3개만 채워서 조건의 절반만 성립했다. 격자를 경로가 전부 채우는 1x3으로 바꿔서 고쳤다 — `isSolved`가 원래 요구하는 대로.

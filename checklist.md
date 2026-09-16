@@ -277,7 +277,12 @@
   - [ ] **검증은 Xcode Live Preview로** — 아직 실제 앱 프로젝트가 없다. 패키지를 Xcode에서 열고
         `GameplayBoardPreview`를 Live/Interactive Preview로 돌려서 마우스로 드래그해본다.
         점 잡기 → 잇기 → 되짚어 지우기 → 다른 선 가로질러 끊기 → 반대쪽 끝점에서 완성, 다섯 가지 다 확인
-- [ ] S3.3 승리 판정 + 피치/햅틱 상승 연결
+- [x] S3.3 승리 판정 + 피치/햅틱 상승 연결
+  - [x] `BoardJuicePlanner` — before/after 스냅샷 → `JuiceStep`, `ChordlineUI`에 순수 로직으로 (테스트 12개)
+  - [x] `activePathLength`를 스텝 인덱스로 직접 씀 (`JuiceSequence` 대신 — D-083, 시간 리셋이 되짚기와 안 맞음)
+  - [x] 색 완성 → `.milestone`, 칸 그리기/되짚기 → `.micro` (양방향)
+  - [x] `GameplayBoardView`에 `onSolved` 콜백 노출 — 실제 승리 연출은 S3.4가 연결
+  - [x] `HapticEngine`/`PitchedTonePlayer` prepare/teardown을 `onAppear`/`onDisappear`에 연결 (JuiceLab 컨벤션 그대로)
 - [ ] S3.4 `VictorySequence` 적용
 - [ ] S3.5 광고 연결 (클리어 전면 · 힌트 보상형)
 - [ ] S3.6 진행 저장 + CloudKit
