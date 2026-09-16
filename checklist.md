@@ -245,7 +245,7 @@
   - [x] `Color(hex:)` → `CoreKitUI/Color+Hex.swift` (D2 이후 모든 게임이 씀)
   - [x] `palette-ledger.md` 1번 줄 + "2~10번이 피해야 할 것"
   - [ ] Sora / JetBrains Mono `.ttf` 번들 → `ThemeTypography` 패밀리 채우기 (D-078)
-  - [ ] **생성기 색 수 > 팔레트 용량 충돌** — S3.7에서 결정 (D-076)
+  - [x] **생성기 색 수 > 팔레트 용량 충돌** — S3.7에서 해소 (D-076/D-095, 출시 콘텐츠가 안전한 조합만 씀)
 - [x] D2 실제 실행 → 아이콘 1024 마스터 (확정안 1c Crossing Pipes)
   - [x] 알파 채널 없음(RGB) 확인, 60pt 축소 판독 확인
   - [x] `Apps/Chordline/Resources/AppIcon.appiconset` — Xcode Single Size (1024 하나, appicon.co 생략)
