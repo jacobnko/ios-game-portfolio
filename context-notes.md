@@ -737,3 +737,9 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **손으로 만든 24개가 전부 "나란한 직선" 하나의 패밀리다.** 끝점을 위아래 같은 열에 두고 사이를 비우면 각 색당 경로가 정확히 하나(세로 직선)라는 게 2×2부터 5×10까지 `Solver`로 확인됐다. 끝점을 회전·반전시킨 변형은 전부 `unsolvable`이었다 — 체스판 패리티가 깨진다, 기존 `aBoardWhoseParityIsWrongIsUnsolvable`과 같은 함정. 모양은 다양하지 않지만 전부 검증됐고, git diff로 그대로 리뷰되는 리터럴 그리드다.
 - **생성기 85개는 실측 수율 100%인 4개 티어에서만 나온다** — `4×4/3색` 20, `4×5·5×4/4색` 35, `5×5/5색` 20, `4×6/5색` 10. 합계 손 24 + 생성 85 = 109개.
 - **카탈로그 전체를 다시 검증한다.** 개별 생성 시점에 이미 유일성을 통과했어도, `StageCatalog`가 재조립(순서 배치, difficulty 재부여)하면서 실수로 원본을 훼손했는지 별도로 확인한다 — 유일 해, 팔레트 상한 이하, difficulty 연속성, id·그리드 중복 없음까지 10개 테스트.
+
+### D-096. S3.8 완료 — 진짜 하드코딩 문자열 하나를 찾아서 고쳤다
+- **`ResultView.swift`(`CoreKitUI`, Phase 2 산출물)에 `Label("Share", ...)`가 하드코딩돼 있었다.** CLAUDE.md의 "디스플레이 문자열은 절대 하드코딩하지 않는다" 규칙을 어긴 실제 사례 — Chordline 전용이 아니라 **포트폴리오 전체가 상속하는** 버그였다. `CommonStrings.resultShare` 추가 + `Common.xcstrings`에 EN "Share"/KO "공유" 등록해서 고쳤다. Chordline의 미래 Result 화면도 이 뷰를 그대로 쓸 거라, 여기서 안 고치면 게임 10개가 전부 같은 문제를 상속한다.
+- **Chordline 자체 화면에는 하드코딩 문자열이 없었다.** HUD·메타 화면이 D3/D4 결정으로 아직 코드에 없어서(`GameplayBoardView`는 `Canvas`+제스처뿐, `Text`/`Button` 없음), 실제로 문자열이 있는 곳은 **프리뷰용 임시 UI**(진행 상태 텍스트, 힌트 버튼) 하나뿐이었다. 그래도 이것도 실제로 컴파일되는 코드라 규칙이 적용된다고 보고 그대로 로컬라이즈했다.
+- **`Chordline.xcstrings` + `ChordlineStrings` enum을 `CommonStrings`와 정확히 같은 모양으로 만들었다.** `Package.swift`에 `defaultLocalization: "en"`과 `resources: [.process("Resources")]`을 추가했다 — CoreKit의 Package.swift가 이미 문서화해둔 것과 같은 요구사항("이게 없으면 SwiftPM이 로컬라이즈드 리소스를 통째로 무시한다"). 호스트(`swift test`)에서는 `.xcstrings`가 컴파일되지 않아 키 자체가 그대로 뜨는 것도 CommonStrings와 동일 — Xcode에서 열어야 실제 텍스트로 resolve된다.
+- **자동 검사(hazard pattern)에 "하드코딩 문자열 grep"은 추가하지 않았다.** `Text("\(score)")`, `Text("×\(multiplier)")`처럼 이미 있는 정당한 순수 숫자 보간 코드가 몇 개 있어서, 단순 정규식으로는 이것들을 전부 오탐으로 잡아낸다 — `try!`/`fatalError`류처럼 예외가 거의 없는 패턴이 아니다. 이번엔 직접 훑어서 실제 위반 하나를 찾아 고쳤고, 자동화는 오탐 비용이 이득보다 커서 보류했다.

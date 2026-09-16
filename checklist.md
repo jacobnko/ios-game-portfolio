@@ -309,7 +309,11 @@
   - [x] `StageCatalog` — 손 24 + 생성 85, difficulty 1...109 순서대로 (테스트 10개)
   - [x] **D-076 해소** — `balancedConfiguration`은 안 고침, 출시 콘텐츠가 그 함수를 안 씀. 안전한 (크기,색수) 4조합만 사용
   - [x] `PaletteCapacityTests` 갱신 — "여전히 깨져 있다" 단언은 유지, 이유를 "출시가 이 함수를 안 쓰기로 했다"로 수정
-- [ ] S3.8 KO/EN 로컬라이즈, 하드코딩 문자열 0
+- [x] S3.8 KO/EN 로컬라이즈, 하드코딩 문자열 0
+  - [x] **`CoreKitUI/ResultView.swift`의 `Label("Share", ...)` 하드코딩 발견·수정** — Phase 2 산출물, 포트폴리오 전체가 상속하던 버그. `CommonStrings.resultShare` 추가
+  - [x] `Chordline.xcstrings` + `ChordlineStrings` — Package.swift에 `defaultLocalization`/`resources` 추가, `CommonStrings`와 동일한 패턴 (테스트 6개)
+  - [x] Chordline 자체 화면(HUD 등)엔 원래 문자열이 없었음 — 프리뷰 임시 UI만 로컬라이즈
+  - [ ] 하드코딩 문자열 자동 검사는 보류 — 정당한 숫자 보간(`Text("\(score)")`)과 구분이 안 돼 오탐 비용이 큼
 - [ ] S3.9 **모델 전환 알림 (Opus → Sonnet 5)**
 
 ---
