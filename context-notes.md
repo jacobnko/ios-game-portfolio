@@ -695,3 +695,15 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **D2~D6은 D1 의존 값만 빈칸으로 남겼다.** 게임명·장르·도파민 트위스트처럼 이미 아는 값은 채우고, hex·스타일 키워드처럼 D1 결과가 나와야 아는 값은 `<...>`로 남겼다 — Chordline의 D2~D6이 D1 실행 전에 있던 것과 정확히 같은 상태.
 - **병렬 실행의 실제 위험 — `palette-ledger.md`는 D1이 끝난 게임만 반영한다.** 여러 게임을 동시에 돌리면 서로의 결과를 못 보고 겹치는 팔레트를 고를 수 있다. 완화책 세 가지를 `docs/design/README.md`에 적어뒀다: (1) 각 게임 톤 방향이 이미 서로 다르게 지정돼 있어 완전히 같은 결과가 나올 확률은 낮음, (2) D1이 끝나는 대로 즉시 ledger에 기록, (3) `game-concepts.md`가 이미 명시한 인접 위험 두 쌍(Pixlaugh↔Noodlewing, Chordline↔Ballanche)은 동시에 돌리지 않기.
 - **공개 저장소 유출 없음.** `docs/design/[0-9]*/`는 이미 gitignore에 걸려 있어(D-088 이전 작업) 이번에 만든 9개 폴더도 전부 로컬에만 남는다. `README.md`만 실제로 커밋됐다.
+
+### D-089. S3.5 계획 — 광고 연결 (클리어 전면 · 힌트 보상형)
+- **범위를 "힌트"로 좁힌다.** 클리어 전면 광고는 이미 Phase 2에서 `GameFlowCoordinator.advanceFromResult` + `AdCoordinator.recordStageClear()`로 일반화되어 있고 테스트도 돼 있다(234개 중 다수). `GameplayBoardView.onSolved`가 연출이 끝난 뒤 발화하도록 이미 S3.4에서 고쳐놨으니, **그게 정확히 `completeStage`를 부를 지점**이다. 하지만 Chordline은 아직 실제 Xcode 앱·Result 화면이 없어서(SPM 패키지뿐), 지금 그 배선을 실제로 연결하려면 앱 셀 전체를 먼저 만들어야 한다 — 그건 S3.5가 아니라 훨씬 큰 별도 작업이다. 그래서 이번 단계는 **힌트(보상형 광고)만** 구현하고, 전면 광고 연결은 "이미 만들어져 있고, Chordline 쪽 앱이 생기면 그대로 붙인다"로 문서화만 한다.
+- **힌트가 반환하는 건 경로, 적용은 호출자.** `HintCoordinator.requestHint`가 보드를 직접 바꾸지 않고 `inout BoardState`로 받아 성공 시 `board.draw(path:)`를 불러 적용한다 — 이 한 함수 뒤에 "색 고르기 → 광고 보여주기 → 성공하면 그 색을 그리기 → 완료 신호 재생"이 전부 들어간다.
+- **힌트가 그리는 경로는 `BoardState`의 진짜 드로잉 규칙을 그대로 통과한다.** 내부 상태를 직접 쓰지 않고 `beginPath`+`extend`+`endPath`를 그대로 재생한다 — 그래서 힌트로 그려진 선도 손으로 그린 것과 똑같이 되짚어 지울 수 있고, 다른 선과 교차하면 똑같이 끊긴다. `beginPath`가 이미 "끝점을 잡으면 그 색을 처음부터 다시 시작한다"를 보장하니, 플레이어가 그 색을 이미 잘못 그려놨어도 힌트가 알아서 지우고 다시 그린다.
+- **`HintCoordinator`는 `Views/` 밖에 둔다.** `Canvas`/`GeometryReader`가 없어서 호스트 테스트에서 그대로 실행되고 커버리지도 정상적으로 잡힌다 — `AdCoordinator`가 이미 프로토콜(`AdPresenting`) 뒤에 있어서 가짜 프리젠터로 테스트되는 것과 같은 이유다.
+
+### D-090. S3.5 완료 — `inout` + `@State` + `await`는 컴파일이 안 된다
+- **실제로 겪은 컴파일 에러.** `HintCoordinator.requestHint(for:board: inout BoardState, ads:) async` 형태로 먼저 짰다. 테스트(로컬 `var board`)에서는 문제없이 통과했는데, 실제 사용처인 SwiftUI 프리뷰의 `@State private var board`에 `&board`를 넘기자 "actor-isolated property 'board' cannot be passed 'inout' to 'async' function call"로 빌드가 깨졌다. `@State`의 프로젝션은 단순 저장 프로퍼티가 아니라서 `await`를 넘나드는 `inout` 대여를 컴파일러가 허용하지 않는다.
+- **수정.** `board`를 값으로 받아 성공 시 **새 `BoardState`를 반환**하도록 바꿨다. 호출자가 `if let hinted = await ... { board = hinted }`로 재대입한다 — 다른 모든 `@State` 비동기 갱신과 같은 모양이다.
+- **일반화.** 테스트가 로컬 `var`로만 이 함수를 불러서 이 문제를 못 잡았다 — **실제 호출부(SwiftUI 바인딩)로 한 번 조립해보기 전까지는 신호가 없었다.** `Views/`가 커버리지 하한에서 빠져 있는 이유(호스트 테스트가 `Canvas`/`GeometryReader`를 못 돌린다)와 같은 뿌리의 문제: 순수 로직은 테스트로 잡히지만, "SwiftUI 바인딩과 실제로 맞물리는가"는 프리뷰에 꽂아봐야만 드러난다. S3.2~S3.5 내내 프리뷰를 매번 갱신해서 실제 호출부를 조립해본 것이 이번에도 정확히 이 문제를 잡아냈다.
+- **클리어 전면 광고는 이번 단계에서 새로 만들 게 없었다.** `GameFlowCoordinator.advanceFromResult` + `AdCoordinator.recordStageClear()`가 Phase 2에서 이미 일반화·테스트돼 있고, `GameplayBoardView.onSolved`가 S3.4에서 이미 "연출이 끝난 뒤"에 발화하도록 고쳐져 있어 그 연결점 역할을 그대로 한다. Chordline 자체 앱/Result 화면이 없어서 지금 실제로 연결할 대상이 없을 뿐이다 — 이 단계에서는 문서화만 하고, 앱 셸이 생기는 시점에 그대로 붙인다.

@@ -292,7 +292,13 @@
   - [x] `GameplayBoardView`가 `.victorySequence` 적용, `theme.victoryConfiguration(origins:)`로 팔레트·타이밍 그대로
   - [x] **`onSolved` 발화 시점을 연출 종료 후로 변경** — S3.3의 즉시 발화는 승리 연출을 끊었을 것 (D-085)
   - [x] 보드 완성 순간엔 일반 `.micro`/`.milestone` 스텝을 건너뜀 — `VictorySequence` 자체 재생과 안 겹치게
-- [ ] S3.5 광고 연결 (클리어 전면 · 힌트 보상형)
+- [x] S3.5 광고 연결 — 힌트 보상형 (클리어 전면은 Phase 2에서 이미 일반화됨, 아래 참고)
+  - [x] `HintPlanner` — 힌트 대상 색·경로 선택 (순수, `ChordlineCore`, 테스트 5개)
+  - [x] `BoardState.draw(path:)` — 힌트 경로를 `beginPath`/`extend`/`endPath`로 재생 (테스트 5개)
+  - [x] `HintCoordinator.requestHint` — 광고 확인 전에 힌트가 있는지 먼저 검사, 성공해야만 보드 반환 (`Views/` 밖, 테스트 6개)
+  - [x] `inout BoardState`는 `@State` 프로퍼티와 `await`를 못 넘나든다는 걸 빌드 에러로 확인 — 값 반환 + 호출자가 재대입하는 방식으로 수정
+  - [ ] **클리어 전면 광고**는 `GameFlowCoordinator.advanceFromResult` + `AdCoordinator.recordStageClear()`로 Phase 2에 이미 구현·테스트됨. Chordline 자체 앱/Result 화면이 생기면 그대로 연결 — 지금은 그 화면이 없어서 연결할 대상이 없음 (D-089)
+  - [ ] HUD의 실제 힌트 버튼(48pt, 앰버, 보상형 뱃지)은 D3 시각 정합 때 같이 반영 — 지금은 Preview의 임시 버튼으로만 경로 검증
 - [ ] S3.6 진행 저장 + CloudKit
 - [ ] S3.7 **스테이지 100개 이상** (수작업 20~30 + 생성기) + 난이도 곡선
 - [ ] S3.8 KO/EN 로컬라이즈, 하드코딩 문자열 0
