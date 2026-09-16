@@ -283,7 +283,12 @@
   - [x] 색 완성 → `.milestone`, 칸 그리기/되짚기 → `.micro` (양방향)
   - [x] `GameplayBoardView`에 `onSolved` 콜백 노출 — 실제 승리 연출은 S3.4가 연결
   - [x] `HapticEngine`/`PitchedTonePlayer` prepare/teardown을 `onAppear`/`onDisappear`에 연결 (JuiceLab 컨벤션 그대로)
-- [ ] S3.4 `VictorySequence` 적용
+- [x] S3.4 `VictorySequence` 적용
+  - [x] `Puzzle.victoryOrigins(layout:)` — 색 쌍 양 끝점을 유닛 좌표로 (순수, `ChordlineCore`, 테스트 7개)
+  - [x] `BoardLayout.containerSize` — origin+boardFrame에서 역산, 별도 파라미터로 안 받음 (B형 재발 방지)
+  - [x] `GameplayBoardView`가 `.victorySequence` 적용, `theme.victoryConfiguration(origins:)`로 팔레트·타이밍 그대로
+  - [x] **`onSolved` 발화 시점을 연출 종료 후로 변경** — S3.3의 즉시 발화는 승리 연출을 끊었을 것 (D-085)
+  - [x] 보드 완성 순간엔 일반 `.micro`/`.milestone` 스텝을 건너뜀 — `VictorySequence` 자체 재생과 안 겹치게
 - [ ] S3.5 광고 연결 (클리어 전면 · 힌트 보상형)
 - [ ] S3.6 진행 저장 + CloudKit
 - [ ] S3.7 **스테이지 100개 이상** (수작업 20~30 + 생성기) + 난이도 곡선

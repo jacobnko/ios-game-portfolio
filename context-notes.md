@@ -673,3 +673,13 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **`BoardJuicePlanner`가 `CoreKitJuice`의 진짜 어휘(`JuiceStep`/`FeedbackWeight`)를 그대로 쓴다.** 별도 열거형을 만들어 나중에 `View`에서 변환하는 방법도 있었지만, 그건 이미 있는 공용 어휘를 게임마다 재발명하는 셈이다. `ChordlineUI`에 `CoreKitJuice`를 직접 의존성으로 추가했다 — `CoreKitUI`를 통해 간접적으로 들어와 있던 걸 명시적으로 꺼냈을 뿐, 새 빌드 비용은 없다.
 - **`HapticEngine`/`PitchedTonePlayer` 호출은 여전히 `Views/`에만 있다.** S3.2에서 세운 구분(순수 계산 vs 기기 호출)이 S3.3에서도 그대로 성립했다 — 테스트 12개가 전부 `BoardJuicePlanner`의 순수 함수만 겨냥하고, `Views/GameplayBoardView.swift`는 그 결과를 재생만 한다.
 - **통합 테스트로 단위 테스트의 전제를 다시 확인했다.** `BoardJuicePlannerTests`는 손으로 만든 숫자로 각 분기를 확인하고, `BoardJuicePlannerIntegrationTests`는 실제 `BoardState`를 플레이해서 같은 숫자가 실제로 나오는지 확인한다. 한 예로 `didJustSolve`를 3x3 보드로 처음 테스트했을 때 실패했다 — 색 하나만 완성해도 `isSolved`는 **칸도 전부 채워야** 참이 되는데, 3x3에서 한 쌍만 잇는 경로는 칸 3개만 채워서 조건의 절반만 성립했다. 격자를 경로가 전부 채우는 1x3으로 바꿔서 고쳤다 — `isSolved`가 원래 요구하는 대로.
+
+### D-085. S3.4 계획 — `VictorySequence` 적용
+- **`onSolved`의 발화 시점을 바꾼다.** S3.3에서는 `isSolved`가 참이 되는 순간 바로 불렀는데, 이제 그 순간엔 `VictorySequence`를 시작만 하고, **연출이 끝난 뒤(`onFinished`)에** `onSolved`를 부른다. `GameFlowCoordinator.advanceFromResult`가 전면 광고를 `completeStage`가 아니라 명시적 "다음" 탭에서만 쏘는 것과 같은 이유 — 승리 연출이 끝나기 전에 화면을 넘기면(광고·네비게이션 등) 카타르시스가 끊긴다.
+- **완성 순간엔 일반 juice 스텝을 쏘지 않는다.** 마지막 칸을 그리는 동작이 "색 완성"과 "보드 전체 완성"을 동시에 만족시킬 수 있는데, 이때 `BoardJuicePlanner.step`의 `.milestone`과 `VictorySequence` 자체의 재생(4단계 상승 + milestone)이 겹쳐 소리가 뭉친다. `didJustSolve`가 참인 호출에서는 일반 스텝을 건너뛰고 `VictorySequence`가 그 순간을 전부 맡는다.
+- **버스트 원점은 보드 위 실제 색점 위치.** `JuiceLab`의 `VictoryLabView`가 이미 같은 이유로 4개 고정 코너 대신 "플레이어가 그린 자리"를 쓴다 — 고정된 한 점에서 터지면 범용 연출로 보이고, 실제 데이터에서 나오면 "이 보드가" 끝난 것처럼 느껴진다. `Puzzle.victoryOrigins(layout:containerSize:)`(순수, `ChordlineCore`)로 모든 색 쌍의 양 끝점을 유닛 좌표로 변환해서 넘긴다.
+
+### D-086. S3.4 완료 — 승리 연출까지 순수/기기 경계 유지
+- **`BoardLayout.containerSize`를 별도 파라미터로 받지 않고 역산했다.** 처음엔 `unitCenter(of:containerSize:)`처럼 컨테이너 크기를 밖에서 받는 API로 짰는데, 실제로는 그 크기가 항상 레이아웃 자신을 만든 값과 같아야 해서 — 다르게 넘길 이유가 없는데 다르게 넘길 수 *있는* 자리였다. 테스트를 먼저 쓰다가 "패딩이 있는 컨테이너" 시나리오를 검증하려 했더니 함수가 애초에 그 시나리오를 지원하지 않는다는 걸 발견했고, `origin`+`boardFrame`에서 원래 컨테이너 크기를 정확히 역산할 수 있다는 걸 확인한 뒤 파라미터를 아예 없앴다. `docs/AUDIT.md` B형("파생값의 일부만 키에 담긴다")과 정확히 같은 모양 — 여기서는 캐시가 아니라 함수 시그니처였을 뿐.
+- **연출이 끝나기 전엔 `onSolved`를 부르지 않는다.** S3.3에서는 `isSolved`가 참이 되는 즉시 콜백을 불렀는데, 이제 그 순간은 `VictorySequence`를 시작만 시키고, `.victorySequence`의 `onFinished`가 오면 그때 `onSolved`를 부른다. `GameFlowCoordinator.advanceFromResult`가 이미 문서화한 것과 같은 함정 — 승리 연출이 끝나기 전에 화면이 넘어가면 카타르시스가 끊긴다.
+- **완성 순간의 이중 재생을 막았다.** 마지막 칸이 "색 완성"과 "보드 전체 완성"을 동시에 만족시키는 그 한 번의 호출에서, 일반 `.milestone` 스텝과 `VictorySequence` 자체의 재생(4단계 상승 + milestone)이 겹치면 소리가 뭉친다. `playJuice`가 `didJustSolve`를 먼저 확인해서, 참이면 일반 스텝을 건너뛰고 연출에게 그 순간을 전부 맡긴다.
