@@ -707,3 +707,9 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **수정.** `board`를 값으로 받아 성공 시 **새 `BoardState`를 반환**하도록 바꿨다. 호출자가 `if let hinted = await ... { board = hinted }`로 재대입한다 — 다른 모든 `@State` 비동기 갱신과 같은 모양이다.
 - **일반화.** 테스트가 로컬 `var`로만 이 함수를 불러서 이 문제를 못 잡았다 — **실제 호출부(SwiftUI 바인딩)로 한 번 조립해보기 전까지는 신호가 없었다.** `Views/`가 커버리지 하한에서 빠져 있는 이유(호스트 테스트가 `Canvas`/`GeometryReader`를 못 돌린다)와 같은 뿌리의 문제: 순수 로직은 테스트로 잡히지만, "SwiftUI 바인딩과 실제로 맞물리는가"는 프리뷰에 꽂아봐야만 드러난다. S3.2~S3.5 내내 프리뷰를 매번 갱신해서 실제 호출부를 조립해본 것이 이번에도 정확히 이 문제를 잡아냈다.
 - **클리어 전면 광고는 이번 단계에서 새로 만들 게 없었다.** `GameFlowCoordinator.advanceFromResult` + `AdCoordinator.recordStageClear()`가 Phase 2에서 이미 일반화·테스트돼 있고, `GameplayBoardView.onSolved`가 S3.4에서 이미 "연출이 끝난 뒤"에 발화하도록 고쳐져 있어 그 연결점 역할을 그대로 한다. Chordline 자체 앱/Result 화면이 없어서 지금 실제로 연결할 대상이 없을 뿐이다 — 이 단계에서는 문서화만 하고, 앱 셸이 생기는 시점에 그대로 붙인다.
+
+### D-091. D5(Juice/VFX 스펙) 도착 — D3/D4와 같은 상태: 스펙만, 반영은 미룸
+- **받은 것.** `docs/design/01-chordline/assets/design_handoff_fx/`에 승리 연출(0→1200ms 타임라인, 흔들림 감쇠식, 파티클 96+24개 물리 파라미터, 배수 텍스트 스크림, 12ms 오디오 스트럼)과 실패 연출("단락" — 마젠타 점멸→순차 소등→노드 팝 바운스, 흔들림은 승리의 42%, 빨강 금지)이 실행 가능한 수치로 다 나와 있다. `chordline-theme.js`/`board-spec.js`는 이전 핸드오프(`design_handoff_screens`, `design_handoff_gameplay_ui`)와 바이트 단위로 동일 — drift 없음.
+- **코드는 아직 범용 기본값이다.** S3.4에서 `GameplayBoardView`는 `theme.victoryConfiguration(origins:)`만 커스텀하고 나머지(`VictoryTimeline.standard`, `ShakeCurve()`, 파티클 90개)는 `CoreKitJuice`의 전 게임 공용 기본값 그대로다. D5가 요구하는 정밀 수치(0–80ms 숨 고르기, 정확한 진폭·주파수·감쇠, 스크림, 오디오 스트럼)는 하나도 안 들어갔다.
+- **실패 연출은 반영이 아니라 신규 구현이다.** `VictorySequence`와 짝을 이루는 실패 시퀀스 타입 자체가 `CoreKitJuice`에 없다. 이건 Chordline 하나만의 튜닝이 아니라 **포트폴리오 공용 타입을 새로 추가하는 일**이다 — `VictoryConfiguration`이 이미 전 게임 공용이라, 짝이 되는 `FailureConfiguration`도 같은 자리(CoreKitJuice)에 있어야 다음 게임들도 재사용한다.
+- **D3·D4와 같은 이유로 지금 반영하지 않는다.** J가 확인 후 "일단 체크"만 요청 — D-087에서 세운 것과 같은 결정 패턴(자산 도착 확인 → 문서화 → 코드 반영은 별도 단계로 미룸). D6(스토어 에셋)은 원래 카드 자체가 "출시 직전에만" 선행조건이라, 실제 스크린샷이 나올 때까지 J가 보류를 확정했다.

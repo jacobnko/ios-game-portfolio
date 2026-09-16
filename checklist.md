@@ -250,10 +250,10 @@
   - [x] 알파 채널 없음(RGB) 확인, 60pt 축소 판독 확인
   - [x] `Apps/Chordline/Resources/AppIcon.appiconset` — Xcode Single Size (1024 하나, appicon.co 생략)
   - [x] `Apps/Chordline/Resources/app-icon.svg` — 인앱 재사용용 벡터 소스
-- [ ] D3 게임플레이 화면 (D1 완료 후)
-- [ ] D4 보조 화면
-- [ ] D5 Juice/VFX 스펙
-- [ ] D6 스토어 에셋
+- [x] D3 게임플레이 화면 — 스펙 도착(`design_handoff_gameplay_ui`), 코드 반영은 미룸
+- [x] D4 보조 화면 — 스펙 도착(`design_handoff_screens`), 코드 반영은 미룸
+- [x] D5 Juice/VFX 스펙 — 스펙 도착(`design_handoff_fx`), 코드 반영은 미룸 (승리 연출은 범용 기본값만, 실패 연출은 아예 없음 — `CoreKitJuice`에 새 공용 타입 필요)
+- [ ] D6 스토어 에셋 — 출시 직전, 실제 스크린샷 확보 후 (J가 보류하기로 확정)
 - [ ] D3 게임플레이 화면
 - [ ] D4 보조 화면
 - [ ] D5 Juice/VFX 스펙
