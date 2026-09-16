@@ -32,6 +32,7 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case resultBestTime = "result.bestTime"
     case resultNewRecord = "result.newRecord"
     case resultStageFailed = "result.stageFailed"
+    case resultShare = "result.share"
 
     case hintTitle = "hint.title"
     case hintWatchAd = "hint.watchAd"

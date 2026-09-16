@@ -85,7 +85,7 @@ public struct ResultView: View {
 
                 if let onShare, outcome.cleared {
                     Button(action: onShare) {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label(CommonStrings.resultShare.text, systemImage: "square.and.arrow.up")
                             .font(theme.typography.body)
                             .foregroundStyle(theme.palette.secondary.resolved(for: colorScheme))
                     }
