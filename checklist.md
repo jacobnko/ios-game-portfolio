@@ -246,7 +246,10 @@
   - [x] `palette-ledger.md` 1번 줄 + "2~10번이 피해야 할 것"
   - [ ] Sora / JetBrains Mono `.ttf` 번들 → `ThemeTypography` 패밀리 채우기 (D-078)
   - [ ] **생성기 색 수 > 팔레트 용량 충돌** — S3.7에서 결정 (D-076)
-- [ ] D2 실제 실행 → 아이콘 1024 마스터
+- [x] D2 실제 실행 → 아이콘 1024 마스터 (확정안 1c Crossing Pipes)
+  - [x] 알파 채널 없음(RGB) 확인, 60pt 축소 판독 확인
+  - [x] `Apps/Chordline/Resources/AppIcon.appiconset` — Xcode Single Size (1024 하나, appicon.co 생략)
+  - [x] `Apps/Chordline/Resources/app-icon.svg` — 인앱 재사용용 벡터 소스
 - [ ] D3 게임플레이 화면 (D1 완료 후)
 - [ ] D4 보조 화면
 - [ ] D5 Juice/VFX 스펙
