@@ -713,3 +713,15 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **코드는 아직 범용 기본값이다.** S3.4에서 `GameplayBoardView`는 `theme.victoryConfiguration(origins:)`만 커스텀하고 나머지(`VictoryTimeline.standard`, `ShakeCurve()`, 파티클 90개)는 `CoreKitJuice`의 전 게임 공용 기본값 그대로다. D5가 요구하는 정밀 수치(0–80ms 숨 고르기, 정확한 진폭·주파수·감쇠, 스크림, 오디오 스트럼)는 하나도 안 들어갔다.
 - **실패 연출은 반영이 아니라 신규 구현이다.** `VictorySequence`와 짝을 이루는 실패 시퀀스 타입 자체가 `CoreKitJuice`에 없다. 이건 Chordline 하나만의 튜닝이 아니라 **포트폴리오 공용 타입을 새로 추가하는 일**이다 — `VictoryConfiguration`이 이미 전 게임 공용이라, 짝이 되는 `FailureConfiguration`도 같은 자리(CoreKitJuice)에 있어야 다음 게임들도 재사용한다.
 - **D3·D4와 같은 이유로 지금 반영하지 않는다.** J가 확인 후 "일단 체크"만 요청 — D-087에서 세운 것과 같은 결정 패턴(자산 도착 확인 → 문서화 → 코드 반영은 별도 단계로 미룸). D6(스토어 에셋)은 원래 카드 자체가 "출시 직전에만" 선행조건이라, 실제 스크린샷이 나올 때까지 J가 보류를 확정했다.
+
+### D-092. S3.6 계획 — 진행 저장 + CloudKit
+- **`ProgressStore`/`StageProgress`/`StageRecord`는 이미 Phase 2에서 전부 일반화·테스트돼 있다.** CloudKit 동기화 중복 병합 규칙까지 포함해서 게임과 무관하게 완성돼 있고, 컨테이너 자체도 앱 타겟의 iCloud 엔타이틀먼트(`iCloud.com.jacobkostudio.<game>`)에 묶이는 거라 Swift 코드가 게임별로 다를 이유가 없다. S3.5(광고)에서 확인한 것과 똑같은 모양 — **저장 메커니즘 자체는 새로 만들 게 없다.**
+- **빠진 건 `BoardState`를 `StageOutcome`으로 바꾸는 다리다.** `completeStage(_:outcome:)`가 요구하는 `StageOutcome`(score·stars·durationSeconds·cleared·progressPercent)을 Chordline이 아직 한 번도 만들어본 적이 없다 — 걸린 시간도 안 재고, 별/점수 공식도 없다. D5 핸드오프도 "별 획득 기준 — 판정 로직은 미정"이라고 명시했다(D-091).
+- **`ChordlineScoring`을 `ChordlineUI`에 둔다 (`ChordlineCore`가 아니라).** `StageOutcome`이 `CoreKitUI`에 있어서, `ChordlineCore`가 이걸 쓰려면 SwiftUI까지 끌고 오는 `CoreKitUI`에 의존해야 한다 — `ChordlineCore`를 의존성 0으로 유지하는 원칙(Package.swift 헤더 주석)을 깨게 된다.
+- **점수·별 공식은 명시적으로 임시다.** 실제 스테이지 난이도 데이터(S3.7)가 없는 상태라 par 타임을 칸 수의 함수로만 어림잡았다 — `parSeconds = cellCount * 0.5`, 이게 브리프의 "한 판 10~30초" 목표와 대충 맞아떨어지긴 하지만(25칸→12.5s, 64칸→32s) 실측이 아니다. 저장 파이프라인이 끝에서 끝까지 동작한다는 걸 증명하는 게 이번 단계의 목적이고, 공식 자체는 S3.7에서 재조정될 걸 전제로 한다.
+- **`GameplayBoardView`는 안 바뀐다.** 캐리어(부모 뷰)가 이미 `puzzle`·`board`를 갖고 있고, 시작 시각도 자기가 잴 수 있어서 — 힌트와 같은 패턴: 새 기능은 `Views/` 밖에 순수하게 추가하고, `GameplayBoardView`의 콜백 시그니처는 그대로 둔다.
+
+### D-093. S3.6 완료 — 저장 파이프라인 끝에서 끝까지 실증
+- **`ChordlineScoring`은 `filledCellCount`의 실제 동작에 맞춰 다시 계산했다.** 처음 테스트를 짤 때 "빈 보드는 0% 진행"이라고 가정했는데 실제로는 40%가 나왔다 — `BoardState.init`이 모든 끝점을 자기 색으로 미리 소유시키기 때문(끝점은 선이 없어도 색을 유지한다는 기존 규칙). 코드가 틀린 게 아니라 내 테스트 전제가 틀렸던 것 — 끝점 4개/칸 10개 = 40%가 맞는 값이다. 픽스처를 이 실제 동작에 맞춰 고쳤다.
+- **점수·별 공식은 문서에도, 코드 주석에도 "임시"라고 반복해서 적어뒀다.** par 타임을 칸 수 × 0.5초로 어림잡았을 뿐 실측 난이도 데이터가 없다 — S3.7에서 스테이지 100개 이상 + 난이도 곡선이 나오면 이 공식은 재조정 대상이다. 지금 목적은 "저장 파이프라인이 끝에서 끝까지 도는가"를 증명하는 것이었지, 최종 밸런싱이 아니다.
+- **Preview가 실제로 `ProgressStore.recordAttempt`를 부르고 읽어온 값을 화면에 보여준다.** in-memory 컨테이너로, JuiceLab의 `FlowLabView`가 쓰는 것과 같은 방식(`ProgressStore.makeContainer(cloudKitEnabled: false)`의 인메모리 버전)이다. 실제 iCloud 컨테이너 연결은 앱 타겟의 엔타이틀먼트 설정이라 Chordline 앱이 생겨야 할 수 있는 일 — 코드는 이미 그 순간을 위해 준비돼 있다.
