@@ -314,7 +314,7 @@
   - [x] `Chordline.xcstrings` + `ChordlineStrings` — Package.swift에 `defaultLocalization`/`resources` 추가, `CommonStrings`와 동일한 패턴 (테스트 6개)
   - [x] Chordline 자체 화면(HUD 등)엔 원래 문자열이 없었음 — 프리뷰 임시 UI만 로컬라이즈
   - [ ] 하드코딩 문자열 자동 검사는 보류 — 정당한 숫자 보간(`Text("\(score)")`)과 구분이 안 돼 오탐 비용이 큼
-- [x] S3.9 **모델 전환 알림 (Opus → Sonnet 5)** — `CLAUDE.md` §7의 전환 조건(그리드 렌더 → 승패 상태 → 광고 트리거 → juice가 느껴짐) 전부 충족(S3.2~S3.8). J가 이미 Sonnet으로 전환해 진행 중 — 확인 완료
+- [ ] S3.9 **모델 전환 알림 (Opus → Sonnet 5)** — `CLAUDE.md` §7의 전환 조건(그리드 렌더 → 승패 상태 → 광고 트리거 → juice가 느껴짐)은 S3.2~S3.8로 전부 충족. **아직 전환 안 함** — Phase 3 종료 감사를 Opus로 끝낸 뒤 J가 판단 (`docs/AUDIT.md` §4가 읽기 패스에 Opus를 쓰라고 명시)
 
 ---
 
