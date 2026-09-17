@@ -789,3 +789,9 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 **추가로 확인만 하고 넘어간 것.** 0 크기 컨테이너 렌더 경로(`cellSize == 0`): dash·글리프·inset·유닛 좌표 전부 크래시·NaN·널 사각형 없이 0으로 수렴한다. 보드 자체가 0 크기라 그릴 것도 없어서 방어할 대상이 없다 — 테스트를 만들지 않았다.
 
 **감사 수렴.** 1차 결함 2건 → 2차 결함 0건. Phase 1이 3차까지 갔던 것과 달리 2차에서 새 결함이 안 나온 건, 1차에서 찾은 두 결함이 **둘 다 "값은 나오는데 의미가 틀린" 부류**여서 기계 검사로는 원래 잡히지 않는 종류였고, 2차에서 같은 렌즈(주석이 약속한 것과 코드가 실제로 주는 것의 차이)로 나머지를 훑었기 때문이다.
+
+### D-101. Phase 4 시작 — 릴리즈 파이프라인 문서화
+- **Phase 4의 절반은 이미 Phase 1에서 문서화돼 있었다.** CloudKit Production 배포(`cloudkit-setup.md` §3), 실제 Ad Unit ID 교체(`admob-setup.md` §2/§5)는 새로 쓸 게 없었고 체크리스트만 정정했다. Phase 1에서 미래를 대비해 써둔 문서가 실제로 Phase 4에서 쓰였다.
+- **개인정보처리방침 호스팅 — GitHub Pages를 선택했다.** `new-game-setup.md`에 이미 `jacobko.app/<codename>/privacy`라는 예시 URL이 있었는데, 실제로 그 도메인을 소유하고 있다는 증거가 어디에도 없었다 — 예시로 써둔 그럴등한 URL이었을 뿐이다. 법적 문서(개인정보처리방침)를 존재하지 않는 도메인 예시로 방치하면 나중에 그대로 App Store Connect에 넣는 사고가 날 수 있어서, 이미 있는 public 저장소(`ios-game-portfolio`)에서 무료로 즉시 되는 GitHub Pages로 확정했다. `new-game-setup.md`와 `Tools/JuiceLab`의 예시 URL도 실제 주소로 갱신했다.
+- **10개 게임이 방침 하나를 공유한다.** 전부 같은 `CoreKit` 데이터 수집 구조(AdMob·Firebase·StoreKit·CloudKit)를 쓰므로 게임별로 따로 쓸 이유가 없다 — 유지보수 지점이 하나로 줄어든다. 데이터가 실제로 바뀌면(새 SDK 추가 등) 이 문서와 App Store Connect의 개인정보 라벨을 **같이** 갱신해야 한다고 `docs/privacy/README.md`에 명시했다.
+- **Small Business Program·GitHub Pages 토글은 코드가 아니라 J의 계정 액션이다.** Claude Code가 GitHub 저장소 설정이나 Apple Developer 계정에 접근할 권한이 없어서, 절차 문서까지만 쓰고 체크박스는 미체크로 남겼다 — 실행 자체는 J의 몫.

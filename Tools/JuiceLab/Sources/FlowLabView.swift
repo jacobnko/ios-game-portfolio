@@ -116,7 +116,7 @@ private struct FlowLabRouter: View {
                 case .settings:
                     SettingsView(
                         purchases: coordinator.purchases,
-                        privacyPolicyURL: URL(string: "https://example.com/privacy"),
+                        privacyPolicyURL: URL(string: "https://jacobnko.github.io/ios-game-portfolio/privacy/"),
                         onResetProgress: {
                             try? coordinator.progress.deleteAll()
                             progressSnapshot = [:]

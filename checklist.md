@@ -319,12 +319,16 @@
 ---
 
 ## Phase 4 — 릴리즈 파이프라인
-- [ ] **CloudKit Console → Deploy Schema to Production** (게임마다, 매 스키마 변경마다)
-- [ ] 심사 리젝 체크리스트 문서
-- [ ] 개인정보처리방침 페이지 + 앱 내 링크
-- [ ] Small Business Program 신청
-- [ ] 실제 Ad Unit ID 교체 절차
-- [ ] App Store Connect 등록 절차 문서
+- [x] **CloudKit Console → Deploy Schema to Production** — 절차는 Phase 1에서 이미 문서화됨 (`docs/architecture/cloudkit-setup.md` §3). 실제 배포는 게임마다, 매 스키마 변경마다 J가 CloudKit Console에서 실행 — Chordline은 아직 앱 타겟이 없어 실행 대상 없음
+- [x] 심사 리젝 체크리스트 문서 — `docs/architecture/app-review-checklist.md` (Guideline 2.1/2.3/4.3/5.1 + 데이터 수집 실사표)
+- [x] 개인정보처리방침 페이지 + 앱 내 링크
+  - [x] 본문 작성 (EN+KO 한 페이지, 포트폴리오 10개 공유) — `docs/privacy/index.html`
+  - [x] 호스팅 방법 문서화 — GitHub Pages, `docs/privacy/README.md`
+  - [ ] **J가 GitHub 저장소 Settings → Pages 토글 켜기** (Claude Code는 저장소 설정 권한 없음)
+  - [ ] URL이 실제로 열리는지 확인 후 App Store Connect·`SettingsView(privacyPolicyURL:)`에 반영
+- [x] Small Business Program 신청 절차 — `docs/architecture/appstore-connect-setup.md` §10. **신청 자체는 J가 App Store Connect에서 실행**
+- [x] 실제 Ad Unit ID 교체 절차 — 이미 Phase 1에 문서화돼 있었음 (`docs/architecture/admob-setup.md` §2, §5)
+- [x] App Store Connect 등록 절차 문서 — `docs/architecture/appstore-connect-setup.md` (번들 ID → 앱 생성 → IAP → 연령 등급 → 개인정보 라벨 → 빌드 업로드)
 
 ---
 

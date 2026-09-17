@@ -174,7 +174,8 @@ private struct FlowRouter: View {
                                onRetry: { coordinator.retryStage(stageID, attempt: 2) })
                 case .settings:
                     SettingsView(purchases: coordinator.purchases,
-                                 privacyPolicyURL: URL(string: "https://jacobko.app/<codename>/privacy"),
+                                 // Shared across the whole portfolio — see docs/privacy/README.md.
+                                 privacyPolicyURL: URL(string: "https://jacobnko.github.io/ios-game-portfolio/privacy/"),
                                  onResetProgress: { try? coordinator.progress.deleteAll() },
                                  onBack: { coordinator.pop() })
                 }
