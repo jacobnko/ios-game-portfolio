@@ -314,7 +314,15 @@
   - [x] `Chordline.xcstrings` + `ChordlineStrings` — Package.swift에 `defaultLocalization`/`resources` 추가, `CommonStrings`와 동일한 패턴 (테스트 6개)
   - [x] Chordline 자체 화면(HUD 등)엔 원래 문자열이 없었음 — 프리뷰 임시 UI만 로컬라이즈
   - [ ] 하드코딩 문자열 자동 검사는 보류 — 정당한 숫자 보간(`Text("\(score)")`)과 구분이 안 돼 오탐 비용이 큼
-- [ ] S3.9 **모델 전환 알림 (Opus → Sonnet 5)** — `CLAUDE.md` §7의 전환 조건(그리드 렌더 → 승패 상태 → 광고 트리거 → juice가 느껴짐)은 S3.2~S3.8로 전부 충족. **아직 전환 안 함** — Phase 3 종료 감사를 Opus로 끝낸 뒤 J가 판단 (`docs/AUDIT.md` §4가 읽기 패스에 Opus를 쓰라고 명시)
+- [x] S3.9 **모델 전환 알림 (Opus → Sonnet 5)** — `CLAUDE.md` §7의 전환 조건 S3.2~S3.8로 전부 충족. Phase 3 감사(D-099/D-100, 결함 2건 수정 + 재검증)를 Opus로 끝낸 뒤 **J가 Sonnet 5로 전환 확정**
+- [x] S3.10 **Xcode 앱 프로젝트 생성 + 실기기 핸드오프** — `CLAUDE.md` §2.6, `docs/architecture/new-game-setup.md`
+  - [x] `project.yml`/`Info.plist`/`Chordline.storekit`/`Chordline.entitlements` (XcodeGen)
+  - [x] `App/ChordlineApp.swift`·`ChordlineFlowRouter` — 5화면 배선, `.game` 케이스만 Chordline 고유
+  - [x] `App/ChordlineGameplayScreen.swift` — `GameplayBoardView` + 임시 헤더(스테이지 번호·힌트), `StageCatalog`에서 퍼즐 조회
+  - [x] `App/ChordlineStage.swift` — `StageDescriptor` 어댑터
+  - [x] 시뮬레이터 빌드 통과 (`xcodebuild ... generic/platform=iOS Simulator`)
+  - [ ] **실기기 빌드는 J가 Xcode에서 팀 서명 후 직접** — `generic/platform=iOS`는 서명 팀이 없어 여기서 실패하는 게 정상
+  - [ ] `docs/DEVICE-TEST.md` 체크리스트로 실제 체감 확인 (J)
 
 ---
 

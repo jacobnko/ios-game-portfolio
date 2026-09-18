@@ -795,3 +795,17 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **개인정보처리방침 호스팅 — GitHub Pages를 선택했다.** `new-game-setup.md`에 이미 `jacobko.app/<codename>/privacy`라는 예시 URL이 있었는데, 실제로 그 도메인을 소유하고 있다는 증거가 어디에도 없었다 — 예시로 써둔 그럴등한 URL이었을 뿐이다. 법적 문서(개인정보처리방침)를 존재하지 않는 도메인 예시로 방치하면 나중에 그대로 App Store Connect에 넣는 사고가 날 수 있어서, 이미 있는 public 저장소(`ios-game-portfolio`)에서 무료로 즉시 되는 GitHub Pages로 확정했다. `new-game-setup.md`와 `Tools/JuiceLab`의 예시 URL도 실제 주소로 갱신했다.
 - **10개 게임이 방침 하나를 공유한다.** 전부 같은 `CoreKit` 데이터 수집 구조(AdMob·Firebase·StoreKit·CloudKit)를 쓰므로 게임별로 따로 쓸 이유가 없다 — 유지보수 지점이 하나로 줄어든다. 데이터가 실제로 바뀌면(새 SDK 추가 등) 이 문서와 App Store Connect의 개인정보 라벨을 **같이** 갱신해야 한다고 `docs/privacy/README.md`에 명시했다.
 - **Small Business Program·GitHub Pages 토글은 코드가 아니라 J의 계정 액션이다.** Claude Code가 GitHub 저장소 설정이나 Apple Developer 계정에 접근할 권한이 없어서, 절차 문서까지만 쓰고 체크박스는 미체크로 남겼다 — 실행 자체는 J의 몫.
+
+### D-102. S3.10 — Chordline 앱을 실제로 켜보고 나서야 잡힌 결함 (포트폴리오 전체 상속)
+- **`String(localized:)`/`LocalizedStringResource`가 `table:` 없이 호출되고 있었다.** `table:`을 안 주면 "Localizable"이라는 **존재하지 않는 테이블**을 찾고, 못 찾으면 던지지 않고 **원래 키 문자열을 그대로 돌려준다.** Home 화면의 Play 버튼이 "common.play"라고 그대로 떴다.
+- **왜 지금까지 아무 테스트도 이걸 못 잡았나.** `swift test`는 `.xcstrings`를 절대 컴파일하지 않는다(Xcode만 한다) — 그래서 호스트에서는 **정상 케이스도 실패 케이스도 똑같이 키 문자열**을 돌려준다. `ThemeTests`/`ChordlineStringsTests`는 "카탈로그 파일 안에 키가 있는가"만 확인했을 뿐 "런타임에 그 키가 실제로 resolve되는가"는 확인한 적이 없다 — **확인할 방법이 호스트에 없었다.** `docs/AUDIT.md`가 이미 이 부류를 경고해뒀다("Runtime resolution is verified by the iOS build and by JuiceLab") — 근데 그 검증이 실제로는 한 번도 실행 화면을 보고 확인된 적이 없었다.
+- **`CommonStrings`(S1.9, 게임 10개가 상속)와 `ChordlineStrings`(S3.8, 같은 패턴을 그대로 베낌) 둘 다 걸려 있었다.** 이 프로젝트에서 Chordline을 실제 앱으로 처음 빌드하고(S3.10) 시뮬레이터에서 Home 화면을 눈으로 본 게 이 결함을 잡은 유일한 방법이었다 — 코드만 읽으면 타입도 맞고 컴파일도 되고 테스트도 초록이라 완벽하게 정상으로 보인다.
+- **수정.** 두 파일 다 `table: "Common"`/`table: "Chordline"`을 명시(카탈로그 파일 이름과 정확히 일치). `audit.sh` 6단계에 정적 검사 추가 — `bundle: .module`을 쓰면서 `table:`이 없는 `String(localized:)`/`LocalizedStringResource(...)` 호출을 grep으로 잡는다. `docs/AUDIT.md` 카탈로그 Q로 등록.
+- **일반화.** 이건 카탈로그 A~P 어디에도 딱 맞지 않는 새로운 부류다 — "정상적으로 보이는 API 호출이 기본 인자 때문에 조용히 실패하고, 그 실패가 호스트에서는 원천적으로 재현되지 않는" 경우. **호스트 테스트가 100% 통과해도 "실제로 켜서 본다"를 대체할 수 없다**는 걸 이 프로젝트에서 처음으로 실증한 사례다.
+
+### D-103. S3.10 완료 — Chordline 실제 Xcode 앱 생성, 게임마다 반복할 단계로 확정
+- **Chordline이 이제 SPM 패키지 + 실제 Xcode 앱, 둘 다다.** `project.yml`(XcodeGen) + `App/`(진입점 3파일: `ChordlineApp.swift`/`ChordlineGameplayScreen.swift`/`ChordlineStage.swift`)이 새로 생겼다. `new-game-setup.md`가 문서화해둔 배선을 그대로 따랐고, 실제로 시뮬레이터에서 빌드·설치·실행까지 검증했다 — 크래시 없음, `GADApplicationIdentifier`/`UIBackgroundModes`/CloudKit 엔타이틀먼트 전부 실제 빌드 산출물에서 확인.
+- **직접 짠 앱 배선 코드에서도 실수 2건을 바로 잡았다.** `ChordlineGameplayScreen`과 `ChordlineFlowRouter` 둘 다 `StageCatalog.all()`(솔버 기반 생성기로 109개를 매번 다시 만드는 함수)을 호출부마다 새로 불렀다 — 스테이지 하나 들어갈 때마다, 진행도가 갱신될 때마다 전체 카탈로그를 다시 생성하고 있었다. 라우터가 이미 계산해둔 값을 화면에 전달하는 방식으로 고쳤다. 코드 리뷰 없이 그냥 "동작하니 됐다"로 넘겼으면 안 보였을 종류다.
+- **Info.plist/entitlements는 XcodeGen이 매번 새로 쓰는 산출물이다 — project.yml이 원본.** 이걸 직접 확인했다: entitlements에 `properties:` 없이 `path:`만 주니 xcodegen이 파일을 **빈 plist로 덮어썼다.** JuiceLab의 기존 `.gitignore`가 `Info.plist`를 이미 무시하고 있던 이유가 바로 이거였다 — Chordline의 `.gitignore`에도 `*.entitlements`를 추가했다.
+- **`Chordline.xcodeproj`/`Info.plist`/`Chordline.entitlements`는 커밋 안 한다 (기존 JuiceLab 컨벤션과 동일).** `project.yml`/`Info.plist`(베이스 템플릿, 실은 이것도 사실 xcodegen이 재작성함)/`App/`/`Chordline.storekit`만 커밋한다.
+- **실기기 빌드는 여기서 끝나지 않는다.** `generic/platform=iOS`는 서명 팀이 없어서 실패하는 게 정상이고 예상된 동작이다 — J가 Xcode에서 본인 Apple ID/팀을 선택해야 다음 단계로 넘어간다. 이 지점부터는 CLAUDE.md §2.6이 명시한 대로 **Claude가 실기기를 대신 조작하지 않는다.**
