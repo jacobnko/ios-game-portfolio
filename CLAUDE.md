@@ -49,9 +49,23 @@ Its reason to exist is simple: every game shipped should require less new code t
 5. **At the end of every phase, run the audit** — `./scripts/audit.sh`, then the reading
    pass in `docs/AUDIT.md` §4. Phase 1 shipped 15 defects past a green build; four of
    them were invisible to reading and one was invisible to everything but running the app.
-6. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
-7. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
-8. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
+6. **A game's core-logic phase (Phase 3 for game #1, the equivalent phase for every game
+   after it) does not end until the real Xcode app project exists.** Up through that
+   phase the game is SPM packages only — `swift test` and Xcode Live Preview are the only
+   verification available, and neither one can prove haptics, audio, real drag input, or
+   CloudKit sync actually work. The closing step, every time, is:
+   1. Follow `docs/architecture/new-game-setup.md` to generate `project.yml` +
+      `Info.plist` + the app entry point (XcodeGen), wiring the game's one bespoke
+      screen into the five shared `CoreKitUI` screens.
+   2. Build for a real device destination (`xcodebuild ... -destination
+      'generic/platform=iOS' build`) to confirm it compiles outside of SPM.
+   3. Hand off to J with `docs/DEVICE-TEST.md`. **J does the on-device running and
+      testing — Claude does not drive a real device, and a passing Simulator build
+      is not a substitute.**
+   Only after that handoff does the phase actually close and the release-pipeline phase begin.
+7. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
+8. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
+9. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
 
 ### Commits
 - **Claude commits automatically.** Staging and committing is part of finishing a step, not a task handed back to the user.
