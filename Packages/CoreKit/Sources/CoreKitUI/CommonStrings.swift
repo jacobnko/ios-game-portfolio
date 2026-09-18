@@ -44,12 +44,23 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case stageLocked = "stage.locked"
 
     /// Resolved through the package's own catalog.
+    ///
+    /// `table:` has to name the catalog file (`Common.xcstrings` compiles to a
+    /// `Common` table) — leaving it out defaults to a table named
+    /// "Localizable", which does not exist here, and both `String(localized:)`
+    /// and `LocalizedStringResource` fail that lookup by returning the raw key
+    /// rather than throwing. That is exactly what shipped: every screen using
+    /// `CommonStrings` showed literal keys like "common.play" instead of real
+    /// text, in every build, since S1.9 — invisible on the host (where an
+    /// .xcstrings file is never compiled at all, so the fallback looks
+    /// identical to the bug) and never actually looked at running until a
+    /// device build's Home screen was.
     public var resource: LocalizedStringResource {
-        LocalizedStringResource(String.LocalizationValue(rawValue), bundle: .atURL(Bundle.module.bundleURL))
+        LocalizedStringResource(String.LocalizationValue(rawValue), table: "Common", bundle: .atURL(Bundle.module.bundleURL))
     }
 
     /// Plain string, for places that cannot take a `LocalizedStringResource`.
     public var text: String {
-        String(localized: String.LocalizationValue(rawValue), bundle: .module)
+        String(localized: String.LocalizationValue(rawValue), table: "Common", bundle: .module)
     }
 }
