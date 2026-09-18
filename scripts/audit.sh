@@ -115,6 +115,24 @@ else
     pass "none"
 fi
 
+# A resource-bundle string lookup with no `table:` defaults to a table named
+# "Localizable", which none of our catalogs are — every one is named after its
+# own file (Common.xcstrings -> table "Common"). Without `table:` the lookup
+# just fails and quietly returns the raw key instead of throwing, which is how
+# CommonStrings shipped showing literal keys like "common.play" on every
+# screen since S1.9 (found only by running a real built app — see D-102).
+# swift test cannot catch the runtime failure itself (.xcstrings never
+# compiles on host), so this checks the one thing that is checkable statically:
+# every such call site names its table.
+UNTABLED=$(grep -rnE 'String\(localized:|LocalizedStringResource\(' --include="*.swift" "${HAZARD_ROOTS[@]}" 2>/dev/null \
+    | grep -E 'bundle:\s*\.module|bundle:\s*\.atURL\(Bundle\.module' | grep -v 'table:')
+if [ -n "$UNTABLED" ]; then
+    echo "$UNTABLED" | sed 's/^/  ✗ missing table\: /' | cut -c1-160
+    fail "string catalog lookup without an explicit table:"
+else
+    pass "every catalog lookup names its table"
+fi
+
 section "7/7  Game packages"
 # Games live in their own repositories (docs/architecture/repo-strategy.md), but
 # their logic is where the puzzle rules live — it gets the same treatment as
