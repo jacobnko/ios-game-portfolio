@@ -161,13 +161,19 @@ public struct SettingsContent: View {
                     .padding(.top, 8)
             }
         }
-        .confirmationDialog(
+        // An alert, not a confirmation dialog. The dialog slides up from the
+        // button as a popover and says only "Reset Progress" twice, which does
+        // not tell the player that every star and best time goes with it.
+        // Wiping progress deserves a centred, modal warning that says what is
+        // lost and cannot be dismissed by tapping past it.
+        .alert(
             CommonStrings.settingsResetProgress.text,
-            isPresented: $isConfirmingReset,
-            titleVisibility: .visible
+            isPresented: $isConfirmingReset
         ) {
-            Button(CommonStrings.settingsResetProgress.text, role: .destructive, action: onResetProgress)
             Button(CommonStrings.cancel.text, role: .cancel) {}
+            Button(CommonStrings.settingsResetProgressConfirm.text, role: .destructive, action: onResetProgress)
+        } message: {
+            Text(CommonStrings.settingsResetProgressMessage.text)
         }
     }
 

@@ -137,6 +137,26 @@ else
     pass "every catalog lookup names its table"
 fi
 
+# A game can ship complete translations that no player can ever reach. iOS only
+# offers the per-app Language switch when the app bundle declares more than one
+# localization, and every string here lives in package bundles — so the app's
+# own Info.plist says "one language" unless told otherwise. Chordline shipped
+# exactly that: en.lproj and ko.lproj compiled and complete, with no way to
+# choose between them. Nothing at build or test time notices.
+for gameProject in "$ROOT/Apps"/*/project.yml; do
+    [ -f "$gameProject" ] || continue
+    GAME_DIR="$(dirname "$gameProject")"
+    GAME_NAME="$(basename "$GAME_DIR")"
+    if ! find "$GAME_DIR/Sources" -name "*.xcstrings" 2>/dev/null | grep -q .; then
+        continue
+    fi
+    if grep -q "CFBundleLocalizations" "$gameProject"; then
+        pass "$GAME_NAME declares the languages it ships"
+    else
+        fail "$GAME_NAME has translations but its app bundle declares no languages"
+    fi
+done
+
 section "7/7  Game packages"
 # Games live in their own repositories (docs/architecture/repo-strategy.md), but
 # their logic is where the puzzle rules live — it gets the same treatment as
