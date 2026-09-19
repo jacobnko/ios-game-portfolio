@@ -27,6 +27,8 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case settingsRestorePurchases = "settings.restorePurchases"
     case settingsPrivacyPolicy = "settings.privacyPolicy"
     case settingsResetProgress = "settings.resetProgress"
+    case settingsOneTime = "settings.oneTime"
+    case settingsSystemSettings = "settings.systemSettings"
 
     case resultStageCleared = "result.stageCleared"
     case resultBestTime = "result.bestTime"
