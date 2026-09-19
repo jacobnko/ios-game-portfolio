@@ -28,8 +28,13 @@ public enum SupportedLanguage: String, CaseIterable, Sendable {
         }
     }
 
-    /// Launch languages. The rest are added per game once Analytics shows traction.
-    public static let launchSet: [SupportedLanguage] = [.english, .korean]
+    /// The languages every game ships translated on day one.
+    ///
+    /// All of them. Translating as the strings are written costs a line per
+    /// key; going back for five languages after the fact means re-reading every
+    /// screen to work out what each string meant. The tests hold the catalogs
+    /// to this list, so a new key cannot ship translated into some of it.
+    public static let launchSet: [SupportedLanguage] = SupportedLanguage.allCases
 }
 
 /// Language selection.

@@ -83,8 +83,20 @@ private struct Catalog {
 
 // MARK: - Languages
 
-@Test func theLaunchSetIsKoreanAndEnglish() {
-    #expect(SupportedLanguage.launchSet == [.english, .korean])
+@Test func everySupportedLanguageShipsAtLaunch() {
+    // Was English and Korean, with the rest deferred until traffic justified
+    // them. Translating alongside the strings turned out to be far cheaper
+    // than coming back to five languages later, so the catalogs now carry all
+    // seven and this is what holds them to it.
+    #expect(SupportedLanguage.launchSet == SupportedLanguage.allCases)
+}
+
+@Test func theLaunchSetMatchesWhatTheAppDeclares() {
+    // These codes go into CFBundleLocalizations verbatim. A language in the
+    // catalog that the app bundle does not declare is invisible to iOS — the
+    // exact failure that hid Korean behind a Settings page with no language
+    // row on it.
+    #expect(Set(SupportedLanguage.allCases.map(\.rawValue)) == ["en", "ko", "ja", "de", "es-MX", "pt-BR", "fr"])
 }
 
 @Test func sevenLanguagesAreSupported() {
