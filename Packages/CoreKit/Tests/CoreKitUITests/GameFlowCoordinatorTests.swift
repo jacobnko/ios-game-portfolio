@@ -225,9 +225,15 @@ private func makeCoordinator() throws -> (GameFlowCoordinator, FakeAdPresenter, 
     coordinator.startStage("s1", attempt: 1)
     _ = await coordinator.completeStage("s1", outcome: StageOutcome(cleared: true))
 
-    async let first: Void = coordinator.advanceFromResult(nextStageID: "s2")
-    async let second: Void = coordinator.advanceFromResult(nextStageID: "s3")
-    _ = await (first, second)
+    // Deliberately ordered rather than `async let` for both: `async let` does
+    // not order its children, so the second tap could acquire the guard first
+    // and the assertions below would flip to "s3" at random. The behaviour
+    // under test is that the *first* tap through wins and the second is
+    // dropped, which needs a first tap that is actually first.
+    let first = Task { await coordinator.advanceFromResult(nextStageID: "s2") }
+    await Task.yield() // let `first` reach its interstitial suspension point
+    await coordinator.advanceFromResult(nextStageID: "s3")
+    await first.value
 
     #expect(presenter.interstitialShowCount == 1)
     #expect(coordinator.path == [.game(stageID: "s2")])
