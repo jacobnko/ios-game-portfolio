@@ -339,6 +339,11 @@
 - [x] Small Business Program 신청 절차 — `docs/architecture/appstore-connect-setup.md` §10. **신청 자체는 J가 App Store Connect에서 실행**
 - [x] 실제 Ad Unit ID 교체 절차 — 이미 Phase 1에 문서화돼 있었음 (`docs/architecture/admob-setup.md` §2, §5)
 - [x] App Store Connect 등록 절차 문서 — `docs/architecture/appstore-connect-setup.md` (번들 ID → 앱 생성 → IAP → 연령 등급 → 개인정보 라벨 → 빌드 업로드)
+- [x] S4.6 스토어 표시명 확정 — 상표 검증
+  - [x] `check-name.sh` us/kr/jp 재확인 — 완전 일치 없음
+  - [x] USPTO 검색 — `CHORDLINE HEALTH`(IC 042, 헬스케어 SaaS) 라이브 상표 발견. 관련 클래스(9·41)와 다름, 단독 문자열 아님 — 상세 판단 근거는 `context-notes.md` D-105
+  - [x] KIPRIS 검색 — 국내 문자상표 0건
+  - [ ] **J가 App Store Connect에서 이름 예약** (예약 후 90일 내 제출 필요 — `docs/architecture/naming.md`)
 
 ---
 
