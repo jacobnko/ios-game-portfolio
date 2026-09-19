@@ -256,10 +256,12 @@ public struct HomeView<Logo: View, Banner: View>: View {
             }
             .frame(height: 5)
 
+            // Spaces around the slash: the numeric font is monospaced, so
+            // "20/119" packs the two counts tight enough to read as one number.
             Text("\(progress.cleared)")
                 .font(theme.typography.numeric)
                 .foregroundStyle(tint)
-            + Text("/\(progress.total)")
+            + Text(" / \(progress.total)")
                 .font(theme.typography.numeric)
                 .foregroundStyle(theme.palette.onSurface.resolved(for: colorScheme).opacity(0.35))
         }
