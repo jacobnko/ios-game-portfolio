@@ -6,39 +6,38 @@ import SwiftUI
 import CoreKitJuice
 import CoreKitServices
 
-/// A second play mode offered next to the primary one.
-///
-/// Separate from the primary `onPlay` rather than a generic list of buttons:
-/// the second mode is almost always gated on finishing the first, and the
-/// locked state (dimmed, non-tappable, with its own label) is the part games
-/// would otherwise each reimplement slightly differently.
-public struct HomeSecondaryMode {
-    public let title: String
-    public let lockedTitle: String
-    public let isLocked: Bool
-    public let action: () -> Void
-
-    public init(title: String, lockedTitle: String, isLocked: Bool, action: @escaping () -> Void) {
-        self.title = title
-        self.lockedTitle = lockedTitle
-        self.isLocked = isLocked
-        self.action = action
-    }
+/// Where a player stands in one ladder.
+public enum HomeModeState: Sendable, Equatable {
+    /// Every stage cleared. Steps back so the live ladder can take the focus.
+    case cleared
+    /// The ladder to play now — the one glowing control on the screen.
+    case current
+    /// Not open yet. Visible on purpose: the ladder ahead is the reason to
+    /// finish the one in hand.
+    case locked
 }
 
-/// How far through the game the player is, shown as a bar plus a count.
-public struct HomeProgress: Equatable, Sendable {
-    public let cleared: Int
-    public let total: Int
+/// One play mode offered on the home screen.
+public struct HomeMode: Identifiable {
+    public let id: String
+    public let title: String
+    /// Shown instead of `title` while locked — says what opens it.
+    public let lockedTitle: String
+    public let state: HomeModeState
+    public let action: () -> Void
 
-    public init(cleared: Int, total: Int) {
-        self.cleared = max(0, cleared)
-        self.total = max(0, total)
-    }
-
-    public var fraction: Double {
-        guard total > 0 else { return 0 }
-        return min(1, Double(cleared) / Double(total))
+    public init(
+        id: String,
+        title: String,
+        lockedTitle: String,
+        state: HomeModeState,
+        action: @escaping () -> Void
+    ) {
+        self.id = id
+        self.title = title
+        self.lockedTitle = lockedTitle
+        self.state = state
+        self.action = action
     }
 }
 
@@ -47,41 +46,33 @@ public struct HomeProgress: Equatable, Sendable {
 /// `logo` and `banner` are slots rather than fixed views because ten games ship
 /// ten different visual identities (§6 of the design handoff), and CoreKitUI has
 /// no dependency on any ad SDK — this view only owns the layout and the
-/// Play/Settings affordances.
+/// mode/settings affordances.
 ///
-/// Layout follows the D4 budget (`screen-spec.js`): a 48pt settings control top
-/// right, branding in the upper third, one glowing primary CTA, a secondary row,
-/// then progress above the reserved banner strip. Every colour comes from the
-/// theme, so the shape is shared while each game still reads as its own app —
-/// the Guideline 4.3 requirement in CLAUDE.md §0.3.
+/// Modes are a list rather than a primary CTA plus extras so that the screen
+/// reads at a glance: exactly one of them is `current` and it is the only
+/// filled, glowing control, finished ladders shrink to a checked row, and
+/// locked ones stay visible but dim. Every colour comes from the theme, so the
+/// ten games share the shape and not the look — the Guideline 4.3 point in
+/// CLAUDE.md §0.3.
 public struct HomeView<Logo: View, Banner: View>: View {
     @Environment(\.gameTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let logo: Logo
     private let banner: Banner
-    private let onPlay: () -> Void
+    private let modes: [HomeMode]
     private let onSettings: () -> Void
-    private let playTitle: String?
-    private let secondaryMode: HomeSecondaryMode?
-    private let progress: HomeProgress?
 
     @State private var soundEnabled = PitchedTonePlayer.shared.isEnabled
 
     public init(
-        onPlay: @escaping () -> Void,
+        modes: [HomeMode],
         onSettings: @escaping () -> Void,
-        playTitle: String? = nil,
-        secondaryMode: HomeSecondaryMode? = nil,
-        progress: HomeProgress? = nil,
         @ViewBuilder logo: () -> Logo,
         @ViewBuilder banner: () -> Banner
     ) {
-        self.onPlay = onPlay
+        self.modes = modes
         self.onSettings = onSettings
-        self.playTitle = playTitle
-        self.secondaryMode = secondaryMode
-        self.progress = progress
         self.logo = logo()
         self.banner = banner()
     }
@@ -101,34 +92,22 @@ public struct HomeView<Logo: View, Banner: View>: View {
 
             Spacer(minLength: 24)
 
-            VStack(spacing: 14) {
-                playButton
-                if let secondaryMode {
-                    HStack(spacing: 14) {
-                        secondaryButton(secondaryMode)
-                        soundButton
-                    }
+            VStack(spacing: 12) {
+                ForEach(modes) { mode in
+                    modeRow(mode)
                 }
             }
             .padding(.horizontal, 24)
 
-            if let progress {
-                progressBar(progress)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 28)
-                    .padding(.bottom, 4)
-            }
-
-            Spacer(minLength: 12)
+            Spacer(minLength: 16)
 
             banner
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
             // Two soft pools of brand colour behind everything, so the screen
-            // is not a flat rectangle of background. Drawn behind the grid, and
-            // never over content — the CTA's own glow has to stay the
-            // brightest thing on the screen.
+            // is not a flat rectangle of background — never over content, since
+            // the current mode's glow has to stay the brightest thing here.
             ZStack {
                 theme.palette.background.resolved(for: colorScheme)
                 RadialGradient(
@@ -148,7 +127,86 @@ public struct HomeView<Logo: View, Banner: View>: View {
         }
     }
 
-    // MARK: - Pieces
+    // MARK: - Modes
+
+    @ViewBuilder
+    private func modeRow(_ mode: HomeMode) -> some View {
+        switch mode.state {
+        case .current: currentRow(mode)
+        case .cleared: clearedRow(mode)
+        case .locked: lockedRow(mode)
+        }
+    }
+
+    /// Filled and glowing, at full height. Replayable, so it stays tappable
+    /// even once it is the finished ladder's turn to be `cleared`.
+    private func currentRow(_ mode: HomeMode) -> some View {
+        let tint = theme.palette.primary.resolved(for: colorScheme)
+        return Button(action: mode.action) {
+            HStack(spacing: 15) {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 22, weight: .black))
+                Text(mode.title)
+                    .font(theme.typography.title)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.center)
+            }
+            .foregroundStyle(theme.palette.background.resolved(for: colorScheme))
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, minHeight: 76)
+            .background(RoundedRectangle(cornerRadius: 22).fill(tint))
+            .shadow(color: tint.opacity(0.5), radius: 15)
+            .shadow(color: tint.opacity(0.22), radius: 35)
+        }
+        .accessibilityLabel(mode.title)
+    }
+
+    /// Shorter, outlined, check-marked. Still tappable — a finished ladder is
+    /// the one a player goes back to for stars.
+    private func clearedRow(_ mode: HomeMode) -> some View {
+        let tint = theme.palette.primary.resolved(for: colorScheme)
+        return Button(action: mode.action) {
+            HStack(spacing: 9) {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 13, weight: .heavy))
+                    .foregroundStyle(tint)
+                Text(mode.title)
+                    .font(theme.typography.body)
+                    .foregroundStyle(theme.palette.onSurface.resolved(for: colorScheme).opacity(0.75))
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(theme.palette.surface.resolved(for: colorScheme))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(tint.opacity(0.3), lineWidth: 1))
+            )
+        }
+        .accessibilityLabel(mode.title)
+    }
+
+    private func lockedRow(_ mode: HomeMode) -> some View {
+        let ink = theme.palette.onSurface.resolved(for: colorScheme)
+        return HStack(spacing: 8) {
+            Image(systemName: "lock.fill").font(.footnote)
+            Text(mode.lockedTitle)
+                .font(theme.typography.body)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.center)
+        }
+        .foregroundStyle(ink.opacity(0.4))
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, minHeight: 52)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(theme.palette.background.resolved(for: colorScheme))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(ink.opacity(0.1), lineWidth: 1))
+        )
+        .accessibilityLabel(mode.lockedTitle)
+    }
+
+    // MARK: - Chrome
 
     /// 48pt, the floor `screen-spec.js` sets for every touch target — above
     /// Apple's 44 so a label or icon can grow without eating into it.
@@ -169,129 +227,14 @@ public struct HomeView<Logo: View, Banner: View>: View {
         }
         .accessibilityLabel(CommonStrings.settings.text)
     }
-
-    /// The only filled, glowing control on the screen.
-    ///
-    /// `minHeight` rather than a fixed height: a translated label is often half
-    /// again as long, and a fixed height truncates it instead of growing.
-    private var playButton: some View {
-        let tint = theme.palette.primary.resolved(for: colorScheme)
-        return Button(action: onPlay) {
-            HStack(spacing: 15) {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 22, weight: .black))
-                Text(playTitle ?? CommonStrings.play.text)
-                    .font(theme.typography.title)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.center)
-            }
-            .foregroundStyle(theme.palette.background.resolved(for: colorScheme))
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, minHeight: 76)
-            .background(RoundedRectangle(cornerRadius: 22).fill(tint))
-            .shadow(color: tint.opacity(0.5), radius: 15)
-            .shadow(color: tint.opacity(0.22), radius: 35)
-        }
-    }
-
-    /// Outlined rather than filled, so the primary CTA stays the only solid
-    /// block of colour on the screen even once a second mode is unlocked.
-    private func secondaryButton(_ mode: HomeSecondaryMode) -> some View {
-        Button(action: mode.isLocked ? {} : mode.action) {
-            HStack(spacing: 8) {
-                Image(systemName: mode.isLocked ? "lock.fill" : "square.grid.2x2.fill")
-                    .font(.footnote)
-                Text(mode.isLocked ? mode.lockedTitle : mode.title)
-                    .font(theme.typography.body)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.center)
-            }
-            .foregroundStyle(
-                theme.palette.onSurface.resolved(for: colorScheme)
-                    .opacity(mode.isLocked ? 0.45 : 1)
-            )
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, minHeight: 60)
-            .background(surfaceTile(radius: 18))
-        }
-        .disabled(mode.isLocked)
-        .accessibilityLabel(mode.isLocked ? mode.lockedTitle : mode.title)
-    }
-
-    /// Reaches `PitchedTonePlayer.shared` directly, the same way `SettingsView`
-    /// does — every game's audio genuinely is that one singleton, so there is
-    /// nothing game-specific to inject.
-    private var soundButton: some View {
-        Button {
-            soundEnabled.toggle()
-            PitchedTonePlayer.shared.isEnabled = soundEnabled
-            AnalyticsHub.shared.log(GameEvent.settingToggled(name: "sound", isOn: soundEnabled))
-        } label: {
-            Image(systemName: soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(
-                    soundEnabled
-                        ? theme.palette.primary.resolved(for: colorScheme)
-                        : theme.palette.onSurface.resolved(for: colorScheme).opacity(0.4)
-                )
-                .frame(width: 60, height: 60)
-                .background(surfaceTile(radius: 18))
-        }
-        .accessibilityLabel(CommonStrings.settingsSound.text)
-    }
-
-    private func progressBar(_ progress: HomeProgress) -> some View {
-        let tint = theme.palette.primary.resolved(for: colorScheme)
-        return HStack(spacing: 14) {
-            GeometryReader { proxy in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(theme.palette.onSurface.resolved(for: colorScheme).opacity(0.1))
-                    Capsule()
-                        .fill(tint)
-                        .frame(width: proxy.size.width * progress.fraction)
-                        .shadow(color: tint.opacity(0.7), radius: 5)
-                }
-            }
-            .frame(height: 5)
-
-            // Spaces around the slash: the numeric font is monospaced, so
-            // "20/119" packs the two counts tight enough to read as one number.
-            Text("\(progress.cleared)")
-                .font(theme.typography.numeric)
-                .foregroundStyle(tint)
-            + Text(" / \(progress.total)")
-                .font(theme.typography.numeric)
-                .foregroundStyle(theme.palette.onSurface.resolved(for: colorScheme).opacity(0.35))
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(progress.cleared) / \(progress.total)")
-    }
-
-    private func surfaceTile(radius: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: radius)
-            .fill(theme.palette.surface.resolved(for: colorScheme))
-            .overlay(
-                RoundedRectangle(cornerRadius: radius)
-                    .stroke(theme.palette.onSurface.resolved(for: colorScheme).opacity(0.11), lineWidth: 1)
-            )
-    }
 }
 
 public extension HomeView where Banner == EmptyView {
     init(
-        onPlay: @escaping () -> Void,
+        modes: [HomeMode],
         onSettings: @escaping () -> Void,
-        playTitle: String? = nil,
-        secondaryMode: HomeSecondaryMode? = nil,
-        progress: HomeProgress? = nil,
         @ViewBuilder logo: () -> Logo
     ) {
-        self.init(
-            onPlay: onPlay, onSettings: onSettings, playTitle: playTitle,
-            secondaryMode: secondaryMode, progress: progress,
-            logo: logo, banner: { EmptyView() }
-        )
+        self.init(modes: modes, onSettings: onSettings, logo: logo, banner: { EmptyView() })
     }
 }
