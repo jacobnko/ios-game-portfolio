@@ -221,6 +221,30 @@ struct ChordlineStage: StageDescriptor {
 - [ ] `GADApplicationIdentifier`를 실제 앱 ID로 교체
 - [ ] 스토어 표시명 확정 (`docs/architecture/naming.md` §확정 시점)
 
+### 첫 제출은 광고 없이 (권장 패턴, Chordline D-106)
+
+첫 심사의 리스크 표면(광고 콘텐츠 지적, ATT 마찰, 심사팀 노출로 인한 무효 트래픽)을 줄이려면
+게임의 첫 App Store 제출은 광고를 완전히 끈 채로 낸다. 배너·전면·보상형·Settings의
+Remove Ads/Restore Purchases·힌트의 "AD" 배지까지 전부 한 번에 숨는다 — 코드를 지우는 게
+아니라 `AdCoordinator(adsEnabled:)` 하나로 숨기는 것이므로, 리뷰 이력이 쌓인 뒤 한 줄만
+바꾸면 전부 돌아온다.
+
+```swift
+// App 진입점(§6) 최상단에 이 한 줄을 둔다 — 플립 지점은 여기 하나뿐이다.
+private let adsEnabledAtLaunch = false   // 첫 제출 통과 후 true로
+
+// AdCoordinator와 SettingsView 양쪽에 그대로 전달한다.
+let ads = AdCoordinator(purchases: purchases, presenter: presenter, adsEnabled: adsEnabledAtLaunch)
+// ...
+SettingsView(purchases: ..., adsEnabled: adsEnabledAtLaunch, ...)
+```
+
+힌트처럼 보상형 광고로 게이팅된 기능은 광고가 꺼진 동안 **무료로 계속 동작해야 한다** —
+`AdCoordinator.showRewarded()`가 이미 이 경로를 갖고 있다(`adsRemoved` 구매자와 동일하게
+`.earned`를 즉시 돌려준다). 광고를 켜는 순간 `AdSetup.start()`(ATT 프롬프트 +
+`MobileAds.shared.start()`)를 실제로 호출하고 있는지도 같이 확인한다 — Chordline은 이 호출
+자체가 빠져 있었다(D-106).
+
 ---
 
 ## 검증

@@ -384,6 +384,18 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 
 ---
 
+## Phase 3.13 — 광고 기능 전체 비활성화 (첫 심사용)
+
+- [x] `AdCoordinator(adsEnabled:)` — 배너·전면·보상형·preload 전부 단일 게이트에 통합
+- [x] 보상형(힌트)은 꺼진 상태에서도 무료로 계속 동작 (`.earned` 즉시 반환)
+- [x] `SettingsView`/`SettingsContent(adsEnabled:)` — Remove Ads·Restore Purchases 같이 숨김
+- [x] `AdCoordinator.showsRewardedBadge` — HUD의 "AD" 배지 숨김
+- [x] 플립 지점 1곳 — `ChordlineApp.swift`의 `adsEnabledAtLaunch` 상수
+- [x] `new-game-setup.md` §8에 패턴 문서화 (게임 2~10 재사용)
+- [x] `context-notes.md` D-106 — `AdSetup.start()`(ATT/SDK 초기화)가 애초에 호출된 적 없었다는 것도 같이 기록. 광고 켤 때 같이 확인 필요
+
+---
+
 ## Phase 3.12 — 프로세스 문서화 (Phase 4 진입 전)
 
 - [x] `CLAUDE.md` §6에 "화면 제작 게이트" 명문화 — D3/D4 리뷰 완료 전엔 화면을 만들지 않는다

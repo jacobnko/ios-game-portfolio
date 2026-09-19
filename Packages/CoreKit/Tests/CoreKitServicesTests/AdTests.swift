@@ -220,3 +220,67 @@ private func makeCoordinator(
     ads.recordStageClear()
     #expect(presenter.preloadCount == 0)
 }
+
+// MARK: - Launch-time ad kill switch
+
+@MainActor
+private func makeDisabledCoordinator(
+    presenter: FakeAdPresenter = FakeAdPresenter(),
+    clock: @escaping @Sendable () -> TimeInterval = { 0 }
+) async -> (AdCoordinator, FakeAdPresenter) {
+    let productID = "com.jacobkostudio.testgame.removeads"
+    let client = FakeStoreClient(entitlements: [])
+    client.products = [.removeAds(id: productID)]
+    let purchases = PurchaseManager(client: client, removeAdsProductID: productID)
+    await purchases.refresh()
+    let ads = AdCoordinator(
+        purchases: purchases, presenter: presenter, policy: .unrestricted,
+        adsEnabled: false, now: clock
+    )
+    return (ads, presenter)
+}
+
+@Test @MainActor func disablingAdsHidesTheBannerForAnUnpaidPlayer() async {
+    // The launch switch is not the same thing as the entitlement — a free
+    // player normally sees a banner, but not in a build with ads off.
+    let (ads, _) = await makeDisabledCoordinator()
+    #expect(ads.showsBanner == false)
+}
+
+@Test @MainActor func disablingAdsSkipsTheInterstitialWithoutAskingTheSDK() async {
+    let (ads, presenter) = await makeDisabledCoordinator()
+    ads.recordStageClear()
+    #expect(await ads.showInterstitialIfAllowed() == false)
+    #expect(presenter.interstitialShowCount == 0)
+    #expect(presenter.preloadCount == 0)  // never even warmed up
+}
+
+@Test @MainActor func disablingAdsStillGrantsTheRewardedAction() async {
+    // A hint must keep working with ads off — it just stops costing a watch.
+    let (ads, presenter) = await makeDisabledCoordinator()
+    #expect(await ads.showRewarded() == .earned)
+    #expect(presenter.rewardedShowCount == 0)
+}
+
+@Test @MainActor func disablingAdsHidesTheRewardedBadge() async {
+    let (ads, _) = await makeDisabledCoordinator()
+    #expect(ads.showsRewardedBadge == false)
+}
+
+@Test @MainActor func aPlayerWhoRemovedAdsStillHidesTheBadgeRegardlessOfTheLaunchSwitch() async {
+    // Two independent reasons to hide the same badge; either alone is enough.
+    let (ads, _, _) = await makeCoordinator(adsRemoved: true)
+    #expect(ads.showsRewardedBadge == false)
+}
+
+@Test @MainActor func theBadgeShowsOnlyWhenAdsAreOnAndNotRemoved() async {
+    let (ads, _, _) = await makeCoordinator()
+    #expect(ads.showsRewardedBadge)
+}
+
+@Test @MainActor func enablingAdsIsTheDefault() async {
+    // The parameter defaults to on, so every existing call site (and every
+    // test above that never mentions it) keeps its current behaviour.
+    let (ads, _, _) = await makeCoordinator()
+    #expect(ads.showsBanner)
+}

@@ -823,3 +823,14 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **KIPRIS(한국) — 국내 상표 0건.** "Chordline" 문자상표로 국내 등록·출원 결과 없음. 해외(영문) 색인에 5건이 잡히는데 이건 위 USPTO 건과 동일한 레코드가 재수집된 것으로 보임(KIPRIS는 해외 상표청 데이터도 색인한다).
 - **결론 — 진행해도 되는 근거는 있지만, 법률 자문은 아니다.** 클래스가 다르고(042 대 9/41), 업종이 다르고(헬스케어 B2B SaaS 대 모바일 퍼즐 게임 B2C), 단독 문자열로 등록된 게 아니라("HEALTH" 결합어만 등록) — 세 가지가 겹쳐서 실무적 충돌 위험은 낮다고 판단했다. 다만 이건 Claude Code의 조사 결과이지 변호사의 의견이 아니다. 확실히 하려면 상표 전문 변호사 검토가 정석이지만, 이 프로젝트 규모(개인 포트폴리오, 무료+인앱)에서 그 비용을 들일지는 J의 판단.
 - **다음 단계는 J의 계정 액션.** App Store Connect에서 실제 이름 예약 — 예약 순간이 "진짜 확정"이고, 예약 후 90일 내 제출하지 않으면 회수된다(`naming.md`). Claude Code는 ASC 계정에 접근 권한이 없어 이 단계를 대신 실행할 수 없다.
+
+### D-106. 광고 기능 전체 비활성화 — 첫 심사는 광고 없이
+- **요청.** 첫 App Store 심사에서 광고 관련 리스크(광고 콘텐츠 지적, ATT 마찰, 심사팀 노출로 인한 무효 트래픽)를 없애기 위해, 광고 기능을 전부 숨기되 나중에 한 줄로 되돌릴 수 있게 해달라는 요청.
+- **단일 진입점이 이미 있었다.** `CLAUDE.md` §5 하드룰("모든 광고 호출부는 단 하나의 adsRemoved 체크 뒤에 있어야 한다")대로 모든 광고 호출이 이미 `AdCoordinator` 하나를 거치고 있었다. 그래서 새 파일이나 전역 상태 없이, `AdCoordinator.init`에 `adsEnabled: Bool = true` 파라미터 하나만 추가하고 기존 5개 메서드(`showsBanner`/`showInterstitialIfAllowed`/`showRewarded`/`preload`/`recordStageClear`) 전부를 거기 물렸다.
+- **전역 mutable static을 안 쓴 이유.** `static var`로 만들면 Swift 6 strict concurrency에서 공유 가변 상태가 되고, 병렬로 도는 테스트끼리 값을 밟을 위험이 생긴다. 생성자 주입(매 인스턴스에 `let`으로 고정)이면 기존 `presenter`/`policy`/`now` 주입 패턴과 동일하고, 테스트도 전혀 안 건드려도 된다 — 디폴트가 `true`라 기존 테스트는 전부 그대로 통과했다.
+- **`showRewarded()`는 끈 상태에서도 힌트를 살려둔다.** `adsEnabled == false`면 광고를 보여주지 않고 바로 `.earned`를 반환 — 이미 있던 "광고 제거 구매자는 무료로 받는다" 경로를 그대로 재사용했다. 광고를 껐다고 힌트 기능 자체가 죽으면 안 된다.
+- **Settings의 Remove Ads/Restore Purchases도 같이 숨겼다.** 광고가 없으면 지울 것도 없고, 지울 게 없으면 복원할 것도 없다 — `SettingsView`/`SettingsContent`에 똑같은 `adsEnabled` 파라미터를 추가해서 두 행을 한 조건으로 묶었다.
+- **HUD의 "AD" 배지도 숨겼다.** `AdCoordinator.showsRewardedBadge`(= `adsEnabled && !purchases.adsRemoved`)를 새로 노출해서 `ChordlineHUD`가 참조하게 했다 — 안 보여줄 광고를 "AD"라고 배지 달아두면 그 자체가 약속 불이행으로 읽힌다.
+- **플립 지점은 딱 하나.** `Apps/Chordline/App/ChordlineApp.swift` 최상단의 `private let adsEnabledAtLaunch = false` — 이 한 줄이 `AdCoordinator`와 `SettingsView` 양쪽에 전달된다. `true`로 바꾸면 배너·전면·보상형·힌트 배지·Settings 구매 행이 전부 동시에 돌아온다.
+- **`AdSetup.start()`(ATT 프롬프트 + `MobileAds.shared.start()`)는 애초에 호출된 적이 없었다.** 이번에 코드를 보다가 발견 — `ChordlineApp.swift` 어디에서도 이걸 부르지 않아서, 지금 광고를 켜더라도 ATT 동의를 실제로 요청하지 않는 상태다. 이건 이번 작업 범위 밖이라 손 안 댔지만, 나중에 광고를 켤 때(`adsEnabledAtLaunch = true`) 같이 처리해야 할 항목으로 남겨둔다 — `NSUserTrackingUsageDescription`은 이미 Info.plist에 있는데 실제로 요청하는 코드가 없는 상태라 지금은 무해하지만, 켜는 순간부터는 필요해진다.
+- **게임 2~10도 같은 패턴을 쓴다.** `AdCoordinator(adsEnabled:)`는 CoreKitServices에 있으므로 모든 게임이 자기 앱 진입점에 똑같이 `private let adsEnabledAtLaunch = false` 한 줄을 두는 것으로 재사용 가능 — `new-game-setup.md`에 문서화할 가치가 있다(다음 게임 착수 시).

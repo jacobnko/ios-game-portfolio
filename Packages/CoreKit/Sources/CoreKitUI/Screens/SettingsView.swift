@@ -22,6 +22,7 @@ public struct SettingsView: View {
     private let purchases: PurchaseManager
     private let notifications: NotificationScheduler?
     private let privacyPolicyURL: URL?
+    private let adsEnabled: Bool
     private let onResetProgress: () -> Void
     private let onBack: () -> Void
 
@@ -29,12 +30,18 @@ public struct SettingsView: View {
         purchases: PurchaseManager,
         notifications: NotificationScheduler? = nil,
         privacyPolicyURL: URL? = nil,
+        // Mirrors AdCoordinator's own `adsEnabled` — pass the same value. There
+        // is nothing to remove and nothing to restore in a build with no ads,
+        // so both rows hide together rather than offering a purchase for
+        // something that is not there.
+        adsEnabled: Bool = true,
         onResetProgress: @escaping () -> Void,
         onBack: @escaping () -> Void
     ) {
         self.purchases = purchases
         self.notifications = notifications
         self.privacyPolicyURL = privacyPolicyURL
+        self.adsEnabled = adsEnabled
         self.onResetProgress = onResetProgress
         self.onBack = onBack
     }
@@ -50,6 +57,7 @@ public struct SettingsView: View {
                     purchases: purchases,
                     notifications: notifications,
                     privacyPolicyURL: privacyPolicyURL,
+                    adsEnabled: adsEnabled,
                     onResetProgress: onResetProgress
                 )
                 .padding(.horizontal, 24)
@@ -116,6 +124,7 @@ public struct SettingsContent: View {
     private let purchases: PurchaseManager
     private let notifications: NotificationScheduler?
     private let privacyPolicyURL: URL?
+    private let adsEnabled: Bool
     private let onResetProgress: () -> Void
 
     @State private var soundEnabled = PitchedTonePlayer.shared.isEnabled
@@ -127,11 +136,13 @@ public struct SettingsContent: View {
         purchases: PurchaseManager,
         notifications: NotificationScheduler? = nil,
         privacyPolicyURL: URL? = nil,
+        adsEnabled: Bool = true,
         onResetProgress: @escaping () -> Void
     ) {
         self.purchases = purchases
         self.notifications = notifications
         self.privacyPolicyURL = privacyPolicyURL
+        self.adsEnabled = adsEnabled
         self.onResetProgress = onResetProgress
         self._notificationsEnabled = State(initialValue: notifications?.isEnabled ?? false)
     }
@@ -140,14 +151,19 @@ public struct SettingsContent: View {
         VStack(spacing: 12) {
             togglesCard
 
-            if !purchases.adsRemoved {
-                removeAdsButton
-            }
-            // Required by App Store review even though non-consumables
-            // auto-restore — see docs/architecture/iap-setup.md §4. Kept
+            // Both rows hide together when ads are off for this build (see
+            // AdCoordinator's own `adsEnabled`): with no ads there is nothing
+            // to remove, and with nothing purchasable there is nothing to
+            // restore. Required by App Store review when there *is* a
+            // purchase — see docs/architecture/iap-setup.md §4 — kept
             // directly under the purchase button and out of the link list
             // below, which is where a reviewer looks for it.
-            restoreButton
+            if adsEnabled {
+                if !purchases.adsRemoved {
+                    removeAdsButton
+                }
+                restoreButton
+            }
 
             linksCard
 

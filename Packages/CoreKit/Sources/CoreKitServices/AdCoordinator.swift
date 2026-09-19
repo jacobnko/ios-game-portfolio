@@ -18,29 +18,48 @@ public final class AdCoordinator {
     private let purchases: PurchaseManager
     private let presenter: AdPresenting
     private let now: @Sendable () -> TimeInterval
+    /// Whole-app kill switch, set once at construction — see `init(adsEnabled:)`.
+    private let adsEnabled: Bool
 
     /// Whether a banner should currently be on screen.
     ///
     /// Games bind their banner container's visibility to this rather than checking
     /// entitlement themselves.
-    public var showsBanner: Bool { !purchases.adsRemoved }
+    public var showsBanner: Bool { adsEnabled && !purchases.adsRemoved }
+
+    /// Whether the next rewarded-ad action (a hint, say) will actually show an ad,
+    /// as opposed to being granted for free. A button that promises "watch an ad
+    /// for X" should check this before badging itself that way — badging one that
+    /// will not show an ad promises something the tap does not deliver.
+    public var showsRewardedBadge: Bool { adsEnabled && !purchases.adsRemoved }
 
     public init(
         purchases: PurchaseManager,
         presenter: AdPresenting,
         policy: AdPolicy = .standard,
+        // Launch-time kill switch for every placement — banners, interstitials,
+        // and the rewarded-ad prompt (rewarded actions still grant their reward
+        // for free when this is off, same as a player who removed ads). Meant
+        // for a game's first App Store submission: ship ad-free to keep the
+        // first review's surface area small — no ad content for a reviewer to
+        // flag, no ATT friction, no invalid-traffic risk from review-team
+        // impressions — then flip this one argument to `true` in a follow-up
+        // update once the app has a review history. Nothing else in the ad
+        // pipeline needs touching either way.
+        adsEnabled: Bool = true,
         now: @escaping @Sendable () -> TimeInterval = { Date.timeIntervalSinceReferenceDate }
     ) {
         self.purchases = purchases
         self.presenter = presenter
         self.policy = policy
+        self.adsEnabled = adsEnabled
         self.now = now
     }
 
     /// Call after every stage clear, whether or not an ad follows.
     public func recordStageClear() {
         activity.recordClear()
-        if !purchases.adsRemoved { presenter.preload() }
+        if adsEnabled, !purchases.adsRemoved { presenter.preload() }
     }
 
     /// Shows an interstitial if the policy and the entitlement both allow it.
@@ -48,6 +67,7 @@ public final class AdCoordinator {
     /// Returns whether one was actually shown, so the caller can delay a transition.
     @discardableResult
     public func showInterstitialIfAllowed() async -> Bool {
+        guard adsEnabled else { return false }
         let verdict = policy.verdict(for: activity, adsRemoved: purchases.adsRemoved, now: now())
         lastVerdict = verdict
         guard verdict.isAllowed, presenter.isInterstitialReady else { return false }
@@ -68,6 +88,7 @@ public final class AdCoordinator {
     /// mean refusing them the hint they chose to earn. Entitlement still applies —
     /// a player who removed ads gets the reward without watching anything.
     public func showRewarded() async -> RewardOutcome {
+        guard adsEnabled else { return .earned }
         if purchases.adsRemoved { return .earned }
         guard presenter.isRewardedReady else {
             presenter.preload()
@@ -82,7 +103,7 @@ public final class AdCoordinator {
 
     /// Warms up inventory. Call when gameplay begins.
     public func preload() {
-        guard !purchases.adsRemoved else { return }
+        guard adsEnabled, !purchases.adsRemoved else { return }
         presenter.preload()
     }
 }
