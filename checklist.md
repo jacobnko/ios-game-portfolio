@@ -340,6 +340,37 @@
 
 ---
 
+## Phase 3.11 — Chordline 완성도 (J 실기기 피드백)
+
+S3.10 실기기 테스트에서 J가 올린 5건. Phase 4로 넘어가기 전에 끝낸다.
+
+### T1. 중복 back 버튼 제거 (J #5)
+- [ ] `NavigationStack`의 시스템 back과 화면 자체 back이 동시에 뜨는 것 수정
+- [ ] StageSelect/Settings/Result 전부 확인
+
+### T2. 앱 아이콘이 빌드에 안 들어감 (J #1)
+- [ ] `Resources/AppIcon.appiconset`이 앱 타깃에 포함되지 않던 문제 수정
+- [ ] 실제 빌드 산출물에서 아이콘 확인
+
+### T3. 스테이지 확장 + 생성 비용 제거 (J #2)
+- [ ] 생성기 `minPathLength` 조정으로 5x6 / 6x5 / 5x7 / 6x6 티어 개방
+- [ ] 스테이지를 빌드 시점에 굽고 앱은 읽기만 — 런타임 솔버 호출 제거
+- [ ] 전 스테이지 해 유일성 검증 테스트
+
+### T4. Easy / Hard 모드 (J #3)
+- [ ] 홈 화면에 모드 2개
+- [ ] Hard는 Easy 전판 클리어 시 해금
+- [ ] 진행도를 모드별로 분리 저장
+
+### T5. Settings 디자인 반영 (J #1)
+- [ ] D4 `screen-spec.js` 레이아웃 적용 (구매 복원 위치는 App Review 항목 — 순서 고정)
+
+### T6. 전반 완성도 (J #4)
+- [ ] Home / StageSelect / Result에 D4 스펙 반영
+- [ ] 게임 화면 HUD 실제 구현 (D-087/D-089에서 미룬 것)
+
+---
+
 ## Phase 5 — Games #2~10
 
 게임별 항목은 `docs/concepts/game-concepts.md`(비공개)에서 관리한다.
