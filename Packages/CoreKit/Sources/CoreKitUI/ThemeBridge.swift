@@ -12,14 +12,20 @@ public extension GameTheme {
         multiplier: Int = 1,
         origins: [CGPoint] = [CGPoint(x: 0.5, y: 0.55)],
         seed: UInt64 = 0x5EED,
-        particleCount: Int = 90
+        particleCount: Int = 90,
+        // Defaults to the theme's three-colour burst; a game whose burst
+        // origins map to something more specific (Chordline's own pipes, say)
+        // can pass a palette ordered to match `origins` 1:1 instead.
+        palette: [Color]? = nil,
+        scrimColor: Color? = nil
     ) -> VictoryConfiguration {
         VictoryConfiguration(
             multiplier: multiplier,
             origins: origins,
             particleCount: particleCount,
-            palette: palette.burstColors,
-            seed: seed
+            palette: palette ?? self.palette.burstColors,
+            seed: seed,
+            scrimColor: scrimColor ?? self.palette.background.resolved(for: .dark)
         )
     }
 }

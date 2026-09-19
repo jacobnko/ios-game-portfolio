@@ -29,17 +29,24 @@ public enum ParticleField {
         count: Int,
         origins: [CGPoint],
         seed: UInt64 = 0x5EED,
-        paletteSize: Int = 3,
         speedRange: ClosedRange<Double> = 0.25...0.95,
         lifetimeRange: ClosedRange<TimeInterval> = 0.45...0.95,
         sizeRange: ClosedRange<CGFloat> = 2.5...7.0,
         staggerWindow: TimeInterval = 0.12
     ) -> [Particle] {
-        guard count > 0, !origins.isEmpty, paletteSize > 0 else { return [] }
+        guard count > 0, !origins.isEmpty else { return [] }
         var rng = SplitMix64(seed: seed)
 
         return (0..<count).map { index in
-            let origin = origins[index % origins.count]
+            // Same modulo as the origin pick below, on purpose: a particle's
+            // colour is tied to the endpoint it spawns from, not chosen at
+            // random, so a caller whose palette is ordered to match `origins`
+            // (one colour per endpoint) gets sparks that actually match the
+            // pipe they came from. A caller with a shorter, generic palette
+            // still gets a colour — `colorIndex % palette.count` at render
+            // time wraps it — just not a 1:1 one.
+            let originIndex = index % origins.count
+            let origin = origins[originIndex]
 
             // Bias upward: particles that spray sideways or downward read as a leak.
             // The jitter is clamped back into the upper half, otherwise it pushes
@@ -54,7 +61,7 @@ public enum ParticleField {
                 birth: rng.next(in: 0...max(0, staggerWindow)),
                 lifetime: rng.next(in: lifetimeRange),
                 size: CGFloat(rng.next(in: Double(sizeRange.lowerBound)...Double(sizeRange.upperBound))),
-                colorIndex: Int(rng.next(upperBound: UInt64(paletteSize)))
+                colorIndex: originIndex
             )
         }
     }

@@ -190,3 +190,74 @@ import CoreGraphics
     let curve = PopCurve(overshoot: 2, riseFraction: 0.9, settleFraction: 0.9)
     #expect(curve.riseFraction + curve.settleFraction <= 1.0)
 }
+
+// MARK: - ShakeCurve, D5 formula
+
+@Test func shakeDecaysExponentiallyNotQuadratically() {
+    // Exponential decay drops off much faster near t=0 than the old quadratic
+    // envelope did — this pins the shape, not just "it decays".
+    let curve = ShakeCurve(amplitude: 10, duration: 1.0, frequency: 1, tau: 0.11)
+    let early = abs(curve.offset(at: 0.01).height)
+    let late = abs(curve.offset(at: 0.5).height)
+    #expect(early > late * 50)
+}
+
+@Test func lateralAmplitudeIsAFractionOfThePrimaryOne() {
+    let curve = ShakeCurve(amplitude: 6, lateralRatio: 0.4)
+    for t in stride(from: 0.0, to: curve.duration, by: 0.01) {
+        let offset = curve.offset(at: t)
+        #expect(abs(offset.width) <= abs(curve.amplitude) * 0.4 + 0.0001)
+    }
+}
+
+// MARK: - BloomCurve
+
+@Test func bloomIsFullWhiteThroughTheIgniteWindow() {
+    let bloom = BloomCurve.standard
+    #expect(bloom.whiteness(at: bloom.igniteStart) == 1)
+    #expect(bloom.whiteness(at: bloom.igniteEnd) == 1)
+}
+
+@Test func bloomIsZeroBeforeIgniting() {
+    #expect(BloomCurve.standard.whiteness(at: 0) == 0)
+}
+
+@Test func bloomDecaysToZeroAfterTheWindow() {
+    // Floating-point division can leave `progress` a hair under 1 rather than
+    // exactly 1, so the curve is checked against a tolerance here rather than
+    // exact zero — the same shape ShakeCurve's own "never truly reaches zero"
+    // comment describes for exponential decay generally.
+    let bloom = BloomCurve.standard
+    #expect(bloom.whiteness(at: bloom.igniteEnd + bloom.decay) < 0.0001)
+    let mid = bloom.whiteness(at: bloom.igniteEnd + bloom.decay / 2)
+    #expect(mid > 0 && mid < 1)
+}
+
+@Test func bloomScalePunchesThenSettlesToExactlyOne() {
+    let bloom = BloomCurve.standard
+    #expect(bloom.scale(at: bloom.igniteStart) == bloom.scalePunch)
+    #expect(bloom.scale(at: bloom.scaleSettle) == 1)
+    #expect(bloom.scale(at: 0) == 1)
+}
+
+@Test func bloomScaleNeverExceedsThePunch() {
+    let bloom = BloomCurve.standard
+    for t in stride(from: 0.0, through: bloom.scaleSettle, by: 0.01) {
+        #expect(bloom.scale(at: t) <= bloom.scalePunch + 0.0001)
+        #expect(bloom.scale(at: t) >= 1 - 0.0001)
+    }
+}
+
+// MARK: - ParticleField colour follows origin
+
+@Test func eachParticlesColourMatchesItsSpawnOrigin() {
+    // A spark must carry the colour of the endpoint it came from, not a random
+    // pick — this is what lets a caller pass a palette ordered to match
+    // origins (Chordline's own pipe colours) and have it actually line up.
+    let origins = [CGPoint(x: 0.1, y: 0.1), CGPoint(x: 0.9, y: 0.9), CGPoint(x: 0.5, y: 0.5)]
+    let particles = ParticleField.make(count: 30, origins: origins)
+    for particle in particles {
+        let expectedOrigin = origins[particle.colorIndex]
+        #expect(particle.origin == expectedOrigin)
+    }
+}

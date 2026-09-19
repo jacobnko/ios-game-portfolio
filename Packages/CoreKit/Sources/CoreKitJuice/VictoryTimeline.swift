@@ -36,11 +36,14 @@ public struct VictoryTimeline: Sendable, Equatable {
     /// particle dies makes the payoff feel clipped.
     public let total: TimeInterval
 
-    /// The default payoff, tuned for a 10–30 second puzzle.
+    /// The default payoff, tuned for a 10–30 second puzzle. Start times follow
+    /// D5's beat: everything fires at ignite (~80ms after the board finishes),
+    /// and the multiplier waits until 240ms so it does not land on the same
+    /// frame as the bloom flash — two payoffs on one frame read as one.
     public static let standard = VictoryTimeline(
-        shake: Phase(start: 0.0, duration: 0.35),
-        burst: Phase(start: 0.02, duration: 1.0),
-        multiplier: Phase(start: 0.30, duration: 0.85),
+        shake: Phase(start: 0.080, duration: 0.42),
+        burst: Phase(start: 0.080, duration: 1.0),
+        multiplier: Phase(start: 0.240, duration: 0.85),
         total: 1.25
     )
 

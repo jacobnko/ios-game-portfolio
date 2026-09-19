@@ -15,7 +15,13 @@ public struct VictoryConfiguration: Sendable {
     public var seed: UInt64
     public var timeline: VictoryTimeline
     public var shake: ShakeCurve
+    public var bloom: BloomCurve
     public var pop: PopCurve
+    /// Fill behind the multiplier text — without it, a light multiplier colour
+    /// (amber, say) washes out against a busy background of similar brightness.
+    /// Defaults to black, which is right for every dark-first game so far; a
+    /// light-background game should pass its own.
+    public var scrimColor: Color
     /// Whether the sequence drives audio and haptics as well as pixels.
     public var playsFeedback: Bool
 
@@ -27,7 +33,9 @@ public struct VictoryConfiguration: Sendable {
         seed: UInt64 = 0x5EED,
         timeline: VictoryTimeline = .standard,
         shake: ShakeCurve = ShakeCurve(),
+        bloom: BloomCurve = .standard,
         pop: PopCurve = .standard,
+        scrimColor: Color = .black,
         playsFeedback: Bool = true
     ) {
         self.multiplier = max(1, multiplier)
@@ -37,7 +45,9 @@ public struct VictoryConfiguration: Sendable {
         self.seed = seed
         self.timeline = timeline
         self.shake = shake
+        self.bloom = bloom
         self.pop = pop
+        self.scrimColor = scrimColor
         self.playsFeedback = playsFeedback
     }
 }
@@ -96,8 +106,7 @@ private struct VictorySequenceModifier: ViewModifier {
         particles = ParticleField.make(
             count: count,
             origins: configuration.origins,
-            seed: configuration.seed,
-            paletteSize: configuration.palette.count
+            seed: configuration.seed
         )
         startDate = Date()
 
@@ -156,7 +165,24 @@ private struct VictoryStage: ViewModifier {
                 let elapsed = context.date.timeIntervalSince(startDate)
                 let shakeOffset = reduceMotion ? .zero : configuration.shake.offset(at: elapsed)
 
+                // Reduce Motion drops the scale punch (a transform reads as
+                // motion) but keeps the flash — D5 calls for "brightness fade
+                // only" under Reduce Motion, not no bloom at all.
+                let whiteness = configuration.bloom.whiteness(at: elapsed)
+                let scale = reduceMotion ? 1 : configuration.bloom.scale(at: elapsed)
+
                 content
+                    .scaleEffect(scale)
+                    .overlay {
+                        // Approximates D5's "core replaced by white" without any
+                        // board-specific knowledge: `.screen` pushes toward white
+                        // in proportion to opacity, which reads as a flash on a
+                        // dark board without this view needing to know it is one.
+                        Color.white
+                            .opacity(whiteness)
+                            .blendMode(.screen)
+                            .allowsHitTesting(false)
+                    }
                     .offset(x: shakeOffset.width, y: shakeOffset.height)
                     .overlay { burstLayer(elapsed: elapsed) }
                     .overlay { multiplierLayer(elapsed: elapsed) }
@@ -192,13 +218,29 @@ private struct VictoryStage: ViewModifier {
     @ViewBuilder
     private func multiplierLayer(elapsed: TimeInterval) -> some View {
         if let progress = configuration.timeline.multiplier.progress(at: elapsed) {
-            Text("×\(configuration.multiplier)")
-                .font(.system(size: 64, weight: .heavy, design: .rounded))
-                .foregroundStyle(configuration.palette.first ?? .yellow)
-                .shadow(radius: 8, y: 2)
-                .scaleEffect(configuration.pop.scale(at: progress))
-                .opacity(configuration.pop.opacity(at: progress))
-                .allowsHitTesting(false)
+            let opacity = configuration.pop.opacity(at: progress)
+            let scale = configuration.pop.scale(at: progress)
+
+            ZStack {
+                // D5 calls this out as required, not decorative: a light
+                // multiplier colour (amber, say) sits directly on top of
+                // whatever the board's own colours are doing at that moment,
+                // and without a scrim behind it the number can lose contrast
+                // against a similarly bright pipe.
+                Ellipse()
+                    .fill(configuration.scrimColor)
+                    .frame(width: 240, height: 120)
+                    .blur(radius: 24)
+                    .opacity(0.72 * opacity)
+
+                Text("×\(configuration.multiplier)")
+                    .font(.system(size: 64, weight: .heavy, design: .rounded))
+                    .foregroundStyle(configuration.palette.first ?? .yellow)
+                    .shadow(radius: 8, y: 2)
+            }
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .allowsHitTesting(false)
         }
     }
 }
