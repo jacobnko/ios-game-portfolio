@@ -37,6 +37,12 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case resultNewRecord = "result.newRecord"
     case resultStageFailed = "result.stageFailed"
     case resultShare = "result.share"
+    /// Short stat-strip labels, distinct from `resultBestTime` which is a
+    /// sentence-cased row label rather than a column header.
+    /// Format string: one `%lld` for the percent. Shown after a failed attempt.
+    case resultAttemptProgress = "result.attemptProgress"
+    case resultStatTime = "result.statTime"
+    case resultStatBest = "result.statBest"
 
     case hintTitle = "hint.title"
     case hintWatchAd = "hint.watchAd"
