@@ -42,6 +42,9 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case purchaseNothingToRestore = "purchase.nothingToRestore"
 
     case stageLocked = "stage.locked"
+    case stageLegendClear = "stage.legendClear"
+    case stageLegendCurrent = "stage.legendCurrent"
+    case stageLegendLocked = "stage.legendLocked"
 
     /// Resolved through the package's own catalog.
     ///

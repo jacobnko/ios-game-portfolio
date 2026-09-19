@@ -1,496 +1,547 @@
 {
-  "sourceLanguage": "en",
-  "version": "1.0",
-  "strings": {
-    "common.play": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Play"
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "common.play" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시작"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작"
           }
         }
       }
     },
-    "common.resume": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resume"
+    "common.resume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이어하기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이어하기"
           }
         }
       }
     },
-    "common.retry": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retry"
+    "common.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다시"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시"
           }
         }
       }
     },
-    "common.next": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next"
+    "common.next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다음"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
           }
         }
       }
     },
-    "common.close": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Close"
+    "common.close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "닫기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
           }
         }
       }
     },
-    "common.cancel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
+    "common.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취소"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
           }
         }
       }
     },
-    "common.back": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Back"
+    "common.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "뒤로"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뒤로"
           }
         }
       }
     },
-    "common.settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
+    "common.settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "설정"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
           }
         }
       }
     },
-    "settings.sound": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sound"
+    "settings.sound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sound"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "소리"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리"
           }
         }
       }
     },
-    "settings.haptics": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Haptics"
+    "settings.haptics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptics"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "진동"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진동"
           }
         }
       }
     },
-    "settings.notifications": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reminders"
+    "settings.notifications" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminders"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알림"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림"
           }
         }
       }
     },
-    "settings.language": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language"
+    "settings.language" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "언어"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어"
           }
         }
       }
     },
-    "settings.languageHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens iOS Settings"
+    "settings.languageHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens iOS Settings"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "iOS 설정에서 변경합니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 설정에서 변경합니다"
           }
         }
       }
     },
-    "settings.removeAds": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove Ads"
+    "settings.removeAds" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Ads"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고 제거"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "광고 제거"
           }
         }
       }
     },
-    "settings.restorePurchases": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restore Purchases"
+    "settings.restorePurchases" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Purchases"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "구매 복원"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구매 복원"
           }
         }
       }
     },
-    "settings.privacyPolicy": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Privacy Policy"
+    "settings.privacyPolicy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "개인정보처리방침"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보처리방침"
           }
         }
       }
     },
-    "settings.resetProgress": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset Progress"
+    "settings.resetProgress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Progress"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "진행도 초기화"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진행도 초기화"
           }
         }
       }
     },
-    "result.stageCleared": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stage Cleared"
+    "result.stageCleared" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage Cleared"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "클리어"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클리어"
           }
         }
       }
     },
-    "result.bestTime": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best Time"
+    "result.bestTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best Time"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "최고 기록"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최고 기록"
           }
         }
       }
     },
-    "result.newRecord": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New Record"
+    "result.newRecord" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Record"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "신기록"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신기록"
           }
         }
       }
     },
-    "hint.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Need a hint?"
+    "hint.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Need a hint?"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "힌트가 필요하세요?"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "힌트가 필요하세요?"
           }
         }
       }
     },
-    "hint.watchAd": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Watch an ad for a hint"
+    "hint.watchAd" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch an ad for a hint"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고 보고 힌트 받기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "광고 보고 힌트 받기"
           }
         }
       }
     },
-    "purchase.pending": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waiting for approval"
+    "purchase.pending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for approval"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "승인 대기 중"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "승인 대기 중"
           }
         }
       }
     },
-    "purchase.restored": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Purchases restored"
+    "purchase.restored" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchases restored"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "구매를 복원했습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구매를 복원했습니다"
           }
         }
       }
     },
-    "purchase.nothingToRestore": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No purchases found"
+    "purchase.nothingToRestore" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No purchases found"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "복원할 구매가 없습니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복원할 구매가 없습니다"
           }
         }
       }
     },
-    "stage.locked": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Locked"
+    "stage.locked" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "잠김"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠김"
           }
         }
       }
     },
-    "common.home": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Home"
+    "common.home" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "홈"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈"
           }
         }
       }
     },
-    "result.stageFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try Again"
+    "result.stageFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다시 도전"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 도전"
           }
         }
       }
     },
-    "result.share": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Share"
+    "result.share" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "공유"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유"
+          }
+        }
+      }
+    },
+    "stage.legendClear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CLEAR"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        }
+      }
+    },
+    "stage.legendCurrent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOW"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재"
+          }
+        }
+      }
+    },
+    "stage.legendLocked" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LOCKED"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠김"
           }
         }
       }
