@@ -61,6 +61,12 @@ public struct StageSelectView<Stage: StageDescriptor>: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(theme.palette.background.resolved(for: colorScheme))
+        // This screen draws its own back button above, so the stack's built-in
+        // one would be a second, differently-styled control doing the same job
+        // — which is exactly how it shipped until a device build showed two
+        // chevrons stacked on the stage grid. JuiceLab's FlowLabView already
+        // did this; the shared screen did not.
+        .navigationBarBackButtonHidden()
     }
 
     @ViewBuilder
