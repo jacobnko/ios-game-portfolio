@@ -384,15 +384,22 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 
 ---
 
-## Phase 3.13 — 광고 기능 전체 비활성화 (첫 심사용)
+## Phase 3.13 — 광고 기능 전체 비활성화 (첫 심사용) → 3.14에서 방향 전환됨
 
-- [x] `AdCoordinator(adsEnabled:)` — 배너·전면·보상형·preload 전부 단일 게이트에 통합
+- [x] `AdCoordinator(adsEnabled:)` — 배너·전면·보상형·preload 전부 단일 게이트에 통합 (인프라는 유지, 실제로는 안 씀)
 - [x] 보상형(힌트)은 꺼진 상태에서도 무료로 계속 동작 (`.earned` 즉시 반환)
-- [x] `SettingsView`/`SettingsContent(adsEnabled:)` — Remove Ads·Restore Purchases 같이 숨김
-- [x] `AdCoordinator.showsRewardedBadge` — HUD의 "AD" 배지 숨김
-- [x] 플립 지점 1곳 — `ChordlineApp.swift`의 `adsEnabledAtLaunch` 상수
-- [x] `new-game-setup.md` §8에 패턴 문서화 (게임 2~10 재사용)
-- [x] `context-notes.md` D-106 — `AdSetup.start()`(ATT/SDK 초기화)가 애초에 호출된 적 없었다는 것도 같이 기록. 광고 켤 때 같이 확인 필요
+- [x] `AdCoordinator.showsRewardedBadge` — HUD의 "AD" 배지가 실제로 광고 뜰 때만 표시되게
+- [x] `context-notes.md` D-106 — `AdSetup.start()`가 애초에 호출된 적 없었다는 것 발견·기록
+
+## Phase 3.14 — 광고는 켜고 배너만 숨김 (D-107, 최종 결정)
+
+- [x] `AdCoordinator`에 `bannerEnabled` 독립 스위치 추가 — 전면/보상형/preload는 그대로, 배너만 게이팅
+- [x] `SettingsView`/`SettingsContent`의 `adsEnabled` 파라미터 롤백 — Remove Ads·Restore Purchases 원상 복구(항상 표시)
+- [x] 플립 지점 1곳 — `ChordlineApp.swift`의 `bannerEnabledAtLaunch` 상수
+- [x] `AdSetup.start()` 실제 배선 — `RootView.setUp()`에서 별도 Task로, 로딩 화면을 막지 않게
+  - [ ] **J가 실기기에서 ATT 프롬프트가 실제로 뜨는지 확인** (이번에 처음 배선했음)
+- [x] `new-game-setup.md` §8 갱신 필요 — D-106 패턴(전체 비활성화) 대신 D-107 패턴(배너만) 반영
+- [x] `context-notes.md` D-107 — 방향 전환 배경 기록
 
 ---
 

@@ -284,3 +284,46 @@ private func makeDisabledCoordinator(
     let (ads, _, _) = await makeCoordinator()
     #expect(ads.showsBanner)
 }
+
+// MARK: - Banner-only switch
+
+@MainActor
+private func makeBannerlessCoordinator(
+    presenter: FakeAdPresenter = FakeAdPresenter(),
+    clock: @escaping @Sendable () -> TimeInterval = { 0 }
+) async -> (AdCoordinator, FakeAdPresenter) {
+    let productID = "com.jacobkostudio.testgame.removeads"
+    let client = FakeStoreClient(entitlements: [])
+    client.products = [.removeAds(id: productID)]
+    let purchases = PurchaseManager(client: client, removeAdsProductID: productID)
+    await purchases.refresh()
+    let ads = AdCoordinator(
+        purchases: purchases, presenter: presenter, policy: .unrestricted,
+        bannerEnabled: false, now: clock
+    )
+    return (ads, presenter)
+}
+
+@Test @MainActor func hidingOnlyTheBannerLeavesEverythingElseLive() async {
+    // The whole point of the separate switch: an interstitial, a rewarded ad,
+    // and the badge that announces it must all still fire with the banner off.
+    let (ads, presenter) = await makeBannerlessCoordinator(clock: { 500 })
+    ads.recordStageClear()
+
+    #expect(ads.showsBanner == false)
+    #expect(await ads.showInterstitialIfAllowed())
+    #expect(presenter.interstitialShowCount == 1)
+    #expect(ads.showsRewardedBadge)
+}
+
+@Test @MainActor func bannerEnabledIsTheDefault() async {
+    let (ads, _, _) = await makeCoordinator()
+    #expect(ads.showsBanner)
+}
+
+@Test @MainActor func removingAdsHidesTheBannerEvenWithTheBannerSwitchOn() async {
+    // Two independent reasons to hide a banner; the entitlement still wins
+    // regardless of which launch switch is set.
+    let (ads, _, _) = await makeCoordinator(adsRemoved: true)
+    #expect(ads.showsBanner == false)
+}

@@ -221,29 +221,35 @@ struct ChordlineStage: StageDescriptor {
 - [ ] `GADApplicationIdentifier`를 실제 앱 ID로 교체
 - [ ] 스토어 표시명 확정 (`docs/architecture/naming.md` §확정 시점)
 
-### 첫 제출은 광고 없이 (권장 패턴, Chordline D-106)
+### 첫 제출 — 광고는 켜고, 배너만 숨긴다 (Chordline D-107)
 
-첫 심사의 리스크 표면(광고 콘텐츠 지적, ATT 마찰, 심사팀 노출로 인한 무효 트래픽)을 줄이려면
-게임의 첫 App Store 제출은 광고를 완전히 끈 채로 낸다. 배너·전면·보상형·Settings의
-Remove Ads/Restore Purchases·힌트의 "AD" 배지까지 전부 한 번에 숨는다 — 코드를 지우는 게
-아니라 `AdCoordinator(adsEnabled:)` 하나로 숨기는 것이므로, 리뷰 이력이 쌓인 뒤 한 줄만
-바꾸면 전부 돌아온다.
+`AdCoordinator`는 스위치 두 개를 따로 갖는다. `adsEnabled`(전체 킬 스위치)와
+`bannerEnabled`(배너만). Chordline은 처음에 전체를 끄는 쪽(D-106)을 검토했다가, 실제로는
+**전면·보상형(힌트)·Settings의 Remove Ads/Restore Purchases는 켜둔 채 배너만 숨기는** 쪽으로
+정했다(D-107) — 배너는 화면에 상시 떠 있어서 스크린샷과 첫인상에 항상 걸리지만, 전면·보상형은
+뭔가 일어나야만(클리어, 힌트 요청) 뜨기 때문에 노출이 훨씬 적다.
 
 ```swift
 // App 진입점(§6) 최상단에 이 한 줄을 둔다 — 플립 지점은 여기 하나뿐이다.
-private let adsEnabledAtLaunch = false   // 첫 제출 통과 후 true로
+private let bannerEnabledAtLaunch = false   // 리뷰 이력이 쌓이면 true로
 
-// AdCoordinator와 SettingsView 양쪽에 그대로 전달한다.
-let ads = AdCoordinator(purchases: purchases, presenter: presenter, adsEnabled: adsEnabledAtLaunch)
-// ...
-SettingsView(purchases: ..., adsEnabled: adsEnabledAtLaunch, ...)
+// AdCoordinator에만 전달한다. SettingsView는 그대로 둔다 — 배너를 숨기는 것과
+// 구매 로직 노출 여부는 무관하다.
+let ads = AdCoordinator(purchases: purchases, presenter: presenter, bannerEnabled: bannerEnabledAtLaunch)
 ```
 
-힌트처럼 보상형 광고로 게이팅된 기능은 광고가 꺼진 동안 **무료로 계속 동작해야 한다** —
-`AdCoordinator.showRewarded()`가 이미 이 경로를 갖고 있다(`adsRemoved` 구매자와 동일하게
-`.earned`를 즉시 돌려준다). 광고를 켜는 순간 `AdSetup.start()`(ATT 프롬프트 +
-`MobileAds.shared.start()`)를 실제로 호출하고 있는지도 같이 확인한다 — Chordline은 이 호출
-자체가 빠져 있었다(D-106).
+전체를 다 끄고 싶은 경우(예: QA 빌드, 또는 첫 제출 전략을 D-106처럼 더 보수적으로 가고 싶은
+게임)를 위해 `adsEnabled`(디폴트 `true`)도 별도로 남아 있다 — 그땐 `bannerEnabled`와 함께
+`adsEnabled: false`를 넘긴다. 이 경우 `SettingsView`는 구매할 것도 복원할 것도 없어지므로
+호출부에서 Remove Ads/Restore Purchases를 직접 조건부로 감싸야 한다(D-106 당시엔 이걸 위해
+`SettingsView(adsEnabled:)` 파라미터를 만들었다가, 배너만 숨기는 쪽으로 정해지면서 다시
+빼냈다 — 필요해지면 그 커밋을 참조).
+
+**`AdSetup.start()`를 실제로 호출하고 있는지 확인한다.** ATT 프롬프트와
+`MobileAds.shared.start()`를 트리거하는 게 이 함수 하나뿐인데, Chordline은 처음엔 이 호출
+자체가 빠져 있었다(D-106에서 발견, D-107에서 배선). 로딩 화면을 막지 않도록 `Task { await
+AdSetup.start() }`로 따로 띄운다 — `await`로 기다리면 ATT 응답이 올 때까지 Home 화면이
+로딩 스피너에 묶인다.
 
 ---
 

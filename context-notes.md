@@ -834,3 +834,10 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **플립 지점은 딱 하나.** `Apps/Chordline/App/ChordlineApp.swift` 최상단의 `private let adsEnabledAtLaunch = false` — 이 한 줄이 `AdCoordinator`와 `SettingsView` 양쪽에 전달된다. `true`로 바꾸면 배너·전면·보상형·힌트 배지·Settings 구매 행이 전부 동시에 돌아온다.
 - **`AdSetup.start()`(ATT 프롬프트 + `MobileAds.shared.start()`)는 애초에 호출된 적이 없었다.** 이번에 코드를 보다가 발견 — `ChordlineApp.swift` 어디에서도 이걸 부르지 않아서, 지금 광고를 켜더라도 ATT 동의를 실제로 요청하지 않는 상태다. 이건 이번 작업 범위 밖이라 손 안 댔지만, 나중에 광고를 켤 때(`adsEnabledAtLaunch = true`) 같이 처리해야 할 항목으로 남겨둔다 — `NSUserTrackingUsageDescription`은 이미 Info.plist에 있는데 실제로 요청하는 코드가 없는 상태라 지금은 무해하지만, 켜는 순간부터는 필요해진다.
 - **게임 2~10도 같은 패턴을 쓴다.** `AdCoordinator(adsEnabled:)`는 CoreKitServices에 있으므로 모든 게임이 자기 앱 진입점에 똑같이 `private let adsEnabledAtLaunch = false` 한 줄을 두는 것으로 재사용 가능 — `new-game-setup.md`에 문서화할 가치가 있다(다음 게임 착수 시).
+
+### D-107. 광고 켜고 배너만 숨김 — D-106에서 방향 전환
+- **J의 결정.** 전체 광고를 끄고 내는 대신(D-106), **전면·보상형(힌트)·Settings 구매 로직은 살려두고 배너 하나만 숨긴다.** 이유: 배너는 화면에 상시 떠 있어서 스크린샷/첫인상에 항상 걸리는 반면, 전면·보상형은 뭔가 일어나야만(클리어, 힌트 요청) 뜨는 거라 노출이 훨씬 적다.
+- **`AdCoordinator`에 두 번째, 더 좁은 스위치를 추가했다.** `adsEnabled`(전체 킬 스위치, D-106에서 만든 것)는 그대로 남겨두고 `bannerEnabled`를 독립적으로 추가했다 — `showsBanner`만 `adsEnabled && bannerEnabled && !purchases.adsRemoved`로 바뀌고, 전면·보상형·preload는 손 안 댔다. 두 스위치가 서로 다른 걸 표현하니 굳이 하나로 합치지 않았다: `adsEnabled`는 "이 빌드에 광고가 있는가", `bannerEnabled`는 "그중 배너를 지금 보여줄 것인가".
+- **Settings의 Remove Ads/Restore Purchases는 원상 복구.** D-106에서 추가했던 `adsEnabled` 파라미터를 `SettingsView`/`SettingsContent`에서 제거했다 — 배너를 숨기는 것과 구매 로직은 무관하고, J가 "구매 로직 세팅은 그대로 있게"라고 명시했다.
+- **플립 지점.** `ChordlineApp.swift`의 `private let bannerEnabledAtLaunch = false` 한 줄. `AdCoordinator(bannerEnabled:)`에만 전달되고, `SettingsView`는 이제 다시 파라미터 없이 원래대로 호출된다.
+- **`AdSetup.start()`를 처음으로 실제 배선했다.** D-106에서 "호출된 적이 없다"고만 기록해뒀던 걸, 이번엔 실제로 전면·보상형 광고가 살아있으니 방치할 수 없어서 고쳤다 — `RootView.setUp()`에서 별도 `Task`로 띄워서 CloudKit/StoreKit 초기화 흐름을 막지 않게 했다(ATT 프롬프트는 앱이 활성화된 뒤에만 뜨는데, 그걸 `await`로 기다리면 Home 화면 자체가 그 응답이 나올 때까지 로딩 스피너에 묶인다). `NSUserTrackingUsageDescription`은 이미 Info.plist에 있었으니 이제 실기기에서 실제로 그 문구와 함께 프롬프트가 뜨는지 J가 확인해야 한다.

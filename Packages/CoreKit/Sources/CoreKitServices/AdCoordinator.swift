@@ -20,12 +20,14 @@ public final class AdCoordinator {
     private let now: @Sendable () -> TimeInterval
     /// Whole-app kill switch, set once at construction — see `init(adsEnabled:)`.
     private let adsEnabled: Bool
+    /// Narrower switch for the banner alone — see `init(bannerEnabled:)`.
+    private let bannerEnabled: Bool
 
     /// Whether a banner should currently be on screen.
     ///
     /// Games bind their banner container's visibility to this rather than checking
     /// entitlement themselves.
-    public var showsBanner: Bool { adsEnabled && !purchases.adsRemoved }
+    public var showsBanner: Bool { adsEnabled && bannerEnabled && !purchases.adsRemoved }
 
     /// Whether the next rewarded-ad action (a hint, say) will actually show an ad,
     /// as opposed to being granted for free. A button that promises "watch an ad
@@ -47,12 +49,21 @@ public final class AdCoordinator {
         // update once the app has a review history. Nothing else in the ad
         // pipeline needs touching either way.
         adsEnabled: Bool = true,
+        // Independent of `adsEnabled`: interstitials, rewarded ads, and the
+        // purchase UI all stay live with this off — only the banner hides.
+        // The usual reason is screenshots/first impression rather than review
+        // risk: a banner is the one placement that sits in every screen's
+        // frame the whole time, so it is what a marketing screenshot or a
+        // reviewer's very first glance shows regardless of what the player
+        // actually does.
+        bannerEnabled: Bool = true,
         now: @escaping @Sendable () -> TimeInterval = { Date.timeIntervalSinceReferenceDate }
     ) {
         self.purchases = purchases
         self.presenter = presenter
         self.policy = policy
         self.adsEnabled = adsEnabled
+        self.bannerEnabled = bannerEnabled
         self.now = now
     }
 
