@@ -344,32 +344,47 @@
 
 ## Phase 3.11 — Chordline 완성도 (J 실기기 피드백)
 
-S3.10 실기기 테스트에서 J가 올린 5건. Phase 4로 넘어가기 전에 끝낸다.
+S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`chordline_design_handoff`)
+반영. Phase 4로 넘어가기 전에 끝냈다.
 
-### T1. 중복 back 버튼 제거 (J #5)
-- [ ] `NavigationStack`의 시스템 back과 화면 자체 back이 동시에 뜨는 것 수정
-- [ ] StageSelect/Settings/Result 전부 확인
+### T1. 중복 back 버튼 제거 (J #5) — [x]
+- [x] `NavigationStack`의 시스템 back과 화면 자체 back이 동시에 뜨는 것 수정 (`.navigationBarBackButtonHidden()`)
+- [x] StageSelect/게임 화면/Settings/Result 전부 확인
 
-### T2. 앱 아이콘이 빌드에 안 들어감 (J #1)
-- [ ] `Resources/AppIcon.appiconset`이 앱 타깃에 포함되지 않던 문제 수정
-- [ ] 실제 빌드 산출물에서 아이콘 확인
+### T2. 앱 아이콘이 빌드에 안 들어감 (J #1) — [x]
+- [x] `Resources/AppIcon.appiconset`이 앱 타깃에 포함되지 않던 문제 수정 (`App/Assets.xcassets`로 이동)
+- [x] 실제 빌드 산출물에서 아이콘 확인 (`Assets.car`, `CFBundleIconName`)
 
-### T3. 스테이지 확장 + 생성 비용 제거 (J #2)
-- [ ] 생성기 `minPathLength` 조정으로 5x6 / 6x5 / 5x7 / 6x6 티어 개방
-- [ ] 스테이지를 빌드 시점에 굽고 앱은 읽기만 — 런타임 솔버 호출 제거
-- [ ] 전 스테이지 해 유일성 검증 테스트
+### T3. 스테이지 확장 + 생성 비용 제거 (J #2) — [x]
+- [x] 생성기 `minPathLength` 조정으로 5x6 / 6x5 / 5x7 / 6x6 티어 개방
+- [x] 스테이지를 빌드 시점에 굽고 앱은 읽기만 — `StageGen` 도구, 런타임 솔버 호출 제거
+- [x] 전 스테이지 해 유일성 검증 테스트
+- [x] 익스트림 모드 추가 — 6색 리드 사용(easy/hard는 5색 유지), 720판
 
-### T4. Easy / Hard 모드 (J #3)
-- [ ] 홈 화면에 모드 2개
-- [ ] Hard는 Easy 전판 클리어 시 해금
-- [ ] 진행도를 모드별로 분리 저장
+### T4. Easy / Hard / Extreme 모드 (J #3, 이후 익스트림 추가 요청) — [x]
+- [x] 홈 화면에 모드 3개, 상태별(진행중/클리어/잠김) 다른 표시
+- [x] Hard는 Easy 전판, Extreme은 Hard 전판 클리어 시 해금
+- [x] `ChordlineProgression.homeStates` — 항상 정확히 하나만 "진행중"임을 테스트로 고정
 
-### T5. Settings 디자인 반영 (J #1)
-- [ ] D4 `screen-spec.js` 레이아웃 적용 (구매 복원 위치는 App Review 항목 — 순서 고정)
+### T5. Settings 디자인 반영 (J #1) — [x]
+- [x] D4 `screen-spec.js` 레이아웃 적용 (구매 복원 위치 고정 — App Review 항목)
+- [x] 초기화 확인을 `confirmationDialog` → `alert`로 교체 (말풍선이 안내 없이 "Reset Progress"만 반복하던 문제)
+- [x] 언어 설정 — `CFBundleLocalizations` 미선언으로 iOS가 언어 전환 메뉴를 아예 안 띄우던 결함 수정
+- [x] 7개 언어 전체 번역 (en·ko·ja·de·es-MX·pt-BR·fr) — 계획을 KO/EN 우선에서 전체 동시 지원으로 변경, `context-notes.md` D-104 이전 근거는 PLAN.md 내 별도 각주 참조
 
-### T6. 전반 완성도 (J #4)
-- [ ] Home / StageSelect / Result에 D4 스펙 반영
-- [ ] 게임 화면 HUD 실제 구현 (D-087/D-089에서 미룬 것)
+### T6. 전반 완성도 (J #4) — [x]
+- [x] Home / StageSelect / 게임 화면 / Result에 D3/D4 스펙 반영
+- [x] 게임 화면 HUD 실제 구현 (D-087/D-089에서 미룬 것 — 뒤로가기·Stage 중앙정렬·Hint+AD 배지)
+- [x] D5 FX 스펙 검토 및 반영 — 파티클을 실제 파이프 색으로, bloom(백색 섬광)·배수 텍스트 scrim·흔들림 지수감쇠 공식 적용. 실패(Short Circuit) 연출은 게임에 실패 상태가 없어 드롭 결정(J 확인)
+
+---
+
+## Phase 3.12 — 프로세스 문서화 (Phase 4 진입 전)
+
+- [x] `CLAUDE.md` §6에 "화면 제작 게이트" 명문화 — D3/D4 리뷰 완료 전엔 화면을 만들지 않는다
+- [x] `PLAN.md` Phase 5 사이클을 로직(병렬 가능)과 화면(D3/D4 필수)으로 분리
+- [x] `CLAUDE.md` §7 모델 전환 기준을 체크 가능한 조건으로 재작성 — Opus 재상향 조건 포함
+- [x] `context-notes.md` D-104 — Chordline 화면 이중 작업의 원인과 재발 방지 근거 기록
 
 ---
 
