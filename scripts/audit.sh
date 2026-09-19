@@ -15,7 +15,11 @@ pass()    { echo "  ✓ $1"; }
 
 # Files that can only execute on a device. Excluded from the coverage floor
 # because no host test can reach them — they are covered by docs/DEVICE-TEST.md.
-DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|NotificationScheduler|StoreKitClient|CoreKitAdsGoogle|CoreKitFirebase|CoreKitUI/Screens'
+DEVICE_ONLY='HapticEngine|PitchedTonePlayer|JuiceAudioSession|VictorySequence|NotificationScheduler|StoreKitClient|CoreKitAdsGoogle|CoreKitFirebase|CoreKitUI/Screens|CoreKitUI/Views'
+# `CoreKitUI/Views` is the shared counterpart to `CoreKitUI/Screens`: view
+# components (a toast overlay, say) rather than whole screens, exempt for the
+# same reason — SwiftUI assembly does not execute on the host. Anything with
+# arithmetic in it belongs outside the folder, where the floor still applies.
 # Same idea, one level down: every game's own full-screen gameplay views
 # (GeometryReader + Canvas + gesture wiring) live under Sources/*UI/Views/ by
 # convention — see docs/architecture/new-game-setup.md. The logic behind them
