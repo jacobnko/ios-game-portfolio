@@ -136,13 +136,78 @@ The decision axis is **"physics-driven vs. state-driven"**, not "UIKit vs. Swift
 - Claude Code writes **only the handoff documents** (specs and prompt cards). It does not generate artwork.
 - Delivered assets land in `Apps/<Game>/Resources/`, and the corresponding item in `checklist.md` is ticked on arrival.
 
+### The screen-building gate (non-negotiable)
+
+**No screen is implemented from a guess.** A game's core-logic phase splits into
+two kinds of work, and they are not allowed to run in the same order Chordline's
+did:
+
+- **Logic work** — board/state model, solver, gesture mechanics, save/ad/juice
+  wiring. This has no visual layout of its own and may start as soon as the
+  phase does, in parallel with the design track.
+- **Screen work** — Home, Stage Select, Settings, Result, and the game's own
+  bespoke gameplay chrome (HUD, board rendering, controls). **This does not
+  start until D3 (gameplay screen) and D4 (supporting screens) are delivered
+  and reviewed.** A screen built before its mockup exists gets built *again*
+  once the mockup arrives — Chordline built five screens once from logic alone,
+  then rebuilt every one of them against D3/D4/D5 after the fact. That is not
+  iteration, it is the same work twice, and the first pass is pure loss.
+
+If a step needs a screen and the mockup is not ready yet, the step waits or
+Claude Design is prompted for that card next — it does not proceed on a
+placeholder that "looks reasonable." A component that only ever shows numbers
+or state during logic testing (a debug list, a plain `Text`) is not a screen
+and is exempt; the moment it is dressed up to look like the real thing, it
+counts as screen work and the gate applies.
+
+Checklist and `PLAN.md` steps for every game after Chordline are written to
+this order explicitly — see `PLAN.md`'s Phase 5 cycle.
+
 ---
 
 ## 7. Model Usage Strategy
 
-- **Phase 1 — architecture setup: Opus 5, effort high.** `CoreKit` + `JuiceManager` skeleton, StoreKit 2 manager, SwiftData/CloudKit schema, AdMob wrapper, and game #1's core loop.
-- **Claude raises the switch proactively.** Once `CoreKit` + `JuiceManager` are scaffolded and game #1 runs end-to-end (grid rendering → win/lose state → ad triggers → juice moments feeling right), tell the user it is a good point to switch models — without being asked.
-- **Phase 2 — implementation: Sonnet 5, effort medium.** Remaining game #1 polish and games #2–10.
+Every switch below is a **concrete, checkable trigger** — Claude states in chat
+that the trigger was hit and which direction it is proposing, rather than
+switching silently or waiting to be asked. J still makes the call; Claude
+raises it.
+
+### Opus 5, effort high
+
+- **Phase 1, always.** `CoreKit` + `JuiceManager` skeleton, StoreKit 2 manager,
+  SwiftData/CloudKit schema, AdMob wrapper — the decisions every later game
+  inherits without re-deriving them.
+- **Any time a game's Phase 3-equivalent needs a new `CoreKit` capability
+  designed from scratch**, not just consumed. Extending an existing pattern
+  (a new `ThemeColor`, a new `JuiceStep` weight) is not this; inventing a new
+  one (a new persistence shape, a new cross-cutting service) is.
+- **Any defect whose root cause is a `CoreKit`-level decision**, not a
+  game-local bug — the kind `docs/AUDIT.md` catalogues, where the fix changes
+  behaviour every game inherits.
+- Whenever J asks for it directly.
+
+### Sonnet 5, effort medium
+
+- **Everything else** — routine implementation, including screen work built
+  against an already-delivered design mockup (§6). Reading a design spec's
+  exact values and translating them faithfully into SwiftUI is not, on its
+  own, a reason to escalate: this session's D3/D4/D5 rebuild ran on Sonnet
+  without trouble once the mockups existed. The failure mode that actually
+  hit Chordline's UI (screens built once with no mockup, then rebuilt once
+  the mockup existed) was a **sequencing bug — the screen-building gate in
+  §6 — not a model-capability problem.** Do not treat "the UI needs polish"
+  as a reason to escalate; treat a missing design brief as a reason to stop
+  and wait for one.
+
+### The switch point, concretely
+
+The proactive Opus → Sonnet switch happens once a game's core loop first runs
+end-to-end **on the host** — win/lose state reachable, at least one juice
+moment wired and feelable in `Tools/JuiceLab` — which is the "게임 로직 구현"
+step in the Phase 5 cycle (`PLAN.md`) for every game after Chordline, matching
+what closed out as S3.9 for Chordline itself. Claude names the step, states
+the trigger explicitly, and proposes the switch there — it does not wait for
+the phase to fully close (§2 item 6) first.
 
 ---
 
