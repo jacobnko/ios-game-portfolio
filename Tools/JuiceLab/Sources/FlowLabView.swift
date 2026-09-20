@@ -61,7 +61,15 @@ private struct FlowLabRouter: View {
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             HomeView(
-                onPlay: { coordinator.showStageSelect() },
+                modes: [
+                    HomeMode(
+                        id: "flow-lab",
+                        title: "Play",
+                        lockedTitle: "Locked",
+                        state: .current,
+                        action: { coordinator.showStageSelect() }
+                    )
+                ],
                 onSettings: { coordinator.openSettings() },
                 logo: {
                     VStack(spacing: 4) {
