@@ -263,10 +263,14 @@ public struct SettingsContent: View {
                         .opacity(0.62)
                 }
                 Spacer(minLength: 8)
-                if let price = purchases.removeAdsProduct?.displayPrice {
-                    Text(price)
-                        .font(.system(size: 19, weight: .bold, design: .monospaced))
-                }
+                // No price on the face of the button. App Store screenshots are
+                // shared across every storefront, so a price baked into this row
+                // ships a US figure to readers of every other currency, and goes
+                // stale the moment the tier changes. StoreKit's own sheet states
+                // the localized price before anything is charged.
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 17, weight: .bold))
+                    .opacity(0.55)
             }
             .foregroundStyle(theme.palette.background.resolved(for: colorScheme))
             .padding(.horizontal, 22)
