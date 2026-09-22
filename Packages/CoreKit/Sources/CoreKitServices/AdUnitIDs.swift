@@ -47,6 +47,36 @@ public struct AdUnitIDs: Sendable, Equatable {
         return AdUnitIDs(banner: banner, interstitial: interstitial, rewarded: rewarded, isTestInventory: false)
     }
 
+    /// Info.plist keys a game sets from its own build configuration, so that
+    /// real ad unit ids never have to be written into source.
+    public enum InfoPlistKey {
+        public static let banner = "CoreKitAdUnitBanner"
+        public static let interstitial = "CoreKitAdUnitInterstitial"
+        public static let rewarded = "CoreKitAdUnitRewarded"
+    }
+
+    /// Reads the three ids from the app's Info.plist, falling back to `.test`
+    /// when any of them is absent or blank.
+    ///
+    /// That fallback is the point: the values arrive from a build configuration
+    /// file that is deliberately not in source control, so a fresh clone builds
+    /// and runs with test inventory instead of failing — and a release that
+    /// forgot to supply them shows test ads rather than mis-attributing real
+    /// impressions.
+    public static func fromInfoPlist(_ bundle: Bundle = .main) -> AdUnitIDs {
+        func value(_ key: String) -> String? {
+            guard let raw = bundle.object(forInfoDictionaryKey: key) as? String,
+                  !raw.trimmingCharacters(in: .whitespaces).isEmpty
+            else { return nil }
+            return raw
+        }
+        guard let banner = value(InfoPlistKey.banner),
+              let interstitial = value(InfoPlistKey.interstitial),
+              let rewarded = value(InfoPlistKey.rewarded)
+        else { return .test }
+        return production(banner: banner, interstitial: interstitial, rewarded: rewarded)
+    }
+
     public func id(for placement: AdPlacement) -> String {
         switch placement {
         case .banner: banner

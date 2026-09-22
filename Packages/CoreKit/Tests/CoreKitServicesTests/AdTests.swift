@@ -12,6 +12,43 @@ import Foundation
     #expect(AdUnitIDs.test.banner.hasPrefix("ca-app-pub-3940256099942544/"))
 }
 
+/// Stands in for a bundle whose Info.plist carries whatever the build
+/// configuration supplied — including nothing at all.
+private final class StubBundle: Bundle, @unchecked Sendable {
+    private let values: [String: String]
+    init(_ values: [String: String]) {
+        self.values = values
+        super.init()
+    }
+    override func object(forInfoDictionaryKey key: String) -> Any? { values[key] }
+}
+
+@Test func infoPlistUnitsFallBackToTestWhenAnyIsMissingOrBlank() {
+    // A clone without the gitignored configuration file, and a release that
+    // half-filled it, must both land on test inventory rather than serve a
+    // partly-real set.
+    #expect(AdUnitIDs.fromInfoPlist(StubBundle([:])) == .test)
+    #expect(AdUnitIDs.fromInfoPlist(StubBundle([
+        AdUnitIDs.InfoPlistKey.banner: "real/1",
+        AdUnitIDs.InfoPlistKey.interstitial: "real/2",
+    ])) == .test)
+    #expect(AdUnitIDs.fromInfoPlist(StubBundle([
+        AdUnitIDs.InfoPlistKey.banner: "real/1",
+        AdUnitIDs.InfoPlistKey.interstitial: "real/2",
+        AdUnitIDs.InfoPlistKey.rewarded: "   ",
+    ])) == .test)
+}
+
+@Test func infoPlistUnitsStillObeyTheProductionGate() {
+    // Even with all three present, a debug build must not serve them.
+    let ids = AdUnitIDs.fromInfoPlist(StubBundle([
+        AdUnitIDs.InfoPlistKey.banner: "real/1",
+        AdUnitIDs.InfoPlistKey.interstitial: "real/2",
+        AdUnitIDs.InfoPlistKey.rewarded: "real/3",
+    ]))
+    #expect(ids.isTestInventory == !CoreKitServices.allowsProductionAdUnits)
+}
+
 @Test func onlyAnAppStoreReceiptUnlocksProductionUnits() {
     // TestFlight writes `sandboxReceipt`, the App Store writes `receipt`, and a
     // Release build run locally has none. Only the middle case may serve live

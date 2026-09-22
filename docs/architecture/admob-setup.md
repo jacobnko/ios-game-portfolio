@@ -45,21 +45,48 @@ Task { await AdSetup.start() }   // ATT 먼저, 그 다음 SDK 시작
 
 ## 2. 광고 ID — 기본값은 항상 테스트
 
-```swift
-// 개발 중 (기본값)
-let ids = AdUnitIDs.test
+실제 ID는 **소스에 쓰지 않는다.** 빌드 설정 파일에서 Info.plist로 주입하고, 코드는 그걸 읽는다.
 
-// 출시 빌드
-let ids = AdUnitIDs.production(banner: "...", interstitial: "...", rewarded: "...")
+```swift
+// 앱 진입점에 한 줄. 세 개를 Info.plist에서 읽는다.
+let adUnitIDs = AdUnitIDs.fromInfoPlist()
 ```
 
+파일 구성은 이렇다.
+
+| 파일 | 커밋? | 내용 |
+|---|---|---|
+| `AdMob.xcconfig` | O | Google 테스트 앱 ID + 빈 광고 단위 3개, 그리고 `#include? "AdMob.local.xcconfig"` |
+| `AdMob.local.xcconfig.example` | O | 채워 넣는 형식만 |
+| `AdMob.local.xcconfig` | **X (gitignore)** | 실제 앱 ID + 광고 단위 3개 |
+
+`project.yml`이 `configFiles`로 `AdMob.xcconfig`를 걸고, Info.plist에
+`GADApplicationIdentifier: $(GAD_APPLICATION_IDENTIFIER)`와 `CoreKitAdUnit*: $(AD_UNIT_*)`를 둔다.
+`#include?`의 `?`가 핵심이다 — 로컬 파일이 없는 클론에서도 에러 없이 테스트 값으로 빌드된다.
+
+**ID를 소스에서 빼는 이유는 비밀이라서가 아니다.** 광고 단위 ID는 어차피 IPA에서 추출된다.
+문제는 남이 그걸 자기 앱에 박아 넣고 트래픽을 만드는 것이고, 그 무효 트래픽으로 정지되는 건
+우리 계정이다. 저장소가 공개로 바뀔 가능성이 있으면 히스토리에서 지우기가 어렵다.
+
+### 실제 ID가 실제로 쓰이는 조건
+
 `production(...)`은 `CoreKitServices.allowsProductionAdUnits`가 `true`일 때만 실제 ID를 쓰고,
-아니면 **조용히 테스트 ID로 떨어진다.** DEBUG 빌드에서는 항상 `false`다.
+아니면 **조용히 테스트 ID로 떨어진다.** 셋 중 하나라도 비어 있으면 세 개 전부 테스트로 간다 —
+반쪽짜리 설정이 실제/테스트 혼합을 만들지 않게.
+
+| 빌드 | 실제 광고 |
+|---|---|
+| DEBUG | 아니오 |
+| TestFlight (`sandboxReceipt`) | 아니오 — 베타 테스터의 탭도 무효 트래픽이다 |
+| App Store (`receipt`) | **예** |
+
+**한때 환경변수(`COREKIT_PRODUCTION_ADS=1`)로 이걸 판별했는데, 그건 동작할 수 없는 방식이었다.**
+`ProcessInfo.environment`는 앱을 실행한 프로세스가 넘겨준 것만 담는다. Xcode에서 실행할 때는
+스킴이 넘겨주지만, 사용자가 홈 화면에서 켠 앱에는 그 변수가 없다. 즉 **정확히 `true`여야 하는
+빌드에서만 항상 `false`**였고, 모든 실사용자가 테스트 광고를 봤을 것이다. 지금은 영수증 파일명으로
+판별한다(App Store는 `receipt`, TestFlight는 `sandboxReceipt`).
 
 **실수의 방향이 한쪽으로만 향하게 만든 것이다.** 잘못되면 테스트 광고가 나오지, 계정 정지는 안 난다.
-자기 광고를 반복 조회·클릭하는 것은 무효 트래픽이고 AdMob 계정 정지 사유다.
-
-출시 빌드에서 실제 광고를 켜려면 Release 스킴에 환경변수 `COREKIT_PRODUCTION_ADS=1`을 넣는다.
 
 ---
 
@@ -127,9 +154,10 @@ SDK를 직접 부르지 않는다. 그래야 **광고 제거 확인이 한 곳�
 
 ## 5. 출시 전 체크
 
-- [ ] `GADApplicationIdentifier`를 실제 앱 ID로 교체
-- [ ] `AdUnitIDs.production(...)`에 실제 3개 ID 입력
-- [ ] Release 스킴에 `COREKIT_PRODUCTION_ADS=1`
+- [ ] `AdMob.local.xcconfig`에 실제 앱 ID + 광고 단위 3개 입력 (gitignore 확인)
+- [ ] 빌드한 `.app`의 Info.plist에 실제 값이 들어갔는지 확인
+      (`PlistBuddy -c 'Print :CoreKitAdUnitBanner' …`)
+- [ ] UMP(유럽 규정 메시지) 배선 — EEA·영국·스위스에 광고를 내보낼 경우
 - [ ] `SKAdNetworkItems` 최신 목록 반영
 - [ ] 광고 제거 구매 후 **배너·전면·보상형 전부** 사라지는지 확인
 - [ ] 배너가 인터랙티브 UI를 가리거나 밀지 않는지 (Guideline 2.3.1)
