@@ -51,30 +51,53 @@ StoreKit이 전부 처리하고 앱은 권한 보유 여부만 읽는다. `결�
 ## Chordline이 신고하는 것 — 전부 AdMob 때문이다
 
 수집 주체는 우리가 아니라 Google Mobile Ads SDK다. Apple은 "제3자 파트너"의 수집도
-개발자가 신고하게 한다. 아래 6개가 Google의 공식 목록을 Apple의 데이터 타입으로 옮긴 것.
+개발자가 신고하게 한다.
+
+**출처는 산문 설명이 아니라 SDK가 번들에 넣어 배포하는 매니페스트다.**
+`GoogleMobileAds.framework/PrivacyInfo.xcprivacy`를 직접 읽어서 옮긴 값이 아래 7개다.
+Apple의 privacy report가 집계하는 것도 바로 이 파일이므로, 라벨을 여기에 맞추면 report와
+라벨이 어긋날 일이 없다. Google의 산문 도움말만 보고 추론하면 **연결·추적 칸이 틀린다** —
+실제로 한 번 틀렸다.
 
 | Apple 데이터 타입 | 분류 | 목적 | 연결 | 추적 |
 |---|---|---|---|---|
-| 대략적인 위치 (Coarse Location) | 위치 | 서드 파티 광고, 분석 | 연결 안 됨 | 예 |
-| 기기 ID (Device ID) | 식별자 | 서드 파티 광고, 분석 | 연결 안 됨 | 예 |
-| 제품 상호작용 (Product Interaction) | 사용 데이터 | 서드 파티 광고, 분석 | 연결 안 됨 | 예 |
-| 광고 데이터 (Advertising Data) | 사용 데이터 | 서드 파티 광고, 분석 | 연결 안 됨 | 예 |
-| 성능 데이터 (Performance Data) | 진단 | 서드 파티 광고, 분석, 앱 기능 | 연결 안 됨 | 예 |
-| 비정상 종료 데이터 (Crash Data) | 진단 | 앱 기능 | 연결 안 됨 | 아니요 |
+| 대략적인 위치 (Coarse Location) | 위치 | 서드 파티 광고, 자사 광고, 분석 | **연결됨** | 아니요 |
+| 기기 ID (Device ID) | 식별자 | 서드 파티 광고, 분석, 자사 광고 | **연결됨** | **예** |
+| 제품 상호 작용 (Product Interaction) | 사용 데이터 | 분석, 자사 광고, 서드 파티 광고 | **연결됨** | 아니요 |
+| 광고 데이터 (Advertising Data) | 사용 데이터 | 서드 파티 광고, 자사 광고, 분석 | **연결됨** | 아니요 |
+| 실적 데이터 (Performance Data) | 진단 | 서드 파티 광고, 자사 광고, 분석 | 연결 안 됨 | 아니요 |
+| 충돌 데이터 (Crash Data) | 진단 | 분석 | 연결 안 됨 | 아니요 |
+| 기타 진단 데이터 (Other Diagnostic Data) | 진단 | 서드 파티 광고, 자사 광고, 분석 | 연결 안 됨 | 아니요 |
 
-### 왜 이렇게 답하는지
+### 헷갈리는 칸들
 
-- **대략적인 위치** — Google이 "IP 주소가 기기의 대략적인 위치를 예상하는 데 사용될 수
-  있다"고 명시한다. 앱은 위치 권한을 요청하지 않지만, IP 기반 추정도 Apple의 Coarse
-  Location에 해당하므로 신고한다.
-- **전부 "연결 안 됨"** — Apple의 "연결"은 신원(계정·이름·이메일)과의 연결이다.
-  Chordline에는 계정이 없어서 연결할 신원 자체가 없다. 예외 없이 전부 연결 안 됨.
-- **추적 "예"** — ATT 승인 시 개인 맞춤 광고가 게재되고, 비개인화 광고를 강제하는 설정도
-  없다. 광고 관련 타입은 제3자 데이터와 결합되므로 추적에 해당한다. 그래서 ATT 프롬프트가
-  필요하고, `AdSetup.start()`가 실제로 그걸 띄운다 — 라벨과 코드가 일치한다.
-- **비정상 종료 데이터만 추적 "아니요"** — Google의 표현이 "비사용자 관련 비정상 종료
-  로그"이고 용도는 SDK 개선이다. 같은 문서가 "진단 정보도 광고·분석에 사용될 수 있다"고
-  덧붙이므로, 더 보수적으로 가려면 여기도 "예"로 둘 수 있다. 판단이 갈리는 유일한 칸이다.
+- **"연결됨"이 4개나 되는 이유.** Apple의 "연결"은 신원과의 연결이다. Chordline에는 계정이
+  없으니 *우리는* 아무것도 연결하지 못한다 — 그래서 "전부 연결 안 됨"으로 추론하기 쉽다.
+  하지만 연결은 제3자가 하는 것도 포함하고, Google은 자기 매니페스트에서 이 4개를
+  `Linked = true`로 선언한다. Google 쪽에서 연결된다는 뜻이므로 "연결됨"이 맞다.
+- **추적은 기기 ID 하나만 "예".** 광고 데이터·제품 상호 작용까지 추적으로 볼 것 같지만,
+  SDK 매니페스트는 `Tracking = true`를 **DeviceID에만** 붙인다. 추적의 매개가 광고
+  식별자이기 때문이다. 나머지는 전부 아니요.
+- **그래도 앱 전체로는 "추적함"이다.** 기기 ID 한 줄이 예이면 앱은 추적하는 앱이고, 그래서
+  ATT 프롬프트가 필수다. `AdSetup.start()`가 실제로 띄운다 — 라벨과 코드가 일치한다.
+- **대략적인 위치** — 앱은 위치 권한을 요청조차 하지 않는다. IP 주소로 추정되는 것이고,
+  그것도 Apple의 Coarse Location에 해당한다.
+- **"자사 광고"(Developer's Advertising or Marketing)도 목적에 들어간다.** Google이
+  매니페스트에 `DeveloperAdvertising`을 넣어두었다. 우리가 자체 광고를 하지 않더라도 SDK의
+  선언을 따른다.
+
+### SDK 버전을 올리면 다시 읽는다
+
+이 표는 특정 SDK 버전의 매니페스트를 옮긴 것이다. 버전을 올린 뒤에는 추측하지 말고 같은
+파일을 다시 읽는다.
+
+```bash
+find "${TMPDIR:-/tmp}" -name PrivacyInfo.xcprivacy -path '*GoogleMobileAds*' \
+  -exec plutil -p {} \;
+```
+
+Apple이 권하는 정석은 Xcode에서 **Product → Archive → Generate Privacy Report**로
+앱과 모든 SDK의 매니페스트를 집계한 보고서를 뽑아, 그걸 보면서 라벨을 채우는 것이다.
 
 ---
 
@@ -95,13 +118,27 @@ StoreKit이 전부 처리하고 앱은 권한 보유 여부만 읽는다. `결�
 
 ---
 
-## 함께 볼 것 — privacy manifest
+## 앱의 privacy manifest
 
-Apple은 2024년부터 SDK의 privacy manifest를 요구한다. `GoogleMobileAds.framework`는
-자기 `PrivacyInfo.xcprivacy`를 **포함하고 있다**(빌드 산출물에서 확인).
+`Apps/Chordline/App/PrivacyInfo.xcprivacy`에 있다. XcodeGen이 `sources: [App]`으로 자동
+포함해서 앱 번들 최상단에 들어간다(빌드로 확인).
 
-**앱 타겟에는 `PrivacyInfo.xcprivacy`가 없다.** 앱 레벨 매니페스트는 (a) required-reason
-API를 직접 쓸 때와 (b) 추적 도메인(`NSPrivacyTrackingDomains`)을 선언할 때 필요하다.
-Chordline은 `UserDefaults` 등 required-reason API를 코드에서 직접 쓰지 않아 업로드가
-막힐 가능성은 낮지만, 추적하는 앱이므로 `NSPrivacyTracking`과 추적 도메인을 앱 레벨에서
-선언해두는 게 정석이다. 출시 전 확인 항목.
+내용이 거의 비어 있는 것이 정상이다. Apple이 명시한다.
+
+> Your app's privacy manifest file **doesn't need to cover data collected by
+> third-party SDKs** that your app links to.
+
+- `NSPrivacyCollectedDataTypes` — **빈 배열.** 우리 코드가 자체적으로 수집하는 건 없다
+  (CloudKit은 사용자 본인 DB, 결제는 StoreKit, 애널리틱스 없음). AdMob의 수집은
+  `GoogleMobileAds.framework`가 자기 매니페스트로 선언한다.
+- `NSPrivacyTracking` — **false.** 추적하는 주체는 광고 SDK이고 그건 SDK 매니페스트에
+  `DeviceID / Tracking = true`로 이미 선언돼 있다. Xcode의 privacy report가 앱과 SDK를
+  **집계**하므로 여기서 false로 두어도 감춰지는 것은 없다. 앱 자체 코드는 추적하지 않는다.
+- `NSPrivacyAccessedAPITypes` — `UserDefaults`(`CA92.1`). `CoreKitServices`의
+  `NotificationScheduler`가 `UserDefaults`를 쓰고, 그 타겟이 앱에 링크되므로 호출 여부와
+  무관하게 심볼이 바이너리에 들어간다. 그래서 선언한다.
+- 그 외 required-reason API는 우리 코드에 없다 — 시스템 부팅 시각·디스크 용량·파일
+  타임스탬프·활성 키보드 전부 미사용(광고 SDK는 자기 것을 자기 매니페스트에 선언한다).
+
+**API를 추가할 때 다시 본다.** `@AppStorage`를 새로 쓰거나 파일 날짜를 읽기 시작하면 이
+파일에 항목을 추가해야 하고, 빠지면 업로드 경고(ITMS-91053)로 돌아온다.
