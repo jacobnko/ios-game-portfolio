@@ -22,6 +22,10 @@ public struct SettingsView: View {
     private let purchases: PurchaseManager
     private let notifications: NotificationScheduler?
     private let privacyPolicyURL: URL?
+    /// Re-opens the ad consent choices. `nil` hides the row — which is correct
+    /// everywhere the consent SDK does not require an entry point, meaning
+    /// everywhere outside the EEA, the UK and Switzerland.
+    private let onPrivacyOptions: (() -> Void)?
     private let onResetProgress: () -> Void
     private let onBack: () -> Void
 
@@ -29,12 +33,14 @@ public struct SettingsView: View {
         purchases: PurchaseManager,
         notifications: NotificationScheduler? = nil,
         privacyPolicyURL: URL? = nil,
+        onPrivacyOptions: (() -> Void)? = nil,
         onResetProgress: @escaping () -> Void,
         onBack: @escaping () -> Void
     ) {
         self.purchases = purchases
         self.notifications = notifications
         self.privacyPolicyURL = privacyPolicyURL
+        self.onPrivacyOptions = onPrivacyOptions
         self.onResetProgress = onResetProgress
         self.onBack = onBack
     }
@@ -50,6 +56,7 @@ public struct SettingsView: View {
                     purchases: purchases,
                     notifications: notifications,
                     privacyPolicyURL: privacyPolicyURL,
+                    onPrivacyOptions: onPrivacyOptions,
                     onResetProgress: onResetProgress
                 )
                 .padding(.horizontal, 24)
@@ -116,6 +123,7 @@ public struct SettingsContent: View {
     private let purchases: PurchaseManager
     private let notifications: NotificationScheduler?
     private let privacyPolicyURL: URL?
+    private let onPrivacyOptions: (() -> Void)?
     private let onResetProgress: () -> Void
 
     @State private var soundEnabled = PitchedTonePlayer.shared.isEnabled
@@ -127,11 +135,13 @@ public struct SettingsContent: View {
         purchases: PurchaseManager,
         notifications: NotificationScheduler? = nil,
         privacyPolicyURL: URL? = nil,
+        onPrivacyOptions: (() -> Void)? = nil,
         onResetProgress: @escaping () -> Void
     ) {
         self.purchases = purchases
         self.notifications = notifications
         self.privacyPolicyURL = privacyPolicyURL
+        self.onPrivacyOptions = onPrivacyOptions
         self.onResetProgress = onResetProgress
         self._notificationsEnabled = State(initialValue: notifications?.isEnabled ?? false)
     }
@@ -222,7 +232,7 @@ public struct SettingsContent: View {
                 CommonStrings.settingsLanguage.text,
                 subtitle: "\(CommonStrings.settingsSystemSettings.text) ↗",
                 systemImage: "globe",
-                isLast: privacyPolicyURL == nil
+                isLast: privacyPolicyURL == nil && onPrivacyOptions == nil
             ) {
                 LanguageSettings.openSystemLanguageSettings()
             }
@@ -233,10 +243,23 @@ public struct SettingsContent: View {
                         CommonStrings.settingsPrivacyPolicy.text,
                         subtitle: nil,
                         systemImage: "doc.text.fill",
-                        isLast: true
+                        isLast: onPrivacyOptions == nil
                     )
                 }
                 .buttonStyle(.plain)
+            }
+
+            // Google's consent SDK requires a reachable way back into these
+            // choices wherever its message says so, so this row is present
+            // exactly when the app was handed an action for it.
+            if let onPrivacyOptions {
+                linkRow(
+                    CommonStrings.settingsAdPrivacy.text,
+                    subtitle: nil,
+                    systemImage: "hand.raised.fill",
+                    isLast: true,
+                    action: onPrivacyOptions
+                )
             }
         }
     }

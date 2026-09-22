@@ -64,6 +64,11 @@ public struct AdBannerView: UIViewRepresentable {
 
         func apply(width: CGFloat) {
             guard width > 0 else { return }
+            // Third load path in this module, and it needs the same consent gate
+            // the interstitial and rewarded loads have. Returning here leaves
+            // `hasRequestedAd` false, so the next layout pass retries once
+            // consent has resolved rather than leaving the slot permanently empty.
+            guard AdSetup.canRequestAds else { return }
 
             // A sub-point width wobble during layout must not trigger a reload.
             let widthChangedMeaningfully = abs(width - loadedWidth) > 1

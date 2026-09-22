@@ -85,6 +85,12 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     // MARK: - Loading
 
     private func loadInterstitialIfNeeded() {
+        // Google requires consent to be resolved before an ad is requested, and
+        // the check belongs here rather than at the call sites: every load goes
+        // through these two functions, so one gate cannot be forgotten in a
+        // third place later. Outside the regions a consent message targets this
+        // is true as soon as AdSetup.requestConsent() has run.
+        guard AdSetup.canRequestAds else { return }
         guard interstitial == nil, !isLoadingInterstitial else { return }
         isLoadingInterstitial = true
         Task { [adUnitIDs] in
@@ -94,6 +100,7 @@ public final class GoogleAdPresenter: NSObject, AdPresenting {
     }
 
     private func loadRewardedIfNeeded() {
+        guard AdSetup.canRequestAds else { return }
         guard rewarded == nil, !isLoadingRewarded else { return }
         isLoadingRewarded = true
         Task { [adUnitIDs] in

@@ -31,6 +31,9 @@ let package = Package(
         // what lets `swift test` keep running on the host, where an iOS-only
         // binary framework cannot link.
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "13.9.0"),
+        // Google's consent SDK. It already arrives as a transitive dependency of
+        // the ads package, but importing it needs the product declared here.
+        .package(url: "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git", from: "3.1.0"),
     ],
     targets: [
         .target(name: "CoreKitJuice"),
@@ -40,6 +43,7 @@ let package = Package(
         .target(name: "CoreKitAdsGoogle", dependencies: [
             "CoreKitServices",
             .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+            .product(name: "GoogleUserMessagingPlatform", package: "swift-package-manager-google-user-messaging-platform"),
         ]),
         .testTarget(name: "CoreKitJuiceTests", dependencies: ["CoreKitJuice"]),
         .testTarget(name: "CoreKitDataTests", dependencies: ["CoreKitData"]),
