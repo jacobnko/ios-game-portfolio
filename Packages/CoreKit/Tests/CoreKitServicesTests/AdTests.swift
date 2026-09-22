@@ -12,6 +12,16 @@ import Foundation
     #expect(AdUnitIDs.test.banner.hasPrefix("ca-app-pub-3940256099942544/"))
 }
 
+@Test func onlyAnAppStoreReceiptUnlocksProductionUnits() {
+    // TestFlight writes `sandboxReceipt`, the App Store writes `receipt`, and a
+    // Release build run locally has none. Only the middle case may serve live
+    // units — a beta tester's taps are invalid traffic the same as ours.
+    #expect(CoreKitServices.allows(receiptNamed: "receipt"))
+    #expect(CoreKitServices.allows(receiptNamed: "sandboxReceipt") == false)
+    #expect(CoreKitServices.allows(receiptNamed: nil) == false)
+    #expect(CoreKitServices.allows(receiptNamed: "") == false)
+}
+
 @Test func productionUnitsFallBackToTestUnlessExplicitlyAllowed() {
     // In a debug build `allowsProductionAdUnits` is false, so this must degrade
     // to test inventory rather than burn real impressions during development.
