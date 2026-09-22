@@ -50,6 +50,17 @@ App Store Connect 없이 구매 흐름을 돌릴 수 있다. `Tools/JuiceLab/Jui
 App Store Connect → 사용자 및 액세스 → Sandbox 테스터 계정 생성 후, 기기의
 설정 → App Store → Sandbox 계정으로 로그인한다. StoreKit Configuration 파일보다 느리지만 실제에 가깝다.
 
+> ⚠️ **실기기에서 실행해도 로컬 파일이 붙어 있으면 무조건 로컬로 간다.**
+> `Chordline` 스킴은 `Chordline.storekit`을 물고 있어서(개발 편의), 샌드박스
+> 계정으로 로그인한 실기기에서 실행해도 결제 시트에 `[Environment: Xcode]`가
+> 뜬다 — `[Environment: Sandbox]`가 아니다. 실기기인지 여부와 무관하게 **스킴에
+> StoreKit Configuration이 붙어 있는지**가 결정한다.
+>
+> 진짜 샌드박스로 확인하려면 **`Chordline-Sandbox` 스킴**을 실행한다. 로컬 파일이
+> 빠진 것만 다른 동일한 스킴이다. `Edit Scheme`에서 매번 껐다 켰다 하지 않는
+> 이유는 그 조작이 project.yml에 없어서 `xcodegen generate`를 다시 돌리면
+> 조용히 원복되기 때문 — 스킴을 둘로 나눠서 실수로 되돌아갈 여지를 없앴다.
+
 ---
 
 ## 4. 코드에서 지켜야 할 것
