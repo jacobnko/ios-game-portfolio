@@ -50,7 +50,7 @@ public enum AdSetup {
     @MainActor
     public static func requestConsent() async {
         await withCheckedContinuation { continuation in
-            ConsentInformation.shared.requestConsentInfoUpdate(with: RequestParameters()) { _ in
+            ConsentInformation.shared.requestConsentInfoUpdate(with: debugRequestParameters()) { _ in
                 continuation.resume()
             }
         }
@@ -59,6 +59,42 @@ public enum AdSetup {
                 continuation.resume()
             }
         }
+    }
+
+    /// Request parameters, carrying a forced geography only in a debug build.
+    ///
+    /// Google's warning about this is that the override must not ship. Rather
+    /// than rely on remembering to delete it, the whole thing is behind
+    /// `#if DEBUG`: there is no Release code path that reads the key, so the
+    /// override cannot reach the App Store even if the value is left set.
+    ///
+    /// Only takes effect on a registered test device. Simulators are test
+    /// devices already; for a real device, run once and copy the id the SDK
+    /// logs (`UMPDebugSettings.testDeviceIdentifiers = @[...]`).
+    @MainActor
+    private static func debugRequestParameters() -> RequestParameters {
+        let parameters = RequestParameters()
+        #if DEBUG
+        // Declared inside the conditional, not beside it: a constant left
+        // outside still ships its string and its reflection metadata into
+        // Release, which makes "none of this exists in the shipped binary"
+        // untrue and unverifiable.
+        let key = "CoreKitAdConsentDebugGeography"
+        let raw = (Bundle.main.object(forInfoDictionaryKey: key) as? String)?
+            .trimmingCharacters(in: .whitespaces)
+        let geography: DebugGeography? = switch raw {
+        case "EEA": .EEA
+        case "regulatedUSState": .regulatedUSState
+        case "other": .other
+        default: nil
+        }
+        if let geography {
+            let debug = DebugSettings()
+            debug.geography = geography
+            parameters.debugSettings = debug
+        }
+        #endif
+        return parameters
     }
 
     /// Whether Google's consent state currently permits requesting ads.
