@@ -136,6 +136,13 @@ The decision axis is **"physics-driven vs. state-driven"**, not "UIKit vs. Swift
 - Claude Code writes **only the handoff documents** (specs and prompt cards). It does not generate artwork.
 - Delivered assets land in `Apps/<Game>/Resources/`, and the corresponding item in `checklist.md` is ticked on arrival.
 
+### Starting a new game
+
+Read `docs/architecture/next-game-handoff.md` first. It is the mine map: every
+trap Chordline actually hit, placed at the phase where it goes off, with the
+file paths to look at. `docs/architecture/new-game-setup.md` is the mechanical
+procedure; the handoff is what the procedure does not tell you.
+
 ### The screen-building gate (non-negotiable)
 
 **No screen is implemented from a guess.** A game's core-logic phase splits into
