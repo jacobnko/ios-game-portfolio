@@ -183,7 +183,8 @@ private struct FlowRouter: View {
                 case .settings:
                     SettingsView(purchases: coordinator.purchases,
                                  // Shared across the whole portfolio — see docs/privacy/README.md.
-                                 privacyPolicyURL: URL(string: "https://jacobnko.github.io/ios-game-portfolio/privacy/"),
+                                 // The game's own page — see docs/privacy/README.md.
+                                 privacyPolicyURL: URL(string: "https://<game>.jacobko.app/privacy"),
                                  onResetProgress: { try? coordinator.progress.deleteAll() },
                                  onBack: { coordinator.pop() })
                 }
