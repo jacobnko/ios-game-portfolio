@@ -334,8 +334,10 @@
 - [x] 개인정보처리방침 페이지 + 앱 내 링크
   - [x] 본문 작성 (EN+KO 한 페이지, 포트폴리오 10개 공유) — `docs/privacy/index.html`
   - [x] 호스팅 방법 문서화 — GitHub Pages, `docs/privacy/README.md`
-  - [ ] **J가 GitHub 저장소 Settings → Pages 토글 켜기** (Claude Code는 저장소 설정 권한 없음)
-  - [ ] URL이 실제로 열리는지 확인 후 App Store Connect·`SettingsView(privacyPolicyURL:)`에 반영
+  - [x] ~~J가 GitHub 저장소 Settings → Pages 토글 켜기~~ — **폐기.** 공용 단일 문서 대신 게임별 페이지로 전환(D-109). `chordline.jacobko.app/privacy` 라이브
+  - [x] `SettingsView(privacyPolicyURL:)`에 반영 — Xcode 빌드로 확인
+  - [ ] **J가 App Store Connect 앱 정보의 개인정보처리방침 URL에 입력**
+  - [ ] **웹 세션에 Advertising 섹션 수정 전달** — UMP 배선 후 페이지가 앱보다 축소 설명 중 (`Marketing/web-handoff.md` 액션 2)
 - [x] Small Business Program 신청 절차 — `docs/architecture/appstore-connect-setup.md` §10. **신청 자체는 J가 App Store Connect에서 실행**
 - [x] 실제 Ad Unit ID 교체 절차 — 이미 Phase 1에 문서화돼 있었음 (`docs/architecture/admob-setup.md` §2, §5)
 - [x] App Store Connect 등록 절차 문서 — `docs/architecture/appstore-connect-setup.md` (번들 ID → 앱 생성 → IAP → 연령 등급 → 개인정보 라벨 → 빌드 업로드)
@@ -343,7 +345,7 @@
   - [x] `check-name.sh` us/kr/jp 재확인 — 완전 일치 없음
   - [x] USPTO 검색 — `CHORDLINE HEALTH`(IC 042, 헬스케어 SaaS) 라이브 상표 발견. 관련 클래스(9·41)와 다름, 단독 문자열 아님 — 상세 판단 근거는 `context-notes.md` D-105
   - [x] KIPRIS 검색 — 국내 문자상표 0건
-  - [ ] **J가 App Store Connect에서 이름 예약** (예약 후 90일 내 제출 필요 — `docs/architecture/naming.md`)
+  - [x] J가 App Store Connect에서 이름 예약 — 앱 레코드 생성 완료(Apple ID 6814033554). **예약 후 90일 내 제출 필요**
 
 ---
 
@@ -397,7 +399,7 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 - [x] `SettingsView`/`SettingsContent`의 `adsEnabled` 파라미터 롤백 — Remove Ads·Restore Purchases 원상 복구(항상 표시)
 - [x] 플립 지점 1곳 — `ChordlineApp.swift`의 `bannerEnabledAtLaunch` 상수
 - [x] `AdSetup.start()` 실제 배선 — `RootView.setUp()`에서 별도 Task로, 로딩 화면을 막지 않게
-  - [ ] **J가 실기기에서 ATT 프롬프트가 실제로 뜨는지 확인** (이번에 처음 배선했음)
+  - [x] J가 실기기에서 ATT 프롬프트 확인 완료
 - [x] `new-game-setup.md` §8 갱신 필요 — D-106 패턴(전체 비활성화) 대신 D-107 패턴(배너만) 반영
 - [x] `context-notes.md` D-107 — 방향 전환 배경 기록
 
@@ -425,3 +427,48 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 - [ ] #8
 - [ ] #9
 - [ ] #10
+
+---
+
+## Phase 4.2 — 스토어 자산·메타데이터 (이번 세션)
+
+- [x] 스크린샷 5장 확정 (게임플레이·결과·스테이지·홈·설정) + 6.9"(1320x2868) 프레임 합성
+  - [x] 원본 해상도 문제를 재촬영 없이 해결 — 규격 캔버스 안 기기 프레임에 합성(D-108)
+  - [x] 7개 언어 × 5장 = 35장. 생성기를 레포에 반입(`Marketing/build_frames.py`)
+  - [x] 6.9" 한 벌만 만든다 — 자동 축소는 최대 크기에서 아래로만 흐른다(왕복 후 확정)
+- [x] 7개 언어 스토어 문안 — 부제·프로모션 텍스트·키워드·설명. 전부 글자 수 제한 검증
+- [x] IAP 심사용 스크린샷 — 버킷 규격(1320x2868)이어야 함을 확인하고 재생성
+- [x] IAP 현지화 문안 7개 언어 — 표시 이름 30자 / 설명 **45자** 제한 확인 후 재작성
+- [x] 웹 핸드오프 문서 — 랜딩 + `/privacy` 2페이지, 주장별 코드 근거표 포함
+- [x] 두 페이지 라이브 확인 — `chordline.jacobko.app`
+  - [ ] **App Store 링크가 404** — 슬러그(`/app/chordline`) 대신 `/app/id6814033554` 형식이어야 함
+  - [ ] **랜딩 `<title>`에 "Jacobko Studio" 중복**
+- [x] 앱 개인정보 라벨 답안 — SDK가 배포하는 매니페스트에서 직접 추출(7개 타입), `docs/privacy/app-privacy-label.md`
+- [x] `PrivacyInfo.xcprivacy` — 앱 타겟에 추가, 번들 최상단 반입 확인
+- [ ] **J가 App Store Connect에 입력** — 앱 개인정보 라벨 / 연령 등급 / 콘텐츠 권한 / IAP 제출 준비 완료
+
+## Phase 4.3 — 광고 실배선 (이번 세션)
+
+- [x] AdMob 계정·앱·광고 단위 3개 생성 (J)
+- [x] 실제 ID 배선 — 소스에 넣지 않고 `AdMob.local.xcconfig`(gitignore) → Info.plist 주입
+  - [x] 빌드된 번들에서 실제 값 4개 확인
+  - [x] 로컬 파일 없는 클론에서도 테스트 값으로 빌드됨(`#include?`) 확인
+- [x] 🔴 **프로덕션 광고 게이트 결함 수정** — 환경변수 기반이라 App Store 빌드에서 영구히 false였음. 모든 실사용자가 테스트 광고를 볼 상태. 영수증 파일명 기반으로 교체 + 테스트 추가
+- [x] 🔴 **`SKAdNetworkItems` 50개 누락 수정** — SDK가 매 실행 로그로 요구하던 것
+- [x] 광고 SDK 초기화를 메인 액터 밖으로 — Google 문서상 최대 30초 소요
+- [x] UMP(GDPR 동의) 배선 — 동의 → ATT → SDK 시작 순서
+  - [x] 광고 로드 3경로(전면·보상형·배너) 전부에 `canRequestAds` 게이트
+  - [x] Settings에 "Ad Privacy Options" 행 — SDK가 요구할 때만 표시, 7개 언어
+  - [x] DEBUG 전용 지역 강제 토글 — Release엔 컴파일되지 않음
+  - [x] AdMob 콘솔 유럽 규정 메시지 Publish (J)
+  - [ ] **시뮬레이터에서 지역을 EEA로 강제해 동의 폼이 실제로 뜨는지 확인**
+- [x] D-110 — 디버거 붙인 실행이 앱을 30초 멈추는 현상은 결함이 아님. 판별법을 `DEVICE-TEST.md` §0에 명문화
+
+## Phase 4.4 — 제출 전 반드시 남은 것
+
+- [ ] 🔴 **샌드박스에서 구매·복원 실제 동작 확인** — 지금까지 로컬 `.storekit`(가짜 스토어)로만 테스트했다. "Restore Purchases가 실제로 동작해야 한다"는 확정 리젝 포인트이고, 로컬 파일로는 증명되지 않는다
+- [ ] 🔴 **최종 빌드로 `DEVICE-TEST.md` 전체 1회** — 광고 실배선·UMP·동의 행이 들어간 뒤 아직 통과한 적 없음
+- [ ] **빌드 아카이브 + 업로드** (Xcode → Product → Archive → Distribute App). 처리에 10~30분
+- [ ] 버전 페이지에서 빌드 선택 + **IAP를 같은 제출에 첨부**
+- [ ] 심사 제출
+- [ ] (병행) 대한민국 세금 양식이 "활성화됨"으로 바뀌는지 확인 — 제출은 막지 않지만 지급에 필요
