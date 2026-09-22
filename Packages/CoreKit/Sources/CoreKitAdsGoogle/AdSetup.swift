@@ -16,7 +16,11 @@ public enum AdSetup {
     ///
     /// Requires `NSUserTrackingUsageDescription` in the app's Info.plist. Without it
     /// the prompt never appears and the status stays `.notDetermined` forever.
-    @MainActor
+    /// Deliberately not `@MainActor`. Only the tracking prompt needs the main
+    /// actor, and it is isolated on its own. Google documents `start()` as
+    /// completing "after the SDK and mediation adapters finish, or after 30
+    /// seconds", and its initialisation does enough work that holding the main
+    /// actor for it makes the first screen unresponsive to taps.
     public static func start() async {
         await requestTrackingAuthorization()
         await MobileAds.shared.start()
