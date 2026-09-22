@@ -13,6 +13,27 @@ StoreKit · SwiftUI 뷰 — 은 기기에서만 실행된다. 그리고 지금�
 
 ## 0. 준비 (최초 1회)
 
+> ### ⚠️ 광고가 있는 앱은 디버거를 붙인 첫 실행이 느리다 — 버그가 아니다
+>
+> AdMob은 초기화할 때 WKWebView로 시그널을 수집하고, 그 때문에 WebKit 보조
+> 프로세스 세 개(GPU · WebContent · Networking)가 뜬다. **Xcode 디버거가 붙어
+> 있으면 이 프로세스 생성이 극단적으로 느려진다** — 실측으로 각 7~10초, 하나는
+> `didBecomeUnresponsive`까지 찍히고, 총 30초(Google이 문서화한 `start()`
+> 타임아웃)간 화면 탭이 밀린다. 로그는 이렇게 보인다.
+>
+> ```
+> GPU process took 8.270797 seconds to launch
+> WebContent process took 9.930426 seconds to launch
+> WebProcessProxy::didBecomeUnresponsive
+> Service "com.apple.CARenderServer" failed bootstrap look up
+> ```
+>
+> **판별법: Xcode를 정지(⌘.)하고 기기에서 앱 아이콘을 직접 탭한다.** 그러면
+> 정상 속도다. 즉 실사용자에게는 나타나지 않는다. 앱이 멈춘 것처럼 보이면
+> 코드를 의심하기 전에 먼저 이걸 확인한다 — Chordline에서 실제로 한 번
+> 결함으로 오진했다(D-110).
+
+
 ```bash
 cd /Users/jacobko/Document/01_iOS/00_Games/Tools/JuiceLab && xcodegen generate && open JuiceLab.xcodeproj
 ```
