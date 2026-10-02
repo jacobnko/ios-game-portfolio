@@ -1,1886 +1,1886 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "common.back": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zurück"
+  "sourceLanguage" : "en",
+  "version" : "1.0",
+  "strings" : {
+    "common.play" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Back"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Atrás"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレイ"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retour"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spielen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "戻る"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jouer"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "뒤로"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jugar"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voltar"
-          }
-        }
-      }
-    },
-    "common.cancel": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abbrechen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancelar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Annuler"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "キャンセル"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취소"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancelar"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jogar"
           }
         }
       }
     },
-    "common.close": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schließen"
+    "common.resume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Close"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이어하기"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cerrar"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再開"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fermer"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortsetzen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "閉じる"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "닫기"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fechar"
-          }
-        }
-      }
-    },
-    "common.home": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Home"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inicio"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accueil"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ホーム"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "홈"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Início"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
           }
         }
       }
     },
-    "common.next": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiter"
+    "common.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Siguiente"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suivant"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nochmal"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "次へ"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다음"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reintentar"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Próximo"
-          }
-        }
-      }
-    },
-    "common.play": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Play"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jugar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jouer"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プレイ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시작"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jogar"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
           }
         }
       }
     },
-    "common.resume": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fortsetzen"
+    "common.next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resume"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuar"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次へ"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reprendre"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "再開"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivant"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이어하기"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuar"
-          }
-        }
-      }
-    },
-    "common.retry": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nochmal"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retry"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reintentar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réessayer"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "もう一度"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다시"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tentar de novo"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próximo"
           }
         }
       }
     },
-    "common.settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen"
+    "common.close" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "닫기"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajustes"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réglages"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "設定"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "설정"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajustes"
-          }
-        }
-      }
-    },
-    "hint.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brauchst du einen Tipp?"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Need a hint?"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿Necesitas una pista?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Besoin d’un indice ?"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ヒントが必要ですか？"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "힌트가 필요하세요?"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Precisa de uma dica?"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fechar"
           }
         }
       }
     },
-    "hint.watchAd": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Werbung ansehen für einen Tipp"
+    "common.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Watch an ad for a hint"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ver un anuncio para una pista"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Regarder une pub pour un indice"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "広告を見てヒントを入手"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고 보고 힌트 받기"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Assista a um anúncio para uma dica"
-          }
-        }
-      }
-    },
-    "purchase.nothingToRestore": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Käufe gefunden"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No purchases found"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se encontraron compras"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucun achat trouvé"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "購入履歴がありません"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "복원할 구매가 없습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nenhuma compra encontrada"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
           }
         }
       }
     },
-    "purchase.pending": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warten auf Freigabe"
+    "common.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waiting for approval"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "뒤로"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Esperando aprobación"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻る"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En attente d’approbation"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "承認を待っています"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "승인 대기 중"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atrás"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aguardando aprovação"
-          }
-        }
-      }
-    },
-    "purchase.restored": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Käufe wiederhergestellt"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Purchases restored"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compras restauradas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Achats restaurés"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "購入を復元しました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "구매를 복원했습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compras restauradas"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar"
           }
         }
       }
     },
-    "result.attemptProgress": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% geschafft"
+    "common.settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% complete"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% completado"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% terminé"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% 完成"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% 완성"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld%% concluído"
-          }
-        }
-      }
-    },
-    "result.bestTime": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bestzeit"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best Time"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mejor tiempo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Meilleur temps"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ベストタイム"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "최고 기록"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Melhor tempo"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes"
           }
         }
       }
     },
-    "result.newRecord": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neuer Rekord"
+    "settings.sound" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sound"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New Record"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nuevo récord"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サウンド"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouveau record"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新記録"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "신기록"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonido"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Novo recorde"
-          }
-        }
-      }
-    },
-    "result.share": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Share"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compartir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Partager"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "シェア"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "공유"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compartilhar"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Som"
           }
         }
       }
     },
-    "result.stageCleared": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Level geschafft"
+    "settings.haptics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptics"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stage Cleared"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진동"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nivel completado"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触覚フィードバック"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niveau réussi"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptik"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ステージクリア"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour haptique"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "클리어"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vibración"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fase concluída"
-          }
-        }
-      }
-    },
-    "result.stageFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Versuch es nochmal"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try Again"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inténtalo de nuevo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réessayer"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "もう一度挑戦"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "다시 도전"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tente de novo"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vibração"
           }
         }
       }
     },
-    "result.statBest": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEST"
+    "settings.notifications" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminders"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BEST"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MEJOR"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リマインダー"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MEILLEUR"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerungen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ベスト"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rappels"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "최고"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordatorios"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MELHOR"
-          }
-        }
-      }
-    },
-    "result.statTime": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZEIT"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TIME"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TIEMPO"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TEMPS"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "タイム"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시간"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TEMPO"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lembretes"
           }
         }
       }
     },
-    "settings.adPrivacy": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datenschutzoptionen für Werbung"
+    "settings.language" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ad Privacy Options"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "언어"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opciones de privacidad de anuncios"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "言語"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Options de confidentialité des publicités"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "広告のプライバシー設定"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langue"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고 개인정보 설정"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opções de privacidade de anúncios"
-          }
-        }
-      }
-    },
-    "settings.haptics": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Haptik"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Haptics"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vibración"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retour haptique"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "触覚フィードバック"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "진동"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vibração"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma"
           }
         }
       }
     },
-    "settings.language": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sprache"
+    "settings.languageHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens iOS Settings"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 설정에서 변경합니다"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Idioma"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOSの設定を開きます"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Langue"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet die iOS-Einstellungen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "言語"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvre les Réglages iOS"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "언어"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Ajustes de iOS"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Idioma"
-          }
-        }
-      }
-    },
-    "settings.languageHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet die iOS-Einstellungen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens iOS Settings"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre Ajustes de iOS"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvre les Réglages iOS"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "iOSの設定を開きます"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "iOS 설정에서 변경합니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre os Ajustes do iOS"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre os Ajustes do iOS"
           }
         }
       }
     },
-    "settings.notifications": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erinnerungen"
+    "settings.removeAds" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Ads"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reminders"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "광고 제거"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recordatorios"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "広告を削除"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rappels"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Werbung entfernen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "リマインダー"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer les pubs"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알림"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar anuncios"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lembretes"
-          }
-        }
-      }
-    },
-    "settings.oneTime": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EINMALIG"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ONE-TIME"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PAGO ÚNICO"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PAIEMENT UNIQUE"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "買い切り"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1회 결제"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PAGAMENTO ÚNICO"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover anúncios"
           }
         }
       }
     },
-    "settings.privacyPolicy": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datenschutz"
+    "settings.restorePurchases" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Purchases"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Privacy Policy"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구매 복원"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Política de privacidad"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "購入を復元"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Confidentialité"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe wiederherstellen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "プライバシーポリシー"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurer les achats"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "개인정보처리방침"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar compras"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Privacidade"
-          }
-        }
-      }
-    },
-    "settings.removeAds": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Werbung entfernen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove Ads"
-          }
-        },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quitar anuncios"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer les pubs"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "広告を削除"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "광고 제거"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remover anúncios"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar compras"
           }
         }
       }
     },
-    "settings.resetProgress": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fortschritt zurücksetzen"
+    "settings.privacyPolicy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset Progress"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보처리방침"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restablecer progreso"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシー"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réinitialiser la progression"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutz"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "進行状況をリセット"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confidentialité"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "진행도 초기화"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Redefinir progresso"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidade"
           }
         }
       }
     },
-    "settings.resetProgressConfirm": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alles zurücksetzen"
+    "settings.resetProgress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Progress"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset Everything"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진행도 초기화"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restablecer todo"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進行状況をリセット"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tout réinitialiser"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschritt zurücksetzen"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "すべてリセット"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser la progression"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "전부 초기화"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer progreso"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Redefinir tudo"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redefinir progresso"
           }
         }
       }
     },
-    "settings.resetProgressMessage": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle geschafften Level, Sterne und Bestzeiten gehen verloren. Das lässt sich nicht rückgängig machen."
+    "result.stageCleared" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage Cleared"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This clears every cleared stage, star and best time. It cannot be undone."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클리어"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se borrarán todos los niveles completados, estrellas y mejores tiempos. No se puede deshacer."
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ステージクリア"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tous les niveaux réussis, étoiles et meilleurs temps seront effacés. Action irréversible."
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level geschafft"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "クリアしたステージ、スター、ベストタイムがすべて消えます。元に戻せません。"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niveau réussi"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "클리어한 스테이지, 별, 최고 기록이 모두 사라집니다. 되돌릴 수 없습니다."
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel completado"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Todas as fases concluídas, estrelas e melhores tempos serão apagados. Não dá para desfazer."
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase concluída"
           }
         }
       }
     },
-    "settings.restorePurchases": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Käufe wiederherstellen"
+    "result.bestTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best Time"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restore Purchases"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최고 기록"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restaurar compras"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ベストタイム"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restaurer les achats"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestzeit"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "購入を復元"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meilleur temps"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "구매 복원"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mejor tiempo"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restaurar compras"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melhor tempo"
           }
         }
       }
     },
-    "settings.sound": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ton"
+    "result.newRecord" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Record"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sound"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신기록"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sonido"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新記録"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Son"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuer Rekord"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "サウンド"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau record"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "소리"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo récord"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Som"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novo recorde"
           }
         }
       }
     },
-    "settings.systemSettings": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Systemeinstellungen"
+    "hint.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Need a hint?"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System Settings"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "힌트가 필요하세요?"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajustes del sistema"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヒントが必要ですか？"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réglages système"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brauchst du einen Tipp?"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "システム設定"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Besoin d’un indice ?"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시스템 설정"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Necesitas una pista?"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajustes do sistema"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precisa de uma dica?"
           }
         }
       }
     },
-    "stage.legendClear": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FERTIG"
+    "hint.watchAd" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch an ad for a hint"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CLEAR"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "광고 보고 힌트 받기"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HECHO"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "広告を見てヒントを入手"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TERMINÉ"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Werbung ansehen für einen Tipp"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "クリア"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regarder une pub pour un indice"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "완료"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver un anuncio para una pista"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CONCLUÍDO"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assista a um anúncio para uma dica"
           }
         }
       }
     },
-    "stage.legendCurrent": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "JETZT"
+    "purchase.pending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for approval"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NOW"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "승인 대기 중"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AHORA"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "承認を待っています"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ACTUEL"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warten auf Freigabe"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "現在"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente d’approbation"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "현재"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando aprobación"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AGORA"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aguardando aprovação"
           }
         }
       }
     },
-    "stage.legendLocked": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GESPERRT"
+    "purchase.restored" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchases restored"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "LOCKED"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구매를 복원했습니다"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BLOQUEADO"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "購入を復元しました"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VERROUILLÉ"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe wiederhergestellt"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ロック"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achats restaurés"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "잠김"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compras restauradas"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "BLOQUEADO"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compras restauradas"
           }
         }
       }
     },
-    "stage.locked": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gesperrt"
+    "purchase.nothingToRestore" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No purchases found"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Locked"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복원할 구매가 없습니다"
           }
         },
-        "es-MX": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bloqueado"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "購入履歴がありません"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verrouillé"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Käufe gefunden"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ロック中"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun achat trouvé"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "잠김"
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron compras"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bloqueado"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma compra encontrada"
+          }
+        }
+      }
+    },
+    "stage.locked" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠김"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック中"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesperrt"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verrouillé"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloqueado"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloqueado"
+          }
+        }
+      }
+    },
+    "common.home" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accueil"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicio"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Início"
+          }
+        }
+      }
+    },
+    "result.stageFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 도전"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度挑戦"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versuch es nochmal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inténtalo de nuevo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tente de novo"
+          }
+        }
+      }
+    },
+    "result.share" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シェア"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartilhar"
+          }
+        }
+      }
+    },
+    "stage.legendClear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CLEAR"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クリア"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FERTIG"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TERMINÉ"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HECHO"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONCLUÍDO"
+          }
+        }
+      }
+    },
+    "stage.legendCurrent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOW"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JETZT"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ACTUEL"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AHORA"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AGORA"
+          }
+        }
+      }
+    },
+    "stage.legendLocked" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LOCKED"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠김"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロック"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GESPERRT"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VERROUILLÉ"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BLOQUEADO"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BLOQUEADO"
+          }
+        }
+      }
+    },
+    "settings.oneTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ONE-TIME"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1회 결제"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "買い切り"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EINMALIG"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PAIEMENT UNIQUE"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PAGO ÚNICO"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PAGAMENTO ÚNICO"
+          }
+        }
+      }
+    },
+    "settings.systemSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Settings"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 설정"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム設定"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemeinstellungen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages système"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes del sistema"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes do sistema"
+          }
+        }
+      }
+    },
+    "settings.resetProgressMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This clears every cleared stage, star and best time. It cannot be undone."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클리어한 스테이지, 별, 최고 기록이 모두 사라집니다. 되돌릴 수 없습니다."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クリアしたステージ、スター、ベストタイムがすべて消えます。元に戻せません。"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle geschafften Level, Sterne und Bestzeiten gehen verloren. Das lässt sich nicht rückgängig machen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les niveaux réussis, étoiles et meilleurs temps seront effacés. Action irréversible."
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se borrarán todos los niveles completados, estrellas y mejores tiempos. No se puede deshacer."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas as fases concluídas, estrelas e melhores tempos serão apagados. Não dá para desfazer."
+          }
+        }
+      }
+    },
+    "settings.resetProgressConfirm" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Everything"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전부 초기화"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてリセット"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles zurücksetzen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout réinitialiser"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer todo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redefinir tudo"
+          }
+        }
+      }
+    },
+    "result.statTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TIME"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시간"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイム"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZEIT"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TIEMPO"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TEMPO"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TEMPS"
+          }
+        }
+      }
+    },
+    "result.statBest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BEST"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최고"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ベスト"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BEST"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MEJOR"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MELHOR"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MEILLEUR"
+          }
+        }
+      }
+    },
+    "result.attemptProgress" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% complete"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% 완성"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% 完成"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% geschafft"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% completado"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% concluído"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% terminé"
+          }
+        }
+      }
+    },
+    "settings.adPrivacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzoptionen für Werbung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad Privacy Options"
+          }
+        },
+        "es-MX" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones de privacidad de anuncios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de confidentialité des publicités"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "広告のプライバシー設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "광고 개인정보 설정"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções de privacidade de anúncios"
           }
         }
       }
     }
-  },
-  "version": "1.0"
+  }
 }
