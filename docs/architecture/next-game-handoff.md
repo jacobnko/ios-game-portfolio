@@ -168,6 +168,20 @@ ATT 프롬프트와 `MobileAds.shared.start()`를 트리거하는 **유일한** 
 호출하지 않고 있었다. 지금은 `Apps/Chordline/App/ChordlineApp.swift`의 `setUp()`에서
 별도 `Task`로 띄운다. `await`로 기다리면 ATT 응답이 올 때까지 Home이 로딩에 묶인다.
 
+### 4.4b ATT 팝업 문구는 언어별로 따로 둔다
+
+`NSUserTrackingUsageDescription`을 `project.yml`에 한 줄로만 쓰면 **모든 사용자가 영어
+팝업을 본다.** 문자열을 7개 언어로 번역해놓고도 이것만 빠지기 쉽다 — 앱 안의 문자열은
+`.xcstrings`에 있지만 Info.plist 키는 별개의 번역 경로다. 읽지 못하는 팝업은 거부하기
+쉬워서 맞춤 광고 비율을 그대로 깎는다.
+
+- 위치: `Apps/Chordline/App/Localization/<lang>.lproj/InfoPlist.strings` (7개)
+- `project.yml`의 값은 폴백이자 영어 문구. XcodeGen이 `.lproj`를 자동 인식한다
+- 언어 폴더 이름은 `CFBundleLocalizations`와 정확히 같아야 한다(`es-MX`, `pt-BR`)
+- **확인은 빌드 번들에서 읽어본다** — `$APP/<lang>.lproj/InfoPlist.strings`
+- 문구는 사실이어야 하고 동의를 강요하거나 보상으로 유도하면 안 된다(5.1.1).
+  "더 관련 있는 광고 + 앱을 무료로 유지"까지는 사실이고 허용된다
+
 ### 4.5 광고 SDK 초기화는 메인 액터 밖에서
 
 Google 문서: `start()`는 "SDK와 미디에이션 어댑터가 끝난 뒤 **또는 30초 뒤**"에 완료된다.
