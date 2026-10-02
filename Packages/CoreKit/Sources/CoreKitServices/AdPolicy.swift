@@ -99,4 +99,17 @@ public struct AdActivity: Sendable, Equatable {
     public mutating func recordRewarded(at time: TimeInterval) {
         lastRewardedAt = time
     }
+
+    /// The most recent full-screen ad of either kind, for anything that must not
+    /// follow an ad too closely — the review prompt, for one. A rewarded ad the
+    /// player chose to watch still counts: they have just spent thirty seconds on
+    /// someone else's content.
+    public var lastAdShownAt: TimeInterval? {
+        switch (lastInterstitialAt, lastRewardedAt) {
+        case let (a?, b?): max(a, b)
+        case let (a?, nil): a
+        case let (nil, b?): b
+        case (nil, nil): nil
+        }
+    }
 }
