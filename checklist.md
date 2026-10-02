@@ -497,12 +497,13 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 - [ ] **1.1.0 빌드를 먼저 확정·업로드한다.** `CoreKit`은 로컬 경로로 참조되므로(`../../Packages/CoreKit`), 지금부터 `CoreKit`에 넣는 변경은 Chordline 브랜치와 무관하게 **그 순간의 아카이브에 그대로 섞인다.** 1.1.0 아카이브를 뜨기 전에 `CoreKit`을 건드리면 검증 안 된 코드가 심사에 들어간다
 
 ### S6.1 결과 공유 (Sonnet)
-- [ ] `CoreKitUI`: `ShareSheet` — `UIActivityViewController` 래퍼. 프로그램으로 여는 SwiftUI 공유 시트가 없어서 필요
-- [ ] Chordline: 공유 문구를 만드는 **순수 함수**(스테이지 · 난이도 · 시간 · App Store 링크) + 테스트
+- [x] `CoreKitUI`: `SharePresenter` — 당초 `ShareSheet`(`.sheet` 래퍼)로 계획했으나 **UIKit에서 직접 띄우는 쪽**으로 바꿨다. `.sheet` 안에 넣으면 네이티브 시트가 반높이 SwiftUI 시트에 한 겹 더 싸인다
+- [x] Chordline: 공유 문구를 만드는 **순수 함수**(스테이지 · 난이도 · 시간 · App Store 링크) + 테스트
   - 숫자는 실제 클리어 결과에서만 가져온다. 실제 기록이 아닌 걸 문구에 쓰지 않는다
-- [ ] 7개 언어 문자열 (`.xcstrings`)
-- [ ] `ChordlineApp.swift`에서 `ResultView(onShare:)` 연결 — 슬롯은 D4에서 이미 설계돼 있다
-- [ ] UISnapshot으로 공유 버튼이 있는 결과 화면 확인
+- [x] 7개 언어 문자열 (`.xcstrings`)
+- [x] `ChordlineApp.swift`에서 `ResultView(onShare:)` 연결 — 슬롯은 D4에서 이미 설계돼 있다
+- [x] UISnapshot으로 공유 버튼이 있는 결과 화면 확인 — 가장 긴 조합(pt-BR)도 버튼이 줄바꿈으로 흡수한다(`fixedSize(vertical)`)
+- [x] 7개 번역 전부 포맷터에 실제로 통과시키는 테스트 + 위치 지정자 개수 검사 (잘못된 지정자는 크래시 위험)
 - [ ] **J 실기기**: 시트가 뜨는지 · 문구 · 링크 미리보기
 
 ### S6.2 리뷰 요청 (🔴 Opus — `CLAUDE.md` §7: 새 `CoreKit` 공통 서비스)

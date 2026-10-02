@@ -885,3 +885,5 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **로컬 알림은 앱 개인정보 라벨을 바꾸지 않는다.** 기기 안에서 예약되고 서버로 나가는 게 없다 — Apple의 "수집"은 우리나 제3자가 접근할 수 있는 방식으로 기기 밖으로 보내는 것이다(D-108 이후 `docs/privacy/app-privacy-label.md`). 방침 페이지에는 한 줄만 추가한다.
 - **`CoreKit`이 로컬 경로 참조라는 점이 릴리스 순서를 정한다.** `Apps/Chordline`은 `../../Packages/CoreKit`을 직접 가리킨다. Chordline 브랜치를 나눠도 `CoreKit` 작업 트리는 하나라서, 지금부터 `CoreKit`에 넣는 변경은 **그 순간 뜨는 어떤 아카이브에든** 들어간다. 그래서 1.1.0을 먼저 확정·업로드한 뒤에 `CoreKit`을 건드린다(Step 0).
 - **아직 모르는 것.** `requestReview`가 Debug와 TestFlight에서 어떻게 동작하는지 — 검증 방법이 거기서 갈리므로 구현 전에 Apple 문서로 확인한다. 추측으로 적지 않았다.
+- **S6.1 중 걸린 것 — 카탈로그를 프로그램으로 고칠 때 포맷을 지켜라.** `.xcstrings`에 키를 넣으려고 `json.dumps(sort_keys=True)`를 썼더니 파일 전체가 재포맷돼 키 하나가 +578/−531 diff가 됐다. Xcode는 `"key" : value`(콜론 앞 공백)와 **키 순서 유지**로 쓴다. 이 직렬화(`indent=2, separators=(",", " : "), ensure_ascii=False`, 정렬 없음)가 원본과 바이트 단위로 같다는 걸 먼저 확인하고 다시 넣었다. 같은 실수를 오늘 `Common.xcstrings`에도 했다는 걸 확인해(+1260/−1213) 내용 동일성을 파싱으로 검증한 뒤 별도 커밋으로 되돌렸다. 앞으로는 카탈로그를 프로그램으로 편집하기 전에 **먼저 원본이 round-trip되는지** 본다.
+- **`SharePresenter`는 `ShareLink`로 대체할 수 없다.** `ShareLink`는 버튼 자체인 뷰라 클로저에서 열 수 없고, `ResultView`는 버튼을 공유 화면이 그리기 때문에 `onShare` 클로저를 받는다.
