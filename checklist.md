@@ -479,3 +479,56 @@ S3.10 실기기 테스트에서 J가 올린 5건 + 새 디자인 핸드오프(`c
 - [ ] 버전 페이지에서 빌드 선택 + **IAP를 같은 제출에 첨부**
 - [ ] 심사 제출
 - [ ] (병행) 대한민국 세금 양식이 "활성화됨"으로 바뀌는지 확인 — 제출은 막지 않지만 지급에 필요
+
+---
+
+## Phase 6 — Chordline 1.2.0 (결과 공유 · 리뷰 요청 · 알림) — D-112
+
+세 기능을 한 릴리스에 넣는다. 핵심 위험은 기능 자체가 아니라 **사용자가 한꺼번에 보게 되는
+시스템 팝업의 양**이다 (ATT, EEA 동의, 알림 권한, 리뷰). 아래 순서표가 그 설계다.
+
+| 팝업 | 언제 | 근거 |
+|---|---|---|
+| EEA 동의 + ATT | 첫 실행 | 광고가 요구 (이미 있음) |
+| 알림 권한 | **첫 클리어 직후** | 맥락이 생긴 뒤. `requestAuthorizationAfterFirstClear()` |
+| 리뷰 요청 | **누적 클리어가 충분히 쌓인 뒤**, 광고 직후는 피함 | 기분이 좋을 때만 |
+
+### Step 0 — 시작 전 (J)
+- [ ] **1.1.0 빌드를 먼저 확정·업로드한다.** `CoreKit`은 로컬 경로로 참조되므로(`../../Packages/CoreKit`), 지금부터 `CoreKit`에 넣는 변경은 Chordline 브랜치와 무관하게 **그 순간의 아카이브에 그대로 섞인다.** 1.1.0 아카이브를 뜨기 전에 `CoreKit`을 건드리면 검증 안 된 코드가 심사에 들어간다
+
+### S6.1 결과 공유 (Sonnet)
+- [ ] `CoreKitUI`: `ShareSheet` — `UIActivityViewController` 래퍼. 프로그램으로 여는 SwiftUI 공유 시트가 없어서 필요
+- [ ] Chordline: 공유 문구를 만드는 **순수 함수**(스테이지 · 난이도 · 시간 · App Store 링크) + 테스트
+  - 숫자는 실제 클리어 결과에서만 가져온다. 실제 기록이 아닌 걸 문구에 쓰지 않는다
+- [ ] 7개 언어 문자열 (`.xcstrings`)
+- [ ] `ChordlineApp.swift`에서 `ResultView(onShare:)` 연결 — 슬롯은 D4에서 이미 설계돼 있다
+- [ ] UISnapshot으로 공유 버튼이 있는 결과 화면 확인
+- [ ] **J 실기기**: 시트가 뜨는지 · 문구 · 링크 미리보기
+
+### S6.2 리뷰 요청 (🔴 Opus — `CLAUDE.md` §7: 새 `CoreKit` 공통 서비스)
+- [ ] `CoreKitServices`: `ReviewPolicy`(순수 판정) + `ReviewActivity`(기기 로컬 영속) + 테스트
+  - 규칙 초안: 누적 클리어 N판 이상 · 서로 다른 이틀 이상 플레이 · **버전당 1회** · 직전 요청과 충분한 간격 · 최근 광고 노출 직후 제외
+  - Apple 한도는 연 3회이고 호출해도 안 뜰 수 있다. 우리 규칙이 그보다 훨씬 보수적이어야 한다
+- [ ] 판정 함수는 시각·버전을 인자로 받는다 — D-110 교훈: **테스트할 수 없는 게이트는 죽어 있어도 모른다**
+- [ ] Chordline 연결: SwiftUI `@Environment(\.requestReview)`를 클리어 직후 호출
+- [ ] ⚠️ **Debug/TestFlight에서 리뷰 팝업이 어떻게 동작하는지 Apple 문서로 먼저 확인** — 검증 방법이 거기서 갈린다 (미확인)
+- [ ] 경계 조건 테스트: 첫 실행 · 버전 업그레이드 · 시계 되돌림 · 광고 직후
+
+### S6.3 알림 (Sonnet)
+`CoreKit`의 `NotificationScheduler`는 이미 완성돼 있다(사다리 · 조용 시간 · 첫 클리어 후 권한). **Chordline이 연결을 안 했을 뿐이다.**
+- [ ] `ChordlineNotificationCopy`(`NotificationCopyProviding`) — `progress` 3개 · `curiosity` 3개, **7개 언어**
+- [ ] Chordline은 스트릭이 없다 → `lossAversion` 풀은 0. **플래너가 0개 풀을 안전하게 다루는지 테스트로 확인**
+- [ ] 첫 클리어 직후 `requestAuthorizationAfterFirstClear()` 연결
+  - 1.0 사용자는 이미 클리어가 있다 → 업그레이드 후 첫 클리어에서 묻게 되는지 확인
+- [ ] 실행/백그라운드 전환 때 `refresh()` 호출
+- [ ] `SettingsView(notifications:)`에 스케줄러 전달 → 토글 행이 나타나는지 (파라미터가 이미 있다)
+- [ ] 개인정보 방침: 로컬 알림은 기기 안에서 예약되고 서버·토큰이 없다는 한 줄 (웹 세션)
+- [ ] 앱 개인정보 라벨은 **바뀌지 않는다** — 로컬 알림은 수집이 아니다. 그래도 확인
+- [ ] **J 실기기**: 권한 팝업 시점 · 설정 토글 · `fireTestNotification`으로 실제 도착
+
+### S6.4 마무리
+- [ ] 버전 `1.2.0` · 빌드 번호 (1.1.0 마지막 빌드보다 큰 값)
+- [ ] `./scripts/verify.sh` + `docs/DEVICE-TEST.md` 갱신 후 J 실기기 1회
+- [ ] 스토어 **What's New** 문구 7개 언어 (글자 수 제한 확인)
+- [ ] 웹 `/privacy` 갱신 (알림 한 줄, 그리고 아직 안 간 Advertising 섹션)
+- [ ] 다음 게임 핸드오프(`next-game-handoff.md`)에 리뷰·공유·알림을 **어디서 호출하는지** 추가
