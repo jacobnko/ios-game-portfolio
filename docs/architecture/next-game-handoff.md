@@ -315,6 +315,30 @@ D1이 "Sora — 한글 조판 안정"이라고 적었지만 **Sora에는 한글�
 - 레퍼런스 사이트: `bargly.jacobko.app`, `chordline.jacobko.app`
 - App Store 링크는 **`/app/id<숫자>`** 형식이다. 슬러그(`/app/chordline`)는 영구히 404다.
 
+### 6.5 출시 직후 붙이는 기능 3종 — 공유 · 리뷰 요청 · 알림
+
+Chordline 1.2.0에서 만든 것이다. 셋 다 `CoreKit`에 있고 게임이 하는 일은 **호출 위치를 정하고 문구를 쓰는 것**뿐이다. 처음부터 넣어서 출시하면 업데이트 한 번을 아낀다.
+
+| 기능 | CoreKit | 게임이 하는 일 | Chordline의 호출 위치 |
+|---|---|---|---|
+| 결과 공유 | `CoreKitUI/SharePresenter` | 문구를 만드는 순수 함수 + 7개 언어 문자열. `ResultView(onShare:)`에 클로저 전달 | `ResultShare.swift`, `ChordlineApp.swift`의 `shareResult` |
+| 리뷰 요청 | `CoreKitServices/ReviewPrompt` (`ReviewPrompter`) | 클리어마다 `recordClear()`, 결과 화면에서 2초 뒤 `verdict` → `recordRequested` → `requestReview()` | `ChordlineApp.swift`의 `requestReviewIfDue` |
+| 알림 | `CoreKitServices/NotificationScheduler` | `NotificationCopyProviding` 구현(문구만) + 4곳 호출 | `ChordlineNotificationCopy.swift`, `ChordlineApp.swift` |
+
+알림 4곳: 스케줄러 생성(`RootView`), 실행 때 `refresh()`(`setUp()`), 백그라운드 전환 때 `refresh()`(`scenePhase`), `SettingsView(notifications:)`로 토글 행 표시. 첫 클리어 뒤 권한 요청은 아래 "팝업 하나" 규칙으로 호출한다.
+
+**함정**
+- 🔴 **결과 화면당 시스템 팝업은 하나다.** 알림 권한 → 리뷰 순서로 한 함수(`presentSystemPromptIfDue`)에 묶는다. 권한은 거절하면 앱 안에서 다시 못 묻는 일회성 기회라서 먼저, 리뷰는 다음 결과 화면에서 다시 판정하면 되므로 뒤로. 따로 `.task` 두 개를 달면 업그레이드 사용자가 팝업 두 개를 연달아 본다.
+- **리뷰는 버튼 탭의 결과로 부르지 않는다.** 시스템이 아무것도 안 띄울 수 있어서 버튼이 먹통처럼 보인다. 화면이 떠 있는 동안 `.task`에서 지연 뒤에 부르면 "다음"을 누른 사람은 `.task`가 취소돼 자동으로 안 묻는다.
+- **리뷰 간격은 1/3년(121.7일)보다 커야 한다.** 120일이면 365일 창에 4번이 들어가고 Apple의 연 3회 한도가 네 번째를 조용히 버린다. 기본값 125일. 테스트가 이걸 계산으로 고정한다.
+- **개발 빌드에서는 리뷰 팝업이 항상 뜨고, TestFlight에서는 아예 안 뜬다.** 안 뜨는 건 고장이 아니다. 정책의 "서로 다른 2일" 조건 때문에 같은 날에는 안 뜨는 것도 정상이다.
+- **기존 사용자를 0부터 다시 세지 않는다.** 이전 버전이 기록을 안 남겼다면 `seedIfNeeded(priorClears:)`로 한 번 반영한다. 첫 게임이면 필요 없다.
+- **알림 문구는 며칠 앞서 쓴 것이다.** 서식 지정자를 쓰지 않고, 도착할 때도 참인 말만 쓴다("새 스테이지가 있어요" ❌ → "아직 클리어하지 못한 스테이지가 있어요" ✅). 스트릭이 없는 게임은 `lossAversion` 풀을 0으로 두면 되고, 문구 공급자는 그 테마를 요청받아도 `progress`로 대체해야 한다.
+- **`refresh()`는 실행 때도 부른다.** 강제 종료는 백그라운드 전환을 건너뛰기 때문이다.
+- **공유 문구는 위치 지정자를 쓴다**(`%1$lld` `%2$@` `%3$.1f`). 번역마다 어순이 다르다. 7개 번역을 전부 실제 포맷터에 통과시키는 테스트를 만든다 — 잘못된 지정자는 크래시 위험이다.
+- **`.xcstrings`를 프로그램으로 고칠 때는 포맷을 지킨다.** `json.dumps(d, indent=2, separators=(",", " : "), ensure_ascii=False)`, `sort_keys` 금지. 먼저 원본이 바이트 단위로 round-trip되는지 확인한다.
+- 앱 개인정보 라벨은 이 세 기능으로 **바뀌지 않는다.** 방침 페이지에는 알림 한 줄이 필요하다(`Apps/Chordline/Marketing/web-handoff.md` §5.4).
+
 ---
 
 ## 7. App Store Connect
