@@ -36,6 +36,12 @@ Its reason to exist: every game shipped should require less new code than the on
 ### SwiftUI view conventions
 - Body frame width `380`, Preview frame `400 x 600`, `.preferredColorScheme(.light)`.
 - Exception: full-screen gameplay views. These conventions apply to component and documentation views only.
+- **Layouts are derived from the container size, never from a device model or a hardcoded 393×852.** Screens of a game that ships on iPad adapt by size class and available size (`GeometryReader` / `horizontalSizeClass`), in both orientations, and keep their state across rotation.
+
+### Device targets
+- **iPhone-only is the default.** A game ships on iPad only when its `PLAN.md` says so.
+- **Never declare iPad (`TARGETED_DEVICE_FAMILY` containing `2`) without having laid it out and run it.** Chordline once declared it as an overclaim and had to pull it back (`Apps/Chordline/project.yml`).
+- **Reference iPad is the iPad mini (8.3-inch, 744×1133pt portrait)** — it is the device J owns, so it is both the Simulator destination (`iPad mini (A17 Pro)`) and the on-device test. Larger iPads must still not break (layouts are size-derived), but they are verified by Simulator only, if at all.
 
 ---
 
@@ -59,7 +65,7 @@ Its reason to exist: every game shipped should require less new code than the on
    audio, real drag input, purchases, or CloudKit sync. The closing step, every time, is:
    1. Follow `docs/architecture/new-game-setup.md` to generate `project.yml` + `Info.plist` + the app entry point (XcodeGen).
    2. Build for a real device destination (`xcodebuild ... -destination 'generic/platform=iOS' build`).
-   3. Hand off to J with `docs/DEVICE-TEST.md`. **J does the on-device testing — a passing Simulator build is not a substitute.**
+   3. Hand off to J with `docs/DEVICE-TEST.md`. **J does the on-device testing — a passing Simulator build is not a substitute.** For a game that ships on iPad, the handoff covers the iPad mini as well as the iPhone.
 7. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
 8. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
 9. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.

@@ -424,14 +424,14 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
 상세 스텝은 `PLAN.md`(비공개)와 게임 저장소의 `checklist.md`. 여기에는 진행 상태와 `CoreKit` 레벨 항목만 남긴다.
 
 - [x] P0 — 셋업: 취소 게임 정리 · `CLAUDE.md` 새판 · Claude Design으로 복귀(D-114) · 비공개 플랜/브리프
-- [ ] P1 — 규칙 확정 `[SONNET]` → 디자인 트랙(J)이 이후 진행
+- [x] P1 — 규칙 확정 `[SONNET]` (2026-10-11, G0 열림) → 디자인 트랙(J)이 이후 진행. 기기는 iPhone + iPad mini 기준(D-115)
 - [ ] P2 — `CoreKit` 보강 `[OPUS]` (디자인 G2 이후)
   - [ ] 결정론 PRNG + 자체 셔플
   - [ ] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환)
   - [ ] `CoreKitJuice` 실패 연출 타입 신설 (D-111 항목 1)
   - [ ] `CoreKitUI` 화면이 게임 #2 디자인을 담는지 실측 (D-111 항목 2)
 - [ ] P3 — 코어 로직
-- [ ] P4 — 화면 · 셰이더
+- [ ] P4 — 화면 · 셰이더 · iPad mini 시뮬레이터 점검
 - [ ] P5 — 통합
 - [ ] P6 — Xcode 앱 + 실기기 핸드오프
 - [ ] P7 — 출시
