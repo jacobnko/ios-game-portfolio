@@ -43,6 +43,9 @@ fastlane/test_output
 *.mobileprovision
 Secrets.xcconfig
 GoogleService-Info.plist
+# Leonardo.ai API key (docs/design/README.md) — any local env file
+.env
+.env.*
 
 # Private planning material — the public repo must not expose the unreleased
 # game roadmap, concepts or brand names.
