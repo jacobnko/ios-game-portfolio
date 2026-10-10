@@ -75,7 +75,7 @@ Phase 1~3에서 이미 코드로 막아뒀다 — 여기서는 "그 방어가 �
 - [ ] 실제 AdMob 앱 ID·Ad Unit ID 3종으로 교체 (`admob-setup.md` §5)
 - [ ] 실제 `GoogleService-Info.plist` (테스트/개발용 프로젝트 아님)
 - [ ] `SKAdNetworkItems` 최신 목록
-- [ ] 연령 등급 질문지에서 도박성 콘텐츠(카지노 테마 게임 있음 — Wordjack) 정확히 신고
+- [ ] 연령 등급 질문지에서 도박성 콘텐츠(카지노 테마 등 시각적 메타포 포함) 정확히 신고
 - [ ] Export Compliance — 암호화 사용 안 함으로 신고 (표준 HTTPS만 사용)
 
 > 리젝당하면 침착하게: Resolution Center에서 정확한 사유를 읽고, 이 문서에서 해당 섹션을

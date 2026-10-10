@@ -1,6 +1,6 @@
 # 다음 게임 핸드오프 — Chordline에서 배운 것 전부
 
-**대상.** 게임 #2~#10을 **새 세션에서** 시작하는 사람(또는 Claude).
+**대상.** 다음 게임을 **새 세션에서** 시작하는 사람(또는 Claude).
 **목적.** Chordline이 실제로 밟은 지뢰를 다시 밟지 않는 것.
 
 이 문서는 **절차서가 아니라 지뢰 지도**다. 기계적인 셋업 절차는
@@ -15,16 +15,16 @@
 
 | 순서 | 파일 | 왜 |
 |---|---|---|
-| 1 | `CLAUDE.md` | 작업 규칙. §6 화면 제작 게이트와 §7 모델 전환이 특히 중요 |
-| 2 | `PLAN.md` (gitignored) | Phase 5 사이클 = 게임 하나를 만드는 전체 흐름 |
+| 1 | `CLAUDE.md` | 작업 규칙. §3 두 트랙 · §7 화면 제작 게이트 · §8 모델 교대가 특히 중요 |
+| 2 | `PLAN.md` (gitignored) | 현재 게임의 스텝 순서 · 스텝별 모델 태그 · 트랙 간 게이트 |
 | 3 | `checklist.md` | Chordline이 실제로 무엇을 했는지. 그대로 복사해 쓸 틀 |
 | 4 | `context-notes.md` | **D-104 ~ D-110이 이 문서의 근거다.** 결정의 이유가 필요하면 여기 |
 | 5 | `docs/architecture/new-game-setup.md` | 프로젝트 생성 절차 (XcodeGen · Info.plist · 5개 화면 배선) |
-| 6 | `docs/design/README.md` | D1~D6 카드 운영 방식 |
+| 6 | `docs/design/README.md` | Leonardo 카드(L0~L6) 운영 방식 |
 | 7 | 이 문서 | 지뢰 지도 |
 
-**게임 #2는 Pixlaugh다.** 브리프와 D1~D6 카드가 이미 채워져 있다 →
-`docs/design/02-pixlaugh/`. 컨셉은 `docs/concepts/game-concepts.md`(gitignored).
+**게임 #2의 컨셉 · 플랜 · Leonardo 브리프는 비공개 문서에 있다** — `docs/concepts/`, `PLAN.md`,
+`docs/design/02-*/` (전부 gitignored, `CLAUDE.md` §9).
 
 ---
 
@@ -46,7 +46,7 @@ Chordline은 **화면 5개를 먼저 만들고**, D3/D4/D5가 나온 뒤 **전�
    └─ [화면 트랙]    Home · Stage Select · Settings · Result · 게임 고유 화면
 ```
 
-**게이트의 정의(`CLAUDE.md` §6).** 숫자나 상태만 찍는 디버그용 `Text`·리스트는 화면이
+**게이트의 정의(`CLAUDE.md` §7).** 숫자나 상태만 찍는 디버그용 `Text`·리스트는 화면이
 아니다. 그것을 "실제처럼 보이게" 꾸미는 순간부터 화면이고, 그때부터 게이트가 적용된다.
 
 D6(스토어 스크린샷)은 **출시 직전**에만 필요하다. 미리 하지 않는다.
@@ -402,7 +402,7 @@ XcodeGen 생성물이다. 소스는 `project.yml`뿐이고, 스킴을 Xcode UI�
 
 ## 9. 모델 전환
 
-`CLAUDE.md` §7이 정본이다. 요약하면:
+`CLAUDE.md` §8이 정본이다. 요약하면:
 
 - **Opus** — 새 `CoreKit` 기능을 처음부터 설계할 때, `CoreKit`에 뿌리를 둔 결함을
   쫓을 때, J가 직접 요청할 때
@@ -419,14 +419,14 @@ XcodeGen 생성물이다. 소스는 `project.yml`뿐이고, 스킴을 Xcode UI�
 ```bash
 cd /Users/jacobko/Document/01_iOS/00_Games
 
-# 1. 디자인 핸드오프 폴더 — 게임 #2~10은 이미 만들어져 있다
-ls docs/design/02-pixlaugh/
+# 1. 디자인 브리프 — docs/design/README.md 대로 Leonardo 브리프를 만든다
+ls docs/design/<NN-game>/
 
 # 2. 이름 상표 확인
-./scripts/check-name.sh Pixlaugh
+./scripts/check-name.sh <Codename>
 
 # 3. 저장소 — 게임마다 따로 만든다 (docs/architecture/repo-strategy.md)
-#    로컬은 Apps/Pixlaugh/, 부모 저장소의 .gitignore가 Apps/*를 막는다
+#    로컬은 Apps/<Codename>/, 부모 저장소의 .gitignore가 Apps/*를 막는다
 
 # 4. 프로젝트 생성 — docs/architecture/new-game-setup.md 를 따른다
 
