@@ -423,7 +423,7 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
 
 상세 스텝은 `PLAN.md`(비공개)와 게임 저장소의 `checklist.md`. 여기에는 진행 상태와 `CoreKit` 레벨 항목만 남긴다.
 
-- [x] P0 — 리셋: 취소 게임 정리 · `CLAUDE.md` 새판(두 트랙 · Leonardo · 모델 교대) · 비공개 플랜/브리프 작성
+- [x] P0 — 리셋: 취소 게임 정리 · `CLAUDE.md` 새판(두 트랙 · 디자인 선행 허용 · 모델 교대) · 비공개 플랜/브리프 작성
 - [ ] P1 — 규칙 확정 · `CoreKit` 보강 `[OPUS]`
   - [ ] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환)
   - [ ] `CoreKitJuice` 실패 연출 타입 신설 (D-111 항목 1)
