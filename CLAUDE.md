@@ -14,7 +14,7 @@ Its reason to exist: every game shipped should require less new code than the on
 1. **Shared code lives in `CoreKit`. Game-specific code lives in `Apps/<Game>`.** If a piece of code would be useful in the next game, it belongs in `CoreKit`.
 2. **DDD — Dopamine-Driven Development.** A raw mechanic without juice is not "done". Never report a feature as working before `CoreKitJuice` is wired into it.
 3. **Every app must look deliberately different.** This is the structural mitigation for App Store Guideline 4.3 (template spam). The private palette ledger (§9) is checked before any palette is locked.
-4. **Two tracks run in parallel: code and graphics.** Claude Code writes code and the graphics brief. Raster assets (app icon, screen mockups, sprites, store backgrounds) are generated in **Leonardo.ai** by J. Claude Code never generates artwork (§7).
+4. **Two tracks: design and code.** J designs in Claude Design (web) and may run it first; Claude Code writes the briefs, specs and code and finishes the look in code (SwiftUI shaders, particles). Only CC0 / OFL third-party assets are imported. Claude Code never generates raster artwork (§7).
 5. **Reuse before writing.** Haptics, synthesized audio, VFX, progress storage, purchases, review prompts, notifications, sharing, localization, and the shared screens already exist. Consume them. If a game finds itself re-implementing one of those, the fix goes into `CoreKit`, not the game.
 
 ---
@@ -30,7 +30,7 @@ Its reason to exist: every game shipped should require less new code than the on
   > because this repo is public portfolio code and must stay consistent with the English-only comment rule.
 - Conversation and the working docs (`PLAN.md`, `checklist.md`, `context-notes.md`, design briefs) are written in Korean. This file, code, identifiers, and commit subjects are English.
 - Target **Swift 6 strict concurrency**. Default to `@MainActor` isolation; do not leave `Sendable` warnings behind.
-- **Never hardcode display strings.** Use `String(localized:)` / `LocalizedStringKey` backed by `.xcstrings` from day one. Fill all 7 launch languages at the moment the key is written.
+- **Never hardcode display strings.** Use `String(localized:)` / `LocalizedStringKey` backed by `.xcstrings` from day one. Fill every language the game ships at the moment the key is written (the game's `PLAN.md` lists them: game #1 ships 7, game #2 ships English only).
 - Deterministic procedural content uses `CoreKit`'s own seeded generator and its own shuffle. Never `Hasher`, `hashValue`, or `SystemRandomNumberGenerator` for anything that must reproduce from a seed.
 
 ### SwiftUI view conventions
@@ -75,22 +75,22 @@ Its reason to exist: every game shipped should require less new code than the on
 - **Never add an AI attribution trailer.** No `Co-Authored-By`, no "Generated with" footer, no emoji sign-off. Subject line and, when useful, a short body — nothing else.
 - Commit one logical change at a time, describable in a single sentence. Conventional Commit prefixes: `feat` / `fix` / `refactor` / `docs` / `chore` / `test`, scoped when it helps: `feat(corekit): ...`
 - **Push automatically too.** J has authorized push for this repository and the game repositories.
-- **This repository is public.** Before any push, verify the diff carries no secret (API keys including the Leonardo key, real Ad Unit IDs, service configs) and no unreleased brand name or mechanic (§9). A pushed secret must be revoked, not just deleted.
+- **This repository is public.** Before any push, verify the diff carries no secret (API keys, real Ad Unit IDs, service configs) and no unreleased brand name or mechanic (§9). A pushed secret must be revoked, not just deleted.
 
 ---
 
 ## 3. The Two Tracks
 
 ```
-Track A · Claude Code   rules → CoreKit gaps → core logic ──┐        ┌─► screens → integration → Xcode app → release
-                                                            ▼        │
-                                                     ══ gate G2 ═════╛   (mockups + layout spec approved)
-Track B · Leonardo (J)  setup → palette lock (G1) → icon (G3) → gameplay mockup → supporting mockups (G2) → sprites (G4) → store art (G5)
+Track B · Design (J, web + session)   brief → palette (G1) → icon (G3) → gameplay screen → supporting screens → juice spec ══ G2 ══╗
+                                                                                                                                  ▼
+Track A · Code (Claude Code)          rules ───────────────────────────────────────────────────── CoreKit gaps → core logic → screens → integration → Xcode app → release
 ```
 
-- Track A's logic work does not wait for Track B. Track A's **screen** work does (§7 gate).
+- **Graphics-first is allowed and is the default when J wants it.** J runs Track B ahead of Track A so the UI and assets are settled before code starts; that avoids rework. Only the rules-confirmation step (what the game *is*) must precede the screen cards, because the screens depend on it.
+- Track A's **screen** work never starts before gate G2 (§7). Logic work may start earlier when J chooses to spend tokens that way.
 - Each game's `PLAN.md` lists the gates (G1–G5) and which step each one unblocks.
-- Leonardo output is a **picture, not a spec**. Before screen work, Claude writes a layout spec in points from the approved mockup, and J approves it. When mockup and spec disagree, the spec wins.
+- A design delivery is a **picture plus numbers**. Before screen work, Claude writes a layout spec in points from the delivered screens, and J approves it. When picture and spec disagree, the spec wins.
 
 ---
 
@@ -102,7 +102,6 @@ Track B · Leonardo (J)  setup → palette lock (G1) → icon (G3) → gameplay 
 ├─ PLAN.md              # current game's roadmap — GITIGNORED, private
 ├─ checklist.md         # portfolio/CoreKit-level progress
 ├─ context-notes.md     # portfolio/CoreKit-level decisions, append-only
-├─ .env.leonardo        # Leonardo API key — GITIGNORED, never committed
 ├─ docs/
 │  ├─ concepts/         # game concepts, rules, palette ledger — GITIGNORED, private
 │  ├─ design/           # README (public) + per-game briefs and raw assets (GITIGNORED)
@@ -150,20 +149,21 @@ The decision axis is **"physics-driven vs. state-driven"**, not "UIKit vs. Swift
 - **Failure animations stay slapstick — cartoonish and bloodless.** Realistic violence raises the age rating.
 - **Never override the `AppleLanguages` UserDefaults key.** Send the user to the system Settings app for per-app language changes.
 
-**Generated assets**
-- **The Leonardo API key lives only in `.env.leonardo`.** Never in source, docs, chat, URLs, or commits.
-- **No text, numbers, or logos baked into generated images.** Anything readable is drawn in code so it localizes and scales.
-- Only assets whose commercial-use terms J has confirmed for the plan they were generated on are shipped.
+**Third-party and generated assets**
+- **Every imported asset is recorded in the game's `ASSETS.md`** (source URL, license, date). Only CC0 and OFL-class licenses are shipped; each license is verified on the original page, not an aggregator.
+- **No AI-image-generator output ships** unless the vendor's current terms confirm that the plan used gives the user ownership and private generation. Leonardo.ai's free plan failed this test (public by default, ownership unclear) — D-114.
+- **SF Symbols are never used in the app icon or any logo** (Apple's terms). In-app buttons only.
+- **No readable text baked into raster art.** Anything readable is drawn in code so it scales and localizes.
 
 ---
 
-## 7. Design Handoff (Leonardo.ai)
+## 7. Design Handoff (Claude Design)
 
-- When work on a game **begins**, create `docs/design/<NN-game>/design-brief-for-leonardoAI.md` from the process in `docs/design/README.md`.
-- **One Leonardo session = one card (L0–L6).** Lock a style-anchor image in L1 and reuse it as the style reference for every later card.
-- Claude Code writes **only the brief, the layout specs, and the import step**. J runs the generations.
-- Accepted assets land in `Apps/<Game>/Resources/`; the matching item in the game's `checklist.md` is ticked on arrival, and the brief's import log records model, prompt version, seed, and size.
-- Chordline was built with the earlier Claude Design card set (`docs/design/_template/`, D1–D6). That set is kept for reference only.
+- When work on a game **begins**, copy `docs/design/_template/` to `docs/design/<NN-game>/` and fill `00-brief.md` and the D1–D6 cards for that game (`docs/design/README.md`).
+- **One Claude Design session = one card.** After a card, only its **text tokens** (hex, fonts, keywords) go into the next card — never the previous deliverable.
+- **Web Claude Design is where J explores and chooses the look; this session's Claude is where it becomes specs and code.** Claude Code writes the briefs, the layout specs, and the import step. It does not generate artwork.
+- Deliveries land in `docs/design/<NN-game>/assets/` (gitignored); accepted app assets are copied to `Apps/<Game>/Resources/` and the matching item in the game's `checklist.md` is ticked.
+- Anything fancy that is not a picture — glass refraction, glow, chromatic aberration, shatter, particles — is built in code (SwiftUI `colorEffect` / `layerEffect` / `distortionEffect`, `CoreKitJuice`), and the delivered D5 numbers are its spec.
 
 ### Starting a new game
 Read `docs/architecture/next-game-handoff.md` first — the mine map of every trap Chordline hit.
@@ -174,7 +174,7 @@ Read `docs/architecture/next-game-handoff.md` first — the mine map of every tr
 **No screen is implemented from a guess.**
 
 - **Logic work** — board/state model, generator/solver, gesture mechanics, save/purchase/juice wiring — has no visual layout of its own and starts as soon as the phase does, in parallel with Track B.
-- **Screen work** — Home, Stage Select, Settings, Result, paywall, and the game's own gameplay chrome — **does not start until the gameplay and supporting-screen mockups are delivered AND their layout specs are approved** (gate G2). Chordline built five screens from logic alone, then rebuilt every one of them once the mockups arrived (D-104). That first pass was pure loss.
+- **Screen work** — Home, Stage Select, Settings, Result, paywall, and the game's own gameplay chrome — **does not start until the gameplay and supporting-screen designs (D3, D4) are delivered AND the layout specs written from them are approved** (gate G2). Chordline built five screens from logic alone, then rebuilt every one of them once the mockups arrived (D-104). That first pass was pure loss.
 
 If a step needs a screen and G2 is not open, the step waits or J runs the missing card next. A debug `Text` or plain list that only shows state is not a screen and is exempt; the moment it is dressed up to look like the real thing, the gate applies.
 
@@ -208,7 +208,7 @@ This repository is public. **An unreleased game's codename, concept, rules, and 
 
 - `PLAN.md`
 - `docs/concepts/` (concept, rules, palette ledger)
-- `docs/design/[0-9]*/` (Leonardo brief, layout specs, raw assets)
+- `docs/design/[0-9]*/` (brief, D-cards, layout specs, `ASSETS.md`, raw deliveries)
 - the game's own repository under `Apps/<Game>/`
 
 Tracked files refer to the in-progress game as "game #2". `CoreKit` changes made for it are described by what they do, not by the game they were made for.

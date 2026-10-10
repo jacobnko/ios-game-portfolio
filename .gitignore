@@ -43,7 +43,7 @@ fastlane/test_output
 *.mobileprovision
 Secrets.xcconfig
 GoogleService-Info.plist
-# Leonardo.ai API key (docs/design/README.md) — any local env file
+# Local env files (API keys etc.) — never committed
 .env
 .env.*
 

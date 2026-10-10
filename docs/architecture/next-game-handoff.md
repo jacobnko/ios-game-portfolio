@@ -20,10 +20,10 @@
 | 3 | `checklist.md` | Chordline이 실제로 무엇을 했는지. 그대로 복사해 쓸 틀 |
 | 4 | `context-notes.md` | **D-104 ~ D-110이 이 문서의 근거다.** 결정의 이유가 필요하면 여기 |
 | 5 | `docs/architecture/new-game-setup.md` | 프로젝트 생성 절차 (XcodeGen · Info.plist · 5개 화면 배선) |
-| 6 | `docs/design/README.md` | Leonardo 카드(L0~L6) 운영 방식 |
+| 6 | `docs/design/README.md` | D1~D6 카드 운영 방식 (웹 / 세션 역할 분담) |
 | 7 | 이 문서 | 지뢰 지도 |
 
-**게임 #2의 컨셉 · 플랜 · Leonardo 브리프는 비공개 문서에 있다** — `docs/concepts/`, `PLAN.md`,
+**게임 #2의 컨셉 · 플랜 · 디자인 브리프는 비공개 문서에 있다** — `docs/concepts/`, `PLAN.md`,
 `docs/design/02-*/` (전부 gitignored, `CLAUDE.md` §9).
 
 ---
@@ -419,7 +419,7 @@ XcodeGen 생성물이다. 소스는 `project.yml`뿐이고, 스킴을 Xcode UI�
 ```bash
 cd /Users/jacobko/Document/01_iOS/00_Games
 
-# 1. 디자인 브리프 — docs/design/README.md 대로 Leonardo 브리프를 만든다
+# 1. 디자인 브리프 — docs/design/README.md 대로 `_template/`을 복사해 브리프와 D-카드를 만든다
 ls docs/design/<NN-game>/
 
 # 2. 이름 상표 확인
