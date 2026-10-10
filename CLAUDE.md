@@ -1,16 +1,21 @@
 # CLAUDE.md — iOS Casual Game Portfolio
 
-This repository holds a **shared architecture plus a set of small casual/puzzle game apps** (10 planned).
-Its reason to exist is simple: every game shipped should require less new code than the one before it.
+This repository holds a **shared architecture (`CoreKit`) plus small casual/puzzle game apps**, built one at a time.
+Its reason to exist: every game shipped should require less new code than the one before it.
+
+- **Game #1 — Chordline**: shipped.
+- **Game #2**: in progress. Its codename, concept, and plan live only in the private documents (§9).
+- The original 10-game roadmap was cancelled on 2026-10-11 (`context-notes.md` D-113). Games are now added one at a time.
 
 ---
 
 ## 0. First Principles
 
-1. **Shared code lives in `CoreKit`. Game-specific code lives in `Apps/<Game>`.** If a piece of code would be useful in game #2, it belongs in `CoreKit`.
-2. **DDD — Dopamine-Driven Development.** A raw mechanic without juice is not "done". Never report a feature as working before `JuiceManager` is wired into it.
-3. **Every app must look deliberately different.** This is the structural mitigation for App Store Guideline 4.3 (template spam).
-4. **Claude Code does not produce design assets.** Icons, illustrations, and visual UI are handed off to Claude Design (§6).
+1. **Shared code lives in `CoreKit`. Game-specific code lives in `Apps/<Game>`.** If a piece of code would be useful in the next game, it belongs in `CoreKit`.
+2. **DDD — Dopamine-Driven Development.** A raw mechanic without juice is not "done". Never report a feature as working before `CoreKitJuice` is wired into it.
+3. **Every app must look deliberately different.** This is the structural mitigation for App Store Guideline 4.3 (template spam). The private palette ledger (§9) is checked before any palette is locked.
+4. **Two tracks run in parallel: code and graphics.** Claude Code writes code and the graphics brief. Raster assets (app icon, screen mockups, sprites, store backgrounds) are generated in **Leonardo.ai** by J. Claude Code never generates artwork (§7).
+5. **Reuse before writing.** Haptics, synthesized audio, VFX, progress storage, purchases, review prompts, notifications, sharing, localization, and the shared screens already exist. Consume them. If a game finds itself re-implementing one of those, the fix goes into `CoreKit`, not the game.
 
 ---
 
@@ -23,9 +28,10 @@ Its reason to exist is simple: every game shipped should require less new code t
   ```
   > Decision: the global "Korean file header" rule is overridden here in favor of English,
   > because this repo is public portfolio code and must stay consistent with the English-only comment rule.
-- Conversation and the working docs (`PLAN.md`, `checklist.md`, `context-notes.md`, design handoffs) are written in Korean. This file, code, identifiers, and commit subjects are English.
+- Conversation and the working docs (`PLAN.md`, `checklist.md`, `context-notes.md`, design briefs) are written in Korean. This file, code, identifiers, and commit subjects are English.
 - Target **Swift 6 strict concurrency**. Default to `@MainActor` isolation; do not leave `Sendable` warnings behind.
-- **Never hardcode display strings.** Use `String(localized:)` / `LocalizedStringKey` backed by `.xcstrings` from day one.
+- **Never hardcode display strings.** Use `String(localized:)` / `LocalizedStringKey` backed by `.xcstrings` from day one. Fill all 7 launch languages at the moment the key is written.
+- Deterministic procedural content uses `CoreKit`'s own seeded generator and its own shuffle. Never `Hasher`, `hashValue`, or `SystemRandomNumberGenerator` for anything that must reproduce from a seed.
 
 ### SwiftUI view conventions
 - Body frame width `380`, Preview frame `400 x 600`, `.preferredColorScheme(.light)`.
@@ -47,66 +53,77 @@ Its reason to exist is simple: every game shipped should require less new code t
    Add it to `Tools/JuiceLab` and hand the user a concrete checklist of what to feel.
    Haptics never fire in the Simulator, so "it builds" is not "it works".
 5. **At the end of every phase, run the audit** — `./scripts/audit.sh`, then the reading
-   pass in `docs/AUDIT.md` §4. Phase 1 shipped 15 defects past a green build; four of
-   them were invisible to reading and one was invisible to everything but running the app.
-6. **A game's core-logic phase (Phase 3 for game #1, the equivalent phase for every game
-   after it) does not end until the real Xcode app project exists.** Up through that
-   phase the game is SPM packages only — `swift test` and Xcode Live Preview are the only
-   verification available, and neither one can prove haptics, audio, real drag input, or
-   CloudKit sync actually work. The closing step, every time, is:
-   1. Follow `docs/architecture/new-game-setup.md` to generate `project.yml` +
-      `Info.plist` + the app entry point (XcodeGen), wiring the game's one bespoke
-      screen into the five shared `CoreKitUI` screens.
-   2. Build for a real device destination (`xcodebuild ... -destination
-      'generic/platform=iOS' build`) to confirm it compiles outside of SPM.
-   3. Hand off to J with `docs/DEVICE-TEST.md`. **J does the on-device running and
-      testing — Claude does not drive a real device, and a passing Simulator build
-      is not a substitute.**
-   Only after that handoff does the phase actually close and the release-pipeline phase begin.
+   pass in `docs/AUDIT.md` §4. Phase 1 of Chordline shipped 15 defects past a green build.
+6. **A game's core-logic phase does not end until the real Xcode app project exists.** Up through that
+   phase the game is SPM packages only — `swift test` and Xcode Live Preview cannot prove haptics,
+   audio, real drag input, purchases, or CloudKit sync. The closing step, every time, is:
+   1. Follow `docs/architecture/new-game-setup.md` to generate `project.yml` + `Info.plist` + the app entry point (XcodeGen).
+   2. Build for a real device destination (`xcodebuild ... -destination 'generic/platform=iOS' build`).
+   3. Hand off to J with `docs/DEVICE-TEST.md`. **J does the on-device testing — a passing Simulator build is not a substitute.**
 7. **Read the actual error output before fixing.** Do not pattern-match a "common fix" from the error keyword.
 8. **Surgical changes only.** No improving adjacent code, no unrequested refactors, no reformatting. Report dead code; do not delete it.
 9. Korean sentences end with `.`, `?`, or `!` — never a trailing `:`.
 
+### Token discipline
+- **One model per session.** When the step's model tag changes (§8), the next step starts in a new session.
+- A new session reads `CLAUDE.md`, the current step in `PLAN.md`, and the game's `checklist.md` — nothing else up front.
+- **Never read `context-notes.md` whole.** `grep` for the D-number or keyword and read that block only.
+- Do not survey `CoreKit` sources. `PLAN.md`'s reuse map already says which type to use; open only the one file whose signature you need.
+
 ### Commits
 - **Claude commits automatically.** Staging and committing is part of finishing a step, not a task handed back to the user.
-- **Never add an AI attribution trailer.** No `Co-Authored-By`, no "Generated with" footer, no emoji sign-off. The commit message is the subject line and, when useful, a short body — nothing else.
-- Commit one logical change at a time, describable in a single sentence.
-- Good: `feat(corekit): add haptic feedback pipeline`
-- Bad: a commit mixing juice, ads, and a bug fix — split it into three.
-- Use Conventional Commit prefixes: `feat` / `fix` / `refactor` / `docs` / `chore` / `test`. Scope with the module when it helps: `feat(corekit): ...`
-- **Push automatically too.** J has authorized push for this repository, so `git push` follows the commit as part of finishing a step.
-- **This repository is public.** Before any push, verify no secret, real Ad Unit ID, or service config entered the diff — a pushed secret must be revoked, not just deleted.
+- **Never add an AI attribution trailer.** No `Co-Authored-By`, no "Generated with" footer, no emoji sign-off. Subject line and, when useful, a short body — nothing else.
+- Commit one logical change at a time, describable in a single sentence. Conventional Commit prefixes: `feat` / `fix` / `refactor` / `docs` / `chore` / `test`, scoped when it helps: `feat(corekit): ...`
+- **Push automatically too.** J has authorized push for this repository and the game repositories.
+- **This repository is public.** Before any push, verify the diff carries no secret (API keys including the Leonardo key, real Ad Unit IDs, service configs) and no unreleased brand name or mechanic (§9). A pushed secret must be revoked, not just deleted.
 
 ---
 
-## 3. Repository Layout
+## 3. The Two Tracks
+
+```
+Track A · Claude Code   rules → CoreKit gaps → core logic ──┐        ┌─► screens → integration → Xcode app → release
+                                                            ▼        │
+                                                     ══ gate G2 ═════╛   (mockups + layout spec approved)
+Track B · Leonardo (J)  setup → palette lock (G1) → icon (G3) → gameplay mockup → supporting mockups (G2) → sprites (G4) → store art (G5)
+```
+
+- Track A's logic work does not wait for Track B. Track A's **screen** work does (§7 gate).
+- Each game's `PLAN.md` lists the gates (G1–G5) and which step each one unblocks.
+- Leonardo output is a **picture, not a spec**. Before screen work, Claude writes a layout spec in points from the approved mockup, and J approves it. When mockup and spec disagree, the spec wins.
+
+---
+
+## 4. Repository Layout
 
 ```
 00_Games/
-├─ CLAUDE.md            # this file — working rules
-├─ PLAN.md              # full roadmap — GITIGNORED, private
-├─ checklist.md         # progress checkboxes, updated at the end of each step
-├─ context-notes.md     # decisions and their rationale, append-only
+├─ CLAUDE.md            # this file — working rules (public)
+├─ PLAN.md              # current game's roadmap — GITIGNORED, private
+├─ checklist.md         # portfolio/CoreKit-level progress
+├─ context-notes.md     # portfolio/CoreKit-level decisions, append-only
+├─ .env.leonardo        # Leonardo API key — GITIGNORED, never committed
 ├─ docs/
-│  ├─ concepts/         # game concepts and brand names — GITIGNORED, private
-│  ├─ design/           # Claude Design handoff documents (§6)
-│  ├─ architecture/     # CoreKit module design notes
+│  ├─ concepts/         # game concepts, rules, palette ledger — GITIGNORED, private
+│  ├─ design/           # README (public) + per-game briefs and raw assets (GITIGNORED)
+│  ├─ architecture/     # CoreKit and process notes
 │  └─ decisions/        # ADRs, for hard-to-reverse decisions only
-├─ Tools/
-│  └─ JuiceLab/         # harness app — feel CoreKit's feedback on a real device
+├─ Tools/JuiceLab/      # harness app — feel CoreKit's feedback on a real device
 ├─ Packages/
-│  └─ CoreKit/          # local SPM package imported by every game
-└─ Apps/
-   ├─ JuicyFlow/        # Game #1
-   └─ .../              # Games #2–10
+│  ├─ CoreKit/          # local SPM package imported by every game
+│  └─ CoreKitFirebase/  # optional analytics adapter (only games that use Firebase)
+└─ Apps/                # each game is its own git repository (docs/architecture/repo-strategy.md)
+   ├─ Chordline/        # Game #1
+   └─ <Game>/           # Game #2 — its own checklist.md and context-notes.md
 ```
 
-- Each game is its own standalone Xcode project. `CoreKit` is attached as a **local package reference** (`../../Packages/CoreKit`).
+- Each game is its own standalone Xcode project with `CoreKit` as a **local package reference** (`../../Packages/CoreKit`).
 - Games never depend on each other. All sharing goes through `CoreKit`.
+- A game imports only the `CoreKit` products it needs. A game without ads does not import `CoreKitAdsGoogle` and skips every ad, ATT, UMP, and SKAdNetwork step.
 
 ---
 
-## 4. Tech Stack Selection Rule
+## 5. Tech Stack Selection Rule
 
 | Genre | Stack | Criterion |
 |---|---|---|
@@ -117,108 +134,88 @@ The decision axis is **"physics-driven vs. state-driven"**, not "UIKit vs. Swift
 
 ---
 
-## 5. Hard Rules (accident prevention)
+## 6. Hard Rules (accident prevention)
 
-- **Use Google's official test Ad Unit IDs for the entire development cycle.** Swap in production IDs only immediately before release. Repeatedly viewing your own live ads counts as invalid traffic and risks account suspension.
-- **The AdMob banner must reuse a single `GADBannerView` instance held by the `Coordinator`.** Creating it inside `updateUIView` causes the banner to reload and flicker on every parent state change.
-- **`Transaction.currentEntitlements` is the only source of truth for ad removal.** Never trust a local cache or a CloudKit-synced flag. Query it asynchronously on every launch.
-- **Every `@Model` property synced via CloudKit must be optional or have a default value,** and `@Attribute(.unique)` is unsupported.
+**Purchases and data**
+- **`Transaction.currentEntitlements` is the only source of truth for any purchased entitlement** (ad removal, full-game unlock). Never trust a local cache, a Keychain flag, or a CloudKit-synced flag. Query it asynchronously on every launch. StoreKit 2 already serves it offline from the device.
 - **"Restore Purchases" must actually work.** It is a guaranteed rejection point otherwise.
-- **Failure animations stay slapstick — cartoonish and bloodless.** Realistic violence raises the age rating and can restrict ad category eligibility.
+- **Every `@Model` property synced via CloudKit must be optional or have a default value,** and `@Attribute(.unique)` is unsupported.
+- Store copy claims only what the code verifiably does (`next-game-handoff.md` §6.3).
+
+**Ads (only games that ship ads)**
+- **Use Google's official test Ad Unit IDs for the entire development cycle.** Swap in production IDs only immediately before release.
+- **The AdMob banner must reuse a single `GADBannerView` instance held by the `Coordinator`.** Creating it inside `updateUIView` makes the banner reload and flicker on every parent state change.
+
+**Content and platform**
+- **Failure animations stay slapstick — cartoonish and bloodless.** Realistic violence raises the age rating.
 - **Never override the `AppleLanguages` UserDefaults key.** Send the user to the system Settings app for per-app language changes.
+
+**Generated assets**
+- **The Leonardo API key lives only in `.env.leonardo`.** Never in source, docs, chat, URLs, or commits.
+- **No text, numbers, or logos baked into generated images.** Anything readable is drawn in code so it localizes and scales.
+- Only assets whose commercial-use terms J has confirmed for the plan they were generated on are shipped.
 
 ---
 
-## 6. Design Handoff (Claude Design)
+## 7. Design Handoff (Leonardo.ai)
 
-- When work on a game's structure **begins**, create its handoff folder at `docs/design/<NN-game-name>/` first.
-- Claude Design is token-expensive, so **never hand it the whole game in one prompt.** Copy the **D1–D6 step cards** defined in `docs/design/README.md` into separate sessions, one at a time.
-- Claude Code writes **only the handoff documents** (specs and prompt cards). It does not generate artwork.
-- Delivered assets land in `Apps/<Game>/Resources/`, and the corresponding item in `checklist.md` is ticked on arrival.
+- When work on a game **begins**, create `docs/design/<NN-game>/design-brief-for-leonardoAI.md` from the process in `docs/design/README.md`.
+- **One Leonardo session = one card (L0–L6).** Lock a style-anchor image in L1 and reuse it as the style reference for every later card.
+- Claude Code writes **only the brief, the layout specs, and the import step**. J runs the generations.
+- Accepted assets land in `Apps/<Game>/Resources/`; the matching item in the game's `checklist.md` is ticked on arrival, and the brief's import log records model, prompt version, seed, and size.
+- Chordline was built with the earlier Claude Design card set (`docs/design/_template/`, D1–D6). That set is kept for reference only.
 
 ### Starting a new game
-
-Read `docs/architecture/next-game-handoff.md` first. It is the mine map: every
-trap Chordline actually hit, placed at the phase where it goes off, with the
-file paths to look at. `docs/architecture/new-game-setup.md` is the mechanical
-procedure; the handoff is what the procedure does not tell you.
+Read `docs/architecture/next-game-handoff.md` first — the mine map of every trap Chordline hit.
+`docs/architecture/new-game-setup.md` is the mechanical procedure.
 
 ### The screen-building gate (non-negotiable)
 
-**No screen is implemented from a guess.** A game's core-logic phase splits into
-two kinds of work, and they are not allowed to run in the same order Chordline's
-did:
+**No screen is implemented from a guess.**
 
-- **Logic work** — board/state model, solver, gesture mechanics, save/ad/juice
-  wiring. This has no visual layout of its own and may start as soon as the
-  phase does, in parallel with the design track.
-- **Screen work** — Home, Stage Select, Settings, Result, and the game's own
-  bespoke gameplay chrome (HUD, board rendering, controls). **This does not
-  start until D3 (gameplay screen) and D4 (supporting screens) are delivered
-  and reviewed.** A screen built before its mockup exists gets built *again*
-  once the mockup arrives — Chordline built five screens once from logic alone,
-  then rebuilt every one of them against D3/D4/D5 after the fact. That is not
-  iteration, it is the same work twice, and the first pass is pure loss.
+- **Logic work** — board/state model, generator/solver, gesture mechanics, save/purchase/juice wiring — has no visual layout of its own and starts as soon as the phase does, in parallel with Track B.
+- **Screen work** — Home, Stage Select, Settings, Result, paywall, and the game's own gameplay chrome — **does not start until the gameplay and supporting-screen mockups are delivered AND their layout specs are approved** (gate G2). Chordline built five screens from logic alone, then rebuilt every one of them once the mockups arrived (D-104). That first pass was pure loss.
 
-If a step needs a screen and the mockup is not ready yet, the step waits or
-Claude Design is prompted for that card next — it does not proceed on a
-placeholder that "looks reasonable." A component that only ever shows numbers
-or state during logic testing (a debug list, a plain `Text`) is not a screen
-and is exempt; the moment it is dressed up to look like the real thing, it
-counts as screen work and the gate applies.
-
-Checklist and `PLAN.md` steps for every game after Chordline are written to
-this order explicitly — see `PLAN.md`'s Phase 5 cycle.
+If a step needs a screen and G2 is not open, the step waits or J runs the missing card next. A debug `Text` or plain list that only shows state is not a screen and is exempt; the moment it is dressed up to look like the real thing, the gate applies.
 
 ---
 
-## 7. Model Usage Strategy
+## 8. Model Usage Strategy — Opus ↔ Sonnet alternation
 
-Every switch below is a **concrete, checkable trigger** — Claude states in chat
-that the trigger was hit and which direction it is proposing, rather than
-switching silently or waiting to be asked. J still makes the call; Claude
-raises it.
+Every step in a game's `PLAN.md` carries a tag. **Claude announces every tag change before starting the next step** — never switches silently, never waits to be asked. J makes the call.
 
-### Opus 5, effort high
+| Tag | Model · effort | Triggers |
+|---|---|---|
+| `[OPUS]` | Opus 5.5 · high | A **new** `CoreKit` capability designed from scratch (a new persistence shape, a new cross-cutting service, a generalized API that every game inherits) · an algorithm whose correctness must be proven (stage generator, solvability guarantee) · a phase-end audit · a defect whose root cause is a `CoreKit`-level decision · J asks |
+| `[SONNET]` | Sonnet 5.5 · medium | Everything else — implementing settled rules, building screens against an approved layout spec, wiring existing `CoreKit` services, localization, docs |
 
-- **Phase 1, always.** `CoreKit` + `JuiceManager` skeleton, StoreKit 2 manager,
-  SwiftData/CloudKit schema, AdMob wrapper — the decisions every later game
-  inherits without re-deriving them.
-- **Any time a game's Phase 3-equivalent needs a new `CoreKit` capability
-  designed from scratch**, not just consumed. Extending an existing pattern
-  (a new `ThemeColor`, a new `JuiceStep` weight) is not this; inventing a new
-  one (a new persistence shape, a new cross-cutting service) is.
-- **Any defect whose root cause is a `CoreKit`-level decision**, not a
-  game-local bug — the kind `docs/AUDIT.md` catalogues, where the fix changes
-  behaviour every game inherits.
-- Whenever J asks for it directly.
+Extending an existing pattern (a new `GameTheme`, a new juice recipe) is `[SONNET]`. "The UI needs polish" is not a reason to escalate — a missing design brief is a reason to stop and wait (§7). Chordline's UI rework was a sequencing bug, not a model-capability problem.
 
-### Sonnet 5, effort medium
+**Announcement format**
+```
+🔁 Model switch proposed — <step> [OPUS] done → next <step> is [SONNET]
+   Why: <one line>
+   Switch to Sonnet 5.5 · medium in the app's model picker, then start a new session with "<step> 시작".
+```
 
-- **Everything else** — routine implementation, including screen work built
-  against an already-delivered design mockup (§6). Reading a design spec's
-  exact values and translating them faithfully into SwiftUI is not, on its
-  own, a reason to escalate: this session's D3/D4/D5 rebuild ran on Sonnet
-  without trouble once the mockups existed. The failure mode that actually
-  hit Chordline's UI (screens built once with no mockup, then rebuilt once
-  the mockup existed) was a **sequencing bug — the screen-building gate in
-  §6 — not a model-capability problem.** Do not treat "the UI needs polish"
-  as a reason to escalate; treat a missing design brief as a reason to stop
-  and wait for one.
-
-### The switch point, concretely
-
-The proactive Opus → Sonnet switch happens once a game's core loop first runs
-end-to-end **on the host** — win/lose state reachable, at least one juice
-moment wired and feelable in `Tools/JuiceLab` — which is the "게임 로직 구현"
-step in the Phase 5 cycle (`PLAN.md`) for every game after Chordline, matching
-what closed out as S3.9 for Chordline itself. Claude names the step, states
-the trigger explicitly, and proposes the switch there — it does not wait for
-the phase to fully close (§2 item 6) first.
+**The formal switch point.** A game's core loop first runs end-to-end on the host — win/lose reachable, at least one juice moment feelable in `Tools/JuiceLab`. After that point, only audits and `CoreKit`-rooted defects return to `[OPUS]`.
 
 ---
 
-## 8. Nicknames
+## 9. Private Material (public-repo leak prevention)
+
+This repository is public. **An unreleased game's codename, concept, rules, and art direction never appear in a tracked file or a commit message.** They live only in:
+
+- `PLAN.md`
+- `docs/concepts/` (concept, rules, palette ledger)
+- `docs/design/[0-9]*/` (Leonardo brief, layout specs, raw assets)
+- the game's own repository under `Apps/<Game>/`
+
+Tracked files refer to the in-progress game as "game #2". `CoreKit` changes made for it are described by what they do, not by the game they were made for.
+
+---
+
+## 10. Nicknames
 
 | Nickname | Refers to |
 |---|---|
