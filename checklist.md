@@ -429,6 +429,7 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
   - [ ] 결정론 PRNG + 자체 셔플
   - [ ] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환)
   - [ ] `CoreKitJuice` 실패 연출 타입 신설 (D-111 항목 1)
+  - [ ] `CoreKitData` 단조 카운터 레코드 — 소모성 재화의 기기 간 병합 (D-116)
   - [ ] `CoreKitUI` 화면이 게임 #2 디자인을 담는지 실측 (D-111 항목 2)
 - [ ] P3 — 코어 로직
 - [ ] P4 — 화면 · 셰이더 · iPad mini 시뮬레이터 점검
