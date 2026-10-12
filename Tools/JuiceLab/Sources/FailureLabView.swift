@@ -221,7 +221,7 @@ struct FailureLabView: View {
             }
 
             Section {
-                Text("The crack, thud and roll-off sounds are pitched placeholders until noise voices exist. Dust on landing and the escaping tile's bounce are not drawn yet — they need the particle extension.")
+                Text("Sounds come from the Sounds page's kit. Dust on landing and the escaping tile's bounce are not drawn here — the game adds them with particle emitters.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -254,19 +254,19 @@ struct FailureLabView: View {
         ],
         cues: [
             JuiceCue(at: 0.0, haptic: light, tone: tone(step: -2)),
-            JuiceCue(at: 0.4, haptic: rigid, tone: tone(step: -1, duration: 0.08)),
-            JuiceCue(at: 0.6, tone: tone(step: -2, duration: 0.08)),
-            JuiceCue(at: 0.8, tone: tone(step: -3, duration: 0.08)),
-            JuiceCue(at: 1.0, tone: tone(step: -4, duration: 0.08)),
+            JuiceCue(at: 0.4, haptic: rigid, tone: SoundKit.recipe(.crack, step: -1)),
+            JuiceCue(at: 0.6, tone: SoundKit.recipe(.crack, step: -2)),
+            JuiceCue(at: 0.8, tone: SoundKit.recipe(.crack, step: -3)),
+            JuiceCue(at: 1.0, tone: SoundKit.recipe(.crack, step: -4)),
             // 1.2–1.7 is the comic pause: no cue at all.
-            JuiceCue(at: 2.05, tone: tone(step: -1, duration: 0.1)),
+            JuiceCue(at: 2.05, tone: SoundKit.recipe(.tonk, step: -1)),
             JuiceCue(at: 2.30, tone: tone(step: -2, duration: 0.22)),
             JuiceCue(at: 2.55, tone: tone(step: -4, duration: 0.22)),
             JuiceCue(at: 2.60, haptic: light),
             JuiceCue(at: 2.80, tone: tone(step: -6, duration: 0.3)),
             JuiceCue(at: 3.00, haptic: light),
-            JuiceCue(at: 3.45, haptic: heavy, tone: tone(step: -6, duration: 0.25, gain: 0.7)),
-            JuiceCue(at: 4.40, haptic: light, tone: tone(step: 0, duration: 0.12)),
+            JuiceCue(at: 3.45, haptic: heavy, tone: SoundKit.recipe(.thud)),
+            JuiceCue(at: 4.40, haptic: light, tone: SoundKit.recipe(.tink, step: 0)),
         ],
         total: 6.0
     )
