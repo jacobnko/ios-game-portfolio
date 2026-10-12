@@ -24,6 +24,7 @@ public final class PitchedTonePlayer {
             volume = min(1, max(0, volume))
             #if canImport(AVFoundation)
             playerNode?.volume = volume
+            voiceNodes.forEach { $0.volume = volume }
             #endif
         }
     }
@@ -34,6 +35,12 @@ public final class PitchedTonePlayer {
     #if canImport(AVFoundation)
     private var engine: AVAudioEngine?
     private var playerNode: AVAudioPlayerNode?
+    /// Separate voices for explicit recipes, so a shatter and a thump fired together
+    /// both sound. Step tones keep their single interrupting node — a fast drag must
+    /// replace the previous note, not stack them.
+    private var voiceNodes: [AVAudioPlayerNode] = []
+    private var nextVoice = 0
+    private static let voiceCount = 4
     private var format: AVAudioFormat?
     /// Keyed by the recipe itself, which is the only thing that determines the
     /// samples. A hand-written key can drift from what rendering actually depends
@@ -63,6 +70,8 @@ public final class PitchedTonePlayer {
             self.configurationObserver = nil
         }
         playerNode?.stop()
+        voiceNodes.forEach { $0.stop() }
+        voiceNodes = []
         engine?.stop()
         playerNode = nil
         engine = nil
@@ -93,9 +102,12 @@ public final class PitchedTonePlayer {
         guard isEnabled else { return }
         #if canImport(AVFoundation)
         startEngineIfNeeded()
-        guard let playerNode, let buffer = buffer(for: recipe) else { return }
-        playerNode.scheduleBuffer(buffer, at: nil, options: [.interrupts])
-        if !playerNode.isPlaying { playerNode.play() }
+        guard !voiceNodes.isEmpty, let buffer = buffer(for: recipe) else { return }
+        // Round-robin: only the oldest of the voices is cut off when all are busy.
+        let voice = voiceNodes[nextVoice % voiceNodes.count]
+        nextVoice += 1
+        voice.scheduleBuffer(buffer, at: nil, options: [.interrupts])
+        if !voice.isPlaying { voice.play() }
         #endif
     }
 }
@@ -112,6 +124,12 @@ private extension PitchedTonePlayer {
         engine.attach(node)
         engine.connect(node, to: engine.mainMixerNode, format: format)
         node.volume = volume
+        let voices = (0..<Self.voiceCount).map { _ in AVAudioPlayerNode() }
+        for voice in voices {
+            engine.attach(voice)
+            engine.connect(voice, to: engine.mainMixerNode, format: format)
+            voice.volume = volume
+        }
 
         do {
             try engine.start()
@@ -139,6 +157,7 @@ private extension PitchedTonePlayer {
 
         self.engine = engine
         self.playerNode = node
+        self.voiceNodes = voices
         self.format = format
         node.play()
     }
