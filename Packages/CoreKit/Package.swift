@@ -7,6 +7,7 @@ import PackageDescription
 //   CoreKitJuice     - feedback pipeline (haptics, pitched audio, victory VFX). No external dependencies.
 //   CoreKitData      - SwiftData + CloudKit progress schema. No external dependencies.
 //   CoreKitServices  - AdMob, StoreKit 2, Firebase. All heavy dependencies live here and nowhere else.
+//   CoreKitRandom    - seeded, release-stable random numbers for procedural content. No dependencies.
 //
 // Keeping Juice and Data dependency-free is what makes SwiftUI Previews and `swift test` fast.
 // Juice code gets tuned dozens of times per game, so preview speed is development speed.
@@ -20,6 +21,7 @@ let package = Package(
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
         .library(name: "CoreKitJuice", targets: ["CoreKitJuice"]),
+        .library(name: "CoreKitRandom", targets: ["CoreKitRandom"]),
         .library(name: "CoreKitData", targets: ["CoreKitData"]),
         .library(name: "CoreKitUI", targets: ["CoreKitUI"]),
         .library(name: "CoreKitServices", targets: ["CoreKitServices"]),
@@ -37,6 +39,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "CoreKitJuice"),
+        .target(name: "CoreKitRandom"),
         .target(name: "CoreKitData"),
         .target(name: "CoreKitUI", dependencies: ["CoreKitJuice", "CoreKitData", "CoreKitServices"], resources: [.process("Resources")]),
         .target(name: "CoreKitServices", dependencies: ["CoreKitData"]),
@@ -46,6 +49,7 @@ let package = Package(
             .product(name: "GoogleUserMessagingPlatform", package: "swift-package-manager-google-user-messaging-platform"),
         ]),
         .testTarget(name: "CoreKitJuiceTests", dependencies: ["CoreKitJuice"]),
+        .testTarget(name: "CoreKitRandomTests", dependencies: ["CoreKitRandom"]),
         .testTarget(name: "CoreKitDataTests", dependencies: ["CoreKitData"]),
         .testTarget(name: "CoreKitServicesTests", dependencies: ["CoreKitServices"]),
         .testTarget(name: "CoreKitUITests", dependencies: ["CoreKitUI"]),
