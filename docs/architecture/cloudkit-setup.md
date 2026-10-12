@@ -39,6 +39,20 @@ let store = ProgressStore(container: try ProgressStore.makeContainer())
 그래서 `ProgressStore`가 읽기·쓰기마다 중복을 병합하고 여분 행을 지운다.
 병합 규칙은 **멱등(idempotent)** 이어야 한다 — 동기화는 여러 번에 걸쳐 수렴하고 그때마다 병합이 다시 돈다.
 
+### 소모성 재화는 "남은 개수"도 "공유 카운터 하나"도 아니다 (D-122)
+
+부스터 · 힌트처럼 쓰면 줄어드는 것은 `CounterStore`로 **사용량**을 저장하고, 남은 개수는 보여줄 때 `한도 − 사용량`으로 계산한다.
+
+| 저장 방식 | 무엇이 깨지나 |
+|---|---|
+| 남은 개수 | 앱을 지웠다 깔면 한도가 되살아난다. 두 기기 병합 규칙이 없다 |
+| 사용량 카운터 1개 + 큰 값 병합 | 두 기기가 오프라인에서 각각 1개 쓰면 둘 다 1을 쓰고 병합 결과도 1이다. 하나가 공짜가 된다 |
+| **기기별 사용량 + 합계** (`CounterStore`) | 기기는 자기 행만 올린다. 같은 기기 행끼리는 큰 값, 기기끼리는 합. 재설치해도 옛 설치의 행이 남아 계속 센다 |
+
+- 컨테이너는 `ProgressStore.makeContainer(includesCounters: true)`로 만들고 `ProgressStore`와 같은 것을 공유한다. 기본값이 `false`인 이유는 이미 출시된 게임의 CloudKit 스키마에 레코드 타입이 몰래 늘지 않게 하려는 것이다.
+- 매일 다시 채워지는 재화는 키에 날짜를 넣는다(`"boosters.day.\(DayStamp.string(for: now))"`). 지난 날짜 키는 `deleteCounters(where:)`로 지워도 된다. **평생 한도 키는 절대 지우지 않는다** — 지우면 쓴 것이 돌아온다.
+- 기기 id는 `CounterStore.installID()`가 만드는 무작위 UUID다. 플레이어의 비공개 iCloud DB 밖으로 나가지 않는다.
+
 ---
 
 ## 3. 출시 직전에 반드시 — 스키마를 Production으로 배포
