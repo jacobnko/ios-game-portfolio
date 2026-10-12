@@ -1,4 +1,4 @@
-# 인앱 결제 (광고 제거) 설정 가이드
+# 인앱 결제 (광고 제거 · 유료 해금) 설정 가이드
 
 `CoreKitServices`의 `PurchaseManager`는 코드만 제공한다. 실제로 팔리려면 아래가 필요하다.
 
@@ -9,11 +9,16 @@
 | 항목 | 값 |
 |---|---|
 | 유형 | **비소모성 (Non-Consumable)** — 게임당 1개 |
-| 제품 ID | `com.jacobkostudio.<codename>.removeads` |
-| 시작 가격 | **$2.99** (≒ ₩3,900 / ¥450). 고정 규칙이 아니라 출발점이고, 실제 전환 데이터로 재조정한다 |
+| 제품 ID | 광고 게임: `com.jacobkostudio.<codename>.removeads` · 유료 해금 게임: `com.jacobkostudio.<codename>.fullgame` |
+| 시작 가격 | 광고 제거 **$2.99** (≒ ₩3,900 / ¥450) · 전체 해금은 게임별 `PLAN.md`가 정한다. 고정 규칙이 아니라 출발점이고, 실제 전환 데이터로 재조정한다 |
 | 수수료 | 기본 30%. **Small Business Program 신청 시 15%** — 연 매출 100만 달러 미만이면 즉시 신청한다 |
 
-제품 ID는 `ProductID.removeAds(bundleID:)`가 만들어 준다. 문자열을 직접 쓰지 않는다.
+제품 ID는 `ProductID.removeAds(bundleID:)` / `ProductID.fullGame(bundleID:)`가 만들어 준다. 문자열을 직접 쓰지 않는다.
+
+**`PurchaseManager`를 만드는 두 방법 (D-120).**
+- 광고 게임: `PurchaseManager()` 또는 `init(client:removeAdsProductID:)` → `adsRemoved`로 광고를 게이트한다.
+- 유료 해금 등 다른 비소모성: `PurchaseManager(productIDs: [ProductID.fullGame()])` → `isEntitled(_:)` · `product(_:)` · `purchase(_:)`. 이 경우 `adsRemoved`는 항상 `false`다.
+- 어느 쪽이든 권한은 `Transaction.currentEntitlements`에서만 나온다. 로컬 · 키체인 · CloudKit 플래그를 두지 않는다 — StoreKit이 서명된 트랜잭션을 기기에 보관하므로 오프라인에서도 그대로 동작한다.
 
 ---
 
