@@ -18,6 +18,7 @@ struct JuiceLabRootView: View {
                 NavigationLink("Haptics") { HapticLabView() }
                 NavigationLink("Audio") { AudioLabView() }
                 NavigationLink("Victory") { VictoryLabView() }
+                NavigationLink("Failure") { FailureLabView() }
                 NavigationLink("Progress") { ProgressLabView() }
                 NavigationLink("Purchases") { PurchaseLabView() }
                 NavigationLink("Ads") { AdsLabView() }
