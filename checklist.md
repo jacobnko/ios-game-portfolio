@@ -425,11 +425,11 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
 
 - [x] P0 — 셋업: 취소 게임 정리 · `CLAUDE.md` 새판 · Claude Design으로 복귀(D-114) · 비공개 플랜/브리프
 - [x] P1 — 규칙 확정 `[SONNET]` (2026-10-11, G0 열림). 기기는 iPhone + iPad mini 기준(D-115)
-- [~] 디자인 트랙 D1~D5 — 배달 · C 검수 완료(2026-10-12), 레이아웃 스펙 J 승인 대기(G2). D6은 출시 직전
+- [x] 디자인 트랙 D1~D5 — 배달 · C 검수 완료, 레이아웃 스펙 J 승인(2026-10-12, G2 열림). D6은 출시 직전
 - [ ] P2 — `CoreKit` 보강 `[OPUS]` (디자인 G2 이후)
   - [x] 결정론 PRNG + 자체 셔플 — `CoreKitRandom.SeededGenerator` (D-119, 2026-10-12)
   - [x] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환 · 첫 게임 iOS 빌드 확인, D-120)
-  - [ ] `CoreKitJuice` 실패 연출 타입 신설 (D-111 항목 1)
+  - [x] `CoreKitJuice` 실패 연출 — 게임이 비트를 정하는 `BeatTimeline` + 슬랩스틱 곡선 4종 + JuiceLab "Failure" (D-121, 2026-10-12)
   - [ ] `CoreKitData` 단조 카운터 레코드 — 소모성 재화의 기기 간 병합 (D-116)
   - [x] `CoreKitUI` 화면이 게임 #2 디자인을 담는지 실측 (D-111 항목 2) → 화면 4종은 담지 못함, 공통 부품만 추가 (D-118)
   - [ ] `CoreKitUI` 공통 부품 추가 — iPad 중앙 카드 · 설정 행 · 구매 행 · iCloud 상태 행
