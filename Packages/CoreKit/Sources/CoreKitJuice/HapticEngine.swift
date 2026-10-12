@@ -73,6 +73,12 @@ public final class HapticEngine {
         play(HapticRecipe.make(for: step), weight: step.weight)
     }
 
+    /// Plays an explicit recipe, for choreographed sequences whose beats need a
+    /// specific feel (a light tap, a rigid crack, a heavy landing) rather than an intent.
+    public func play(_ recipe: HapticRecipe) {
+        play(recipe, weight: recipe.fallbackWeight)
+    }
+
     private func play(_ recipe: HapticRecipe, weight: FeedbackWeight) {
         guard isEnabled else { return }
         #if canImport(CoreHaptics) && canImport(UIKit)

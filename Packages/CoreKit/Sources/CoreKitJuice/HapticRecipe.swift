@@ -75,6 +75,14 @@ extension HapticRecipe {
     public var duration: TimeInterval {
         eventSpacing * TimeInterval(eventCount - 1)
     }
+
+    /// The simple impact generator closest to this recipe, for devices without
+    /// rich haptics: crisp reads as rigid, hard-and-soft as heavy, the rest as light.
+    var fallbackWeight: FeedbackWeight {
+        if sharpness >= 0.8 { return .error }
+        if intensity >= 0.85 { return .milestone }
+        return .micro
+    }
 }
 
 private extension Float {

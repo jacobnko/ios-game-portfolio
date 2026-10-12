@@ -86,6 +86,18 @@ public final class PitchedTonePlayer {
     public func play(_ step: JuiceStep) {
         play(step.weight, stepIndex: step.index)
     }
+
+    /// Plays an explicit tone, for choreographed sequences that set their own pitches
+    /// (a falling three-note sigh) instead of climbing the scale.
+    public func play(_ recipe: ToneRecipe) {
+        guard isEnabled else { return }
+        #if canImport(AVFoundation)
+        startEngineIfNeeded()
+        guard let playerNode, let buffer = buffer(for: recipe) else { return }
+        playerNode.scheduleBuffer(buffer, at: nil, options: [.interrupts])
+        if !playerNode.isPlaying { playerNode.play() }
+        #endif
+    }
 }
 
 #if canImport(AVFoundation)
@@ -132,9 +144,12 @@ private extension PitchedTonePlayer {
     }
 
     func buffer(for weight: FeedbackWeight, stepIndex: Int) -> AVAudioPCMBuffer? {
+        buffer(for: ToneRecipe.make(for: weight, stepIndex: stepIndex, scale: scale, root: root))
+    }
+
+    func buffer(for recipe: ToneRecipe) -> AVAudioPCMBuffer? {
         guard let format else { return nil }
 
-        let recipe = ToneRecipe.make(for: weight, stepIndex: stepIndex, scale: scale, root: root)
         if let cached = bufferCache[recipe] { return cached }
 
         let samples = recipe.renderSamples(sampleRate: format.sampleRate)
