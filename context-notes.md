@@ -958,3 +958,14 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **왜 별도 타깃인가.** 게임의 규칙 · 생성기 패키지는 순수 로직이어야 한다. `CoreKitData`에 넣으면 SwiftData가, `CoreKitJuice`에 넣으면 연출 계층이 같이 딸려 온다. 의존 0의 타깃이면 규칙 패키지가 이것만 가져간다.
 - **보고만 하는 것(삭제하지 않음).** `CoreKitJuice/ParticleField.swift` 안에 같은 SplitMix64가 `internal`로 하나 더 있다(파티클 버스트용, `RandomNumberGenerator` 채택). 지금 통합하면 요청 범위 밖의 리팩터링이라 그대로 뒀다. P2.6(`ParticleField` 확장)에서 같은 파일을 만질 때 `CoreKitRandom`으로 옮길지 판단한다 — 같은 알고리즘이라 파티클 출력은 바뀌지 않아야 하고, 기존 테스트가 그걸 확인한다.
 - **verify.sh 중 만난 것.** `$TMPDIR` DerivedData의 xcframework `Info.plist` 유실(`next-game-handoff.md` §8.1)이 또 났다. 문서의 정리 명령으로 해결 — 코드 문제가 아니었다.
+
+## 2026-10-12 · 게임 #2 P2.2 — 구매 관리 일반화
+
+### D-120. `PurchaseManager`가 "광고 제거 1개"에서 "추적하는 비소모성 N개"로 바뀐다 — 기존 API는 그대로
+- **왜.** 게임 #2는 광고가 없고 전체 해금 상품 하나를 판다. `PurchaseManager`는 `adsRemoved`와 `<bundle>.removeads`에 묶여 있어서 이 게임을 표현하지 못했다. 게임마다 구매 코드를 새로 쓰는 것은 `CLAUDE.md` §0.5가 막는 일이다.
+- **모양.** 내부 상태를 `productIDs`(추적 집합) · `entitledProductIDs` · `products[id]`로 바꾸고 `isEntitled(_:)` · `product(_:)` · `purchase(_:)` · `loadProducts()`를 추가했다. 새 초기화 `init(client:productIDs:)`. `ProductID.fullGame(bundleID:)` 규칙 추가.
+- **호환을 증명한 방법.** `adsRemoved` · `removeAdsProduct` · `purchaseRemoveAds()` · `loadProduct()` · `restore() -> Bool` · `PurchaseManager()` · `init(client:removeAdsProductID:)`는 이름과 동작을 그대로 두고 새 내부 위의 얇은 표면으로 만들었다. **기존 테스트 파일은 한 줄도 바꾸지 않았고 전부 통과**했으며, 출시된 첫 게임 앱을 실제로 iOS 빌드해 성공을 확인했다. 첫 게임 저장소에는 변경이 없다.
+- **설계 중에 잡은 결함 하나.** 단일 상품일 때는 "무엇이든 권한이 생기면 승인 대기 표시를 지운다"가 맞았다. 상품이 여러 개가 되면, 이미 A를 가진 사람이 B를 부모 승인 대기로 걸어 둔 상태에서 권한을 다시 읽는 순간 대기 표시가 잘못 사라진다. 대기 중인 상품 id를 따로 기억해 **그 상품이 도착할 때만** 지우도록 바꿨고, 이 상황을 그대로 재현하는 테스트를 넣었다.
+- **추적하지 않는 id는 무시한다.** 다른 앱 · 단종 상품의 권한이 섞여 와도 아무것도 열지 않는다(`intersection`). 추적하지 않는 id로 `purchase`를 부르면 App Store에 가기 전에 `productNotFound`로 실패한다 — 오타가 "찾을 수 없음"이라는 모호한 서버 응답으로 돌아오지 않게.
+- **오프라인.** 컨셉 초안은 결제 결과를 키체인에 캐싱해 오프라인을 보장하자고 했지만(비공개 컨셉 문서), 하드룰(`currentEntitlements`만 정본)과 충돌하고 필요도 없다 — StoreKit 2가 서명된 트랜잭션을 기기에 보관한다. "상품 정보는 못 불러와도 권한은 유지"를 테스트로 고정했다.
+- **남은 것.** `JuiceLab.storekit`에는 아직 광고 제거 상품만 있다. 전체 해금 상품의 StoreKit 구성 시나리오(구매 · 복원 · 환불)는 페이월 스텝(P4.6)에서 게임 쪽 구성 파일로 돌린다 — 로직은 가짜 클라이언트 테스트 16개가 덮는다.

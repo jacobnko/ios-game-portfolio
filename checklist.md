@@ -428,7 +428,7 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
 - [~] 디자인 트랙 D1~D5 — 배달 · C 검수 완료(2026-10-12), 레이아웃 스펙 J 승인 대기(G2). D6은 출시 직전
 - [ ] P2 — `CoreKit` 보강 `[OPUS]` (디자인 G2 이후)
   - [x] 결정론 PRNG + 자체 셔플 — `CoreKitRandom.SeededGenerator` (D-119, 2026-10-12)
-  - [ ] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환)
+  - [x] `PurchaseManager`를 비소모성 권한 N개로 일반화 (Chordline 소스 호환 · 첫 게임 iOS 빌드 확인, D-120)
   - [ ] `CoreKitJuice` 실패 연출 타입 신설 (D-111 항목 1)
   - [ ] `CoreKitData` 단조 카운터 레코드 — 소모성 재화의 기기 간 병합 (D-116)
   - [x] `CoreKitUI` 화면이 게임 #2 디자인을 담는지 실측 (D-111 항목 2) → 화면 4종은 담지 못함, 공통 부품만 추가 (D-118)
