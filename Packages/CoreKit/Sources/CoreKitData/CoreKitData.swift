@@ -8,5 +8,5 @@ public enum CoreKitData {
     ///
     /// CloudKit-backed SwiftData models cannot be migrated destructively, so this
     /// value is the trigger for writing an explicit migration plan.
-    public static let schemaVersion = "0.1.0"
+    public static let schemaVersion = "0.2.0"
 }

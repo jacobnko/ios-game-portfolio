@@ -24,17 +24,25 @@ public final class ProgressStore {
     /// Requires the iCloud capability with CloudKit enabled on the app target.
     /// Sync is silent and needs no login screen — it rides the Apple ID already on
     /// the device — and survives deleting and reinstalling the app.
-    public static func makeContainer(cloudKitEnabled: Bool = true) throws -> ModelContainer {
+    ///
+    /// `includesCounters` adds `CounterRecord` for games that sell or grant
+    /// consumables (`CounterStore`). It is opt-in so a shipped game's CloudKit schema
+    /// does not gain a record type its Production schema was never deployed with.
+    public static func makeContainer(cloudKitEnabled: Bool = true, includesCounters: Bool = false) throws -> ModelContainer {
         let configuration = ModelConfiguration(
             cloudKitDatabase: cloudKitEnabled ? .automatic : .none
         )
-        return try ModelContainer(for: StageRecord.self, configurations: configuration)
+        return try ModelContainer(for: schema(includesCounters: includesCounters), configurations: configuration)
     }
 
     /// Throwaway container for tests and SwiftUI previews.
-    public static func inMemoryContainer() throws -> ModelContainer {
+    public static func inMemoryContainer(includesCounters: Bool = false) throws -> ModelContainer {
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
-        return try ModelContainer(for: StageRecord.self, configurations: configuration)
+        return try ModelContainer(for: schema(includesCounters: includesCounters), configurations: configuration)
+    }
+
+    private static func schema(includesCounters: Bool) -> Schema {
+        includesCounters ? Schema([StageRecord.self, CounterRecord.self]) : Schema([StageRecord.self])
     }
 
     // MARK: - Reading

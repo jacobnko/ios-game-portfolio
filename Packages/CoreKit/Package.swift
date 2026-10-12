@@ -5,7 +5,7 @@ import PackageDescription
 //
 // Target layout is deliberate:
 //   CoreKitJuice     - feedback pipeline (haptics, pitched audio, victory VFX). No external dependencies.
-//   CoreKitData      - SwiftData + CloudKit progress schema. No external dependencies.
+//   CoreKitData      - SwiftData + CloudKit progress and usage-counter schema. No external dependencies.
 //   CoreKitServices  - AdMob, StoreKit 2, Firebase. All heavy dependencies live here and nowhere else.
 //   CoreKitRandom    - seeded, release-stable random numbers for procedural content. No dependencies.
 //
