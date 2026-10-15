@@ -30,9 +30,13 @@ public enum ICloudStatus: Equatable, Sendable {
 
     /// Asks CloudKit. Only call this from an app that has the iCloud capability for
     /// `containerIdentifier` — creating a container without the entitlement traps.
-    public static func current(containerIdentifier: String) async -> ICloudStatus {
+    /// `fetch` is the CloudKit call; tests pass their own.
+    public static func current(
+        containerIdentifier: String,
+        fetch: @Sendable (String) async throws -> CKAccountStatus = { try await CKContainer(identifier: $0).accountStatus() }
+    ) async -> ICloudStatus {
         do {
-            return ICloudStatus(try await CKContainer(identifier: containerIdentifier).accountStatus())
+            return ICloudStatus(try await fetch(containerIdentifier))
         } catch {
             return .unavailable
         }

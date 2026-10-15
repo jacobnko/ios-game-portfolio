@@ -43,6 +43,14 @@ import CloudKit
     #expect(ICloudStatus(CKAccountStatus.couldNotDetermine) == .unavailable)
     #expect(ICloudStatus.on.isSyncing && !ICloudStatus.off.isSyncing)
 }
+
+private struct Offline: Error {}
+
+@Test func askingCloudKitMapsTheAnswerOrFallsBackToUnavailable() async {
+    #expect(await ICloudStatus.current(containerIdentifier: "x", fetch: { _ in .available }) == .on)
+    #expect(await ICloudStatus.current(containerIdentifier: "x", fetch: { _ in .noAccount }) == .off)
+    #expect(await ICloudStatus.current(containerIdentifier: "x", fetch: { _ in throw Offline() }) == .unavailable)
+}
 #endif
 
 @Test func newSharedStringsHaveEveryLanguage() throws {
