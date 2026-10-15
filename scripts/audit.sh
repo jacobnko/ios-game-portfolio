@@ -32,19 +32,26 @@ GAME_DEVICE_ONLY='UI/Views/'
 COVERAGE_FLOOR=80
 
 section "1/7  Build, tests, product checks"
-"$ROOT/scripts/verify.sh" 2>&1 | grep -E "Test run|BUILD|MISSING|ok " | sed 's/^/  /'
-"$ROOT/scripts/verify.sh" 2>&1 | grep -q "BUILD FAILED" && fail "a build failed" || pass "builds and tests"
+# Each tool's output is captured first and searched afterwards. Piping straight into
+# `grep -q` under `pipefail` reports the producer's exit status, not grep's: a build
+# that fails *and* prints "BUILD FAILED" used to come out as a pass, and grep closing
+# the pipe early could turn a success into a failure.
+VERIFY_OUT="$("$ROOT/scripts/verify.sh" 2>&1)"
+grep -E "Test run|BUILD|MISSING|ok " <<<"$VERIFY_OUT" | sed 's/^/  /'
+if grep -q "BUILD FAILED" <<<"$VERIFY_OUT"; then fail "a build failed"; else pass "builds and tests"; fi
 
 section "2/7  Warnings treated as errors"
-if swift build --package-path "$PKG" -Xswiftc -warnings-as-errors 2>&1 | grep -q "error:"; then
+WARN_OUT="$(swift build --package-path "$PKG" -Xswiftc -warnings-as-errors 2>&1)"
+if grep -q "error:" <<<"$WARN_OUT"; then
     fail "warnings present"
 else
     pass "no warnings"
 fi
 
 section "3/7  Static analyser"
-if ( cd "$PKG" && xcodebuild analyze -scheme CoreKit-Package -destination 'generic/platform=iOS' \
-        -derivedDataPath "${TMPDIR:-/tmp}/ck-analyze" 2>&1 | grep -q "ANALYZE SUCCEEDED" ); then
+ANALYZE_OUT="$( cd "$PKG" && xcodebuild analyze -scheme CoreKit-Package -destination 'generic/platform=iOS' \
+        -derivedDataPath "${TMPDIR:-/tmp}/ck-analyze" 2>&1 )"
+if grep -q "ANALYZE SUCCEEDED" <<<"$ANALYZE_OUT"; then
     pass "analyze succeeded"
 else
     fail "analyze failed"

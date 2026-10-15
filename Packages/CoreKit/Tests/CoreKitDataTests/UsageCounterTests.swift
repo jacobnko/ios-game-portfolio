@@ -193,3 +193,12 @@ private func makeStores(_ ids: String...) throws -> [CounterStore] {
     #expect(try progress.progress(forStage: "s1")?.isCleared == true)
     #expect(try counters.total("boosters.free") == 1)
 }
+
+@Test func aDevicesOwnTallyIsReadable() {
+    var counter = UsageCounter()
+    counter.increment(deviceID: "phone", by: 2)
+    counter.increment(deviceID: "pad")
+    #expect(counter.tally(for: "phone") == 2)
+    #expect(counter.tally(for: "pad") == 1)
+    #expect(counter.tally(for: "watch") == 0, "a device that never used it reads as zero")
+}
