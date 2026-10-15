@@ -1027,3 +1027,10 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **원인.** `tally(for:)`는 화면이 "이 기기 몫"을 보여 줄 때 쓰라고 공개했지만 테스트는 합계만 봤다. `draw`는 `GraphicsContext`가 필요해 호스트에서 못 돈다고 여겨 실기기 확인(JuiceLab)으로 미뤘다.
 - **왜 안 잡혔나.** P2.9 감사를 보류해 둔 사이에 쌓였다.
 - **수정.** `tally(for:)` 테스트 추가. `draw`는 `ImageRenderer`로 `Canvas`를 화면 밖에서 그려 칠해진 픽셀 수를 센다 — 살아 있는 버스트는 칠하고 수명이 지난 버스트는 아무것도 칠하지 않는다. 호스트에서 돌 수 없다고 생각한 그리기 코드도 이렇게 실행할 수 있다.
+
+### D-125. 보조 화면 공통 부품은 "추가만" 한다 — AdaptiveCard · SettingsSection/Row · PurchaseRow · ICloudStatusRow (2026-10-15, game #2 P2.8)
+- **결정.** 두 번째 게임의 보조 화면을 만들면서 처음으로 두 게임이 겹치는 부분이 보였다. 기존 `CoreKitUI` 화면 4종(Chordline 모양 — 모드 사다리 · 광고 제거 · 시간 기록)은 **건드리지 않고**, 겹치는 부품만 새로 추가했다. 출시된 Chordline 호출부를 흔드는 비용이 더 크다.
+- **부품.** `AdaptiveCard`(compact = 전체 폭 − 여백, regular = 최대 560pt 가운데 카드) · `SettingsSection`/`SettingsRow`/`StatusPill`(기존 Settings 카드 · 행 모양을 공개 부품으로) · `PurchaseRow`(상태 4종: 보유 · `displayPrice`로 판매 · 진행 중/승인 대기 · 불가 — 판정은 순수 함수 `PurchaseRowState`) · `ICloudStatusRow`(`CKAccountStatus` → 켜짐 · 꺼짐 · 제한 · 일시 불가, 안내 문구 포함).
+- **판단을 뷰 밖으로.** 폭 계산 · 구매 상태 · iCloud 매핑은 모두 순수 타입이라 호스트 테스트로 고정된다. 뷰 파일(`Views/`)은 조립만 한다.
+- **`ICloudStatus.current(containerIdentifier:)`는 iCloud 권한이 있는 앱에서만 부른다.** 권한 없이 `CKContainer`를 만들면 앱이 멈춘다 — 그래서 `default()`가 아니라 컨테이너 ID를 받게 했고, 상태 값 자체는 뷰에 주입한다.
+- **새 공통 문자열 8개**는 카탈로그의 7개 언어를 모두 채웠고, 빠진 언어가 있으면 실패하는 테스트를 둔다(호스트는 `.xcstrings`를 컴파일하지 않으므로 파일을 직접 읽는다).

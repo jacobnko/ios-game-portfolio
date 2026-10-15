@@ -51,6 +51,15 @@ public enum CommonStrings: String, CaseIterable, Sendable {
     case purchasePending = "purchase.pending"
     case purchaseRestored = "purchase.restored"
     case purchaseNothingToRestore = "purchase.nothingToRestore"
+    case purchaseOwned = "purchase.owned"
+    case purchaseUnavailable = "purchase.unavailable"
+
+    case settingsOn = "settings.on"
+    case settingsOff = "settings.off"
+    case settingsICloudSync = "settings.icloudSync"
+    case settingsICloudOffHint = "settings.icloudOffHint"
+    case settingsICloudRestricted = "settings.icloudRestricted"
+    case settingsICloudUnavailable = "settings.icloudUnavailable"
 
     case stageLocked = "stage.locked"
     case stageLegendClear = "stage.legendClear"
