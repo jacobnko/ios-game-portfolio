@@ -1,0 +1,15 @@
+# Cloudflare Worker for in-app feedback (D-126). Secrets — never in this file:
+#   wrangler secret put DISCORD_WEBHOOK   (the channel's webhook URL)
+#   wrangler secret put APP_KEYS          ({"<random key>": "<App name>"} for every game)
+name = "feedback-relay"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+# Five reports a minute per IP address.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
