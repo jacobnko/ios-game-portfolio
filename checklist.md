@@ -547,3 +547,4 @@ D-111이 남긴 `CoreKit` 보강 3건은 새 게임 #2의 P1으로 넘어갔다(
 - [x] 다음 게임 핸드오프 §6.5 — 공유 · 리뷰 · 알림 호출 위치와 함정
 - [x] `audit.sh` — Chordline 통과. Pixlaugh(게임 #2)가 커버리지 하한 미달(`PuzzleDifficulty.swift` 0%) — 이번 작업과 무관, Pixlaugh 단계에서 처리
 - [ ] **J**: AdMob 동의 메시지 기본 언어 English로 변경 후 게시, 아카이브 → 업로드 → 1.2.0 심사 제출 (What's New 붙여넣기)
+- [x] **피드백 보내기 (D-126)** — `CoreKitServices.FeedbackSender` · `CoreKitUI.FeedbackForm` · `Tools/FeedbackRelay`(Cloudflare Worker → Discord) · [ ] J: Worker 배포 · Discord 웹후크 · 게임별 앱 키
