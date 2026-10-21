@@ -1,4 +1,4 @@
-// Sends a player's bug report or idea to the studio's feedback relay, which forwards it to Discord (D-126).
+// Sends a player's bug report or idea to Discord — straight to a webhook, or through the studio relay (D-126).
 
 import Foundation
 
@@ -49,27 +49,73 @@ public struct FeedbackReport: Equatable, Sendable, Codable {
     }
 }
 
-/// Where reports go and how often. Built from the game's Info.plist; nil when the game has no relay
-/// configured, so the screen can offer email instead.
+/// Where reports go. Built from the game's Info.plist; nil when nothing is configured, so the screen
+/// can offer email instead.
 public struct FeedbackEndpoint: Equatable, Sendable {
+    public enum Style: Equatable, Sendable {
+        /// The studio relay (`Tools/FeedbackRelay`): the key names the game; the webhook stays on the server.
+        case relay(appKey: String)
+        /// A Discord webhook posted to directly. Simpler, but the URL ships inside the app and anyone who
+        /// extracts it can post to the channel; the only remedy is a new webhook and an app update (D-126).
+        case discord(appName: String)
+    }
+
     public let url: URL
-    /// Identifies the game to the relay. Not a secret — it only lets the relay name the game and
-    /// drop requests that carry no known key.
-    public let appKey: String
+    public let style: Style
 
     public init(url: URL, appKey: String) {
         self.url = url
-        self.appKey = appKey
+        style = .relay(appKey: appKey)
     }
 
-    /// Reads `FeedbackEndpoint` and `FeedbackAppKey` from the bundle; nil if either is missing or blank.
+    public init(discordWebhook url: URL, appName: String) {
+        self.url = url
+        style = .discord(appName: appName)
+    }
+
+    /// `FeedbackDiscordWebhook` (a discord.com webhook) wins; otherwise `FeedbackEndpoint` + `FeedbackAppKey`.
+    /// Blank or half-built values (an unset build setting) count as absent.
     public static func from(bundle: Bundle = .main) -> FeedbackEndpoint? {
-        guard let raw = bundle.object(forInfoDictionaryKey: "FeedbackEndpoint") as? String,
-              let key = bundle.object(forInfoDictionaryKey: "FeedbackAppKey") as? String,
-              !key.trimmingCharacters(in: .whitespaces).isEmpty,
-              let url = URL(string: raw.trimmingCharacters(in: .whitespaces)), url.scheme == "https",
+        func value(_ key: String) -> String? {
+            let text = (bundle.object(forInfoDictionaryKey: key) as? String)?.trimmingCharacters(in: .whitespaces) ?? ""
+            return text.isEmpty || text.contains("$(") ? nil : text
+        }
+        if let raw = value("FeedbackDiscordWebhook"), let url = URL(string: raw), isDiscordWebhook(url) {
+            let name = value("CFBundleDisplayName") ?? value("CFBundleName") ?? "App"
+            return FeedbackEndpoint(discordWebhook: url, appName: name)
+        }
+        guard let raw = value("FeedbackEndpoint"), let key = value("FeedbackAppKey"),
+              let url = URL(string: raw), url.scheme == "https",
               let host = url.host, !host.isEmpty else { return nil }   // an unset host builds "https:///feedback"
         return FeedbackEndpoint(url: url, appKey: key)
+    }
+
+    /// `https://discord.com/api/webhooks/<id>/<token>` (or discordapp.com) with both parts present.
+    static func isDiscordWebhook(_ url: URL) -> Bool {
+        guard url.scheme == "https", let host = url.host, host == "discord.com" || host == "discordapp.com" else { return false }
+        let parts = url.path.split(separator: "/")
+        return parts.count == 4 && parts[0] == "api" && parts[1] == "webhooks" && !parts[2].isEmpty && !parts[3].isEmpty
+    }
+}
+
+/// The Discord message for a report: one embed, and no pings ever (`allowed_mentions` empty).
+enum DiscordFeedback {
+    static func payload(_ report: FeedbackReport, appName: String) -> [String: Any] {
+        let bug = report.kind == .bug
+        let title = "\(bug ? "🐞 Bug" : "💡 Idea") · \(appName) \(report.appVersion) (\(report.build))"
+        return [
+            "username": "Feedback",
+            "allowed_mentions": ["parse": [String]()],
+            "embeds": [[
+                "title": String(title.prefix(256)),
+                "description": report.message,
+                "color": bug ? 0xFF4D2E : 0xB8FF2E,
+                "fields": [
+                    ["name": "Device", "value": String("\(report.device) · iOS \(report.osVersion)".prefix(1024)), "inline": true],
+                    ["name": "Context", "value": String((report.context.isEmpty ? "—" : report.context).prefix(1024)), "inline": true],
+                ],
+            ]],
+        ]
     }
 }
 
@@ -85,7 +131,7 @@ public enum FeedbackError: Error, Equatable, Sendable {
 @MainActor
 public final class FeedbackSender {
     public static let minimumLength = 5
-    /// Discord caps a message at 2000 characters; the relay adds a header.
+    /// Discord caps a message at 2000 characters (an embed's text at 4096); this leaves room either way.
     public static let maximumLength = 1500
     /// One report per this many seconds from one device.
     public static let interval: TimeInterval = 30
@@ -121,8 +167,13 @@ public final class FeedbackSender {
         var request = URLRequest(url: endpoint.url, timeoutInterval: 15)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(endpoint.appKey, forHTTPHeaderField: "X-Feedback-Key")
-        request.httpBody = try JSONEncoder().encode(trimmed)
+        switch endpoint.style {
+        case .relay(let appKey):
+            request.setValue(appKey, forHTTPHeaderField: "X-Feedback-Key")
+            request.httpBody = try JSONEncoder().encode(trimmed)
+        case .discord(let appName):
+            request.httpBody = try JSONSerialization.data(withJSONObject: DiscordFeedback.payload(trimmed, appName: appName))
+        }
         return request
     }
 

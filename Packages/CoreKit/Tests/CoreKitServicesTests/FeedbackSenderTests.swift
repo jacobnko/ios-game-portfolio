@@ -71,3 +71,32 @@ private func makeSender(_ box: Box, now: @escaping () -> Date) -> FeedbackSender
     let current = FeedbackReport.current(kind: .idea, message: "More levels please", context: "classic.easy.3")
     #expect(!current.osVersion.isEmpty && !current.device.isEmpty && current.kind == .idea)
 }
+
+@MainActor
+@Test func aDiscordWebhookGetsOneEmbedAndNoPings() async throws {
+    let box = Box()
+    let hook = URL(string: "https://discord.com/api/webhooks/123/abc")!
+    let sender = FeedbackSender(endpoint: FeedbackEndpoint(discordWebhook: hook, appName: "GameOne"), transport: { request in
+        box.requests.append(request)
+        return (Data(), HTTPURLResponse(url: request.url!, statusCode: 204, httpVersion: nil, headerFields: nil)!)
+    })
+    try await sender.send(report("  Tiles vanished @everyone  "))
+    let request = try #require(box.requests.first)
+    #expect(request.url == hook && request.value(forHTTPHeaderField: "X-Feedback-Key") == nil)
+    let body = try #require(request.httpBody)
+    let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+    #expect((json["allowed_mentions"] as? [String: Any])?["parse"] as? [String] == [])
+    let embed = try #require((json["embeds"] as? [[String: Any]])?.first)
+    #expect(embed["title"] as? String == "🐞 Bug · GameOne 1.0.0 (1)")
+    #expect(embed["description"] as? String == "Tiles vanished @everyone")
+    #expect(embed["color"] as? Int == 0xFF4D2E)
+}
+
+@Test func onlyARealDiscordWebhookCountsAsOne() {
+    #expect(FeedbackEndpoint.isDiscordWebhook(URL(string: "https://discord.com/api/webhooks/1/token")!))
+    #expect(FeedbackEndpoint.isDiscordWebhook(URL(string: "https://discordapp.com/api/webhooks/1/token")!))
+    #expect(!FeedbackEndpoint.isDiscordWebhook(URL(string: "https://discord.com/api/webhooks/1")!), "no token")
+    #expect(!FeedbackEndpoint.isDiscordWebhook(URL(string: "https://discord.com/api/webhooks//")!), "an unset build setting")
+    #expect(!FeedbackEndpoint.isDiscordWebhook(URL(string: "http://discord.com/api/webhooks/1/t")!), "plain http")
+    #expect(!FeedbackEndpoint.isDiscordWebhook(URL(string: "https://evil.example/api/webhooks/1/t")!))
+}
