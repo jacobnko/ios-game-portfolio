@@ -1042,3 +1042,9 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **개인정보.** 이메일 · 이름 칸을 두지 않는다(답장이 필요하면 메일 주소 안내). 보내는 것: 사용자가 쓴 글 · 앱 버전/빌드 · iOS 버전 · 기기 모델 · 게임이 넘긴 짧은 상황 문자열. App Store 라벨은 "수집 안 함" → **"사용자와 연결되지 않은 데이터: 고객 지원(사용자 콘텐츠) · 기타 진단 데이터, 목적 앱 기능"**. 게임의 `PrivacyInfo.xcprivacy` · 방침 문구도 같이 고친다.
 - 중계 주소 · 앱 키는 게임의 Info.plist 값(빌드 설정)으로 주입. 비어 있으면 메뉴는 메일(`mailto:`)로 대신한다 — 중계가 아직 없어도 앱은 동작한다.
 - **추가 (2026-10-21) — 게임이 직접 전송을 고를 수 있다.** game #2는 J 결정으로 중계 없이 Discord 웹훅에 직접 보낸다(`FeedbackEndpoint.Style.discord`, Info.plist `FeedbackDiscordWebhook`이 있으면 우선). 대가: 웹훅이 앱 바이너리에 들어가 추출 가능 — 새면 웹훅 삭제 · 재발급 + 앱 업데이트. 중계(`.relay`)와 `Tools/FeedbackRelay`는 다음 게임용으로 그대로 둔다. Discord 임베드 형식은 두 경로가 같다.
+
+### D-127. 정적 색 토큰을 시스템 모양(라이트/다크)에 따라 바꾸는 `Color(light:dark:)` (2026-11-07, game #2)
+- **문제.** `ThemeColor.resolved(for:)`는 뷰마다 `@Environment(\.colorScheme)`을 읽어야 한다. 팔레트를 정적 토큰(`SomeColor.lime`)으로 수백 곳에서 쓰는 게임은 라이트 모드를 넣으려면 모든 호출부를 고쳐야 한다.
+- **결정.** `CoreKitUI`에 `Color(light:dark:)`를 추가한다 — UIKit `UIColor { traits in }`, AppKit `NSColor(name:dynamicProvider:)`로 만든 동적 색. 모양이 지정되지 않았으면 dark로 본다(어둡게만 그려 온 게임이 그대로 보이게). `ThemeColor.adaptive`가 같은 쌍을 한 색으로 돌려준다. 기존 API는 건드리지 않는다(추가만, D-125와 같은 원칙).
+- **테스트 함정.** AppKit의 동적 색은 메인 스레드에서 풀린다 — 테스트를 `@MainActor`로 두지 않으면 `Color.resolve(in:)`가 멈춘다(실제로 멈췄다).
+
