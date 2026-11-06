@@ -1048,3 +1048,8 @@ S2.1(공통 화면 골격)·S2.2(새 게임 설정 문서)·S2.3(코드네임 �
 - **결정.** `CoreKitUI`에 `Color(light:dark:)`를 추가한다 — UIKit `UIColor { traits in }`, AppKit `NSColor(name:dynamicProvider:)`로 만든 동적 색. 모양이 지정되지 않았으면 dark로 본다(어둡게만 그려 온 게임이 그대로 보이게). `ThemeColor.adaptive`가 같은 쌍을 한 색으로 돌려준다. 기존 API는 건드리지 않는다(추가만, D-125와 같은 원칙).
 - **테스트 함정.** AppKit의 동적 색은 메인 스레드에서 풀린다 — 테스트를 `@MainActor`로 두지 않으면 `Color.resolve(in:)`가 멈춘다(실제로 멈췄다).
 
+### D-128. 플레이어가 고르는 모양 `AppearanceChoice` (System / Light / Dark) (2026-11-07, game #2)
+- **무엇.** `CoreKitUI/AppearanceChoice.swift` — `system` · `light` · `dark`(raw 값이 저장 형식이라 이름 고정, 테스트가 고정)와 `View.appearance(_:)`.
+- **왜 창 스타일인가.** `.preferredColorScheme(nil)`은 이미 떠 있는 시트를 기기 설정으로 되돌리지 못하는 경우가 있다. iOS에서는 연결된 모든 창의 `overrideUserInterfaceStyle`을 바꿔 시트 · 커버 · 알림이 함께 따르게 한다. macOS(호스트 테스트)는 `preferredColorScheme`.
+- **쓰는 법.** 게임은 선택을 `@AppStorage`로 저장(기본 `.system`)하고 루트에 `.appearance(choice)` 한 줄. 문구(라벨)는 게임 카탈로그에.
+- **한계.** 런치 화면은 앱 코드 전이라 기기 모양을 따른다.
